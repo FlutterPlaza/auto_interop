@@ -1,0 +1,23 @@
+name: native_bridge_generator
+description: Code generator for native_bridge - auto-generates type-safe Dart bindings from native package APIs.
+version: 0.1.0
+homepage: https://github.com/FlutterPlaza/native_bridge
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  build: ^2.4.0
+  source_gen: ^1.5.0
+  yaml: ^3.1.0
+  path: ^1.9.0
+  code_builder: ^4.10.0
+  dart_style: ^2.3.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  test: ^1.25.0
+  build_test: ^2.2.0
+  build_runner: ^2.4.0
+  json_serializable: ^6.8.0
+  lints: ^5.0.0
