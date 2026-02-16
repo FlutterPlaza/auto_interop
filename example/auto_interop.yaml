@@ -1,0 +1,23 @@
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.6.0"
+    imports:
+      - "format"
+      - "addDays"
+      - "differenceInDays"
+
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+    imports:
+      - "Session"
+      - "DataRequest"
+
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+    imports:
+      - "OkHttpClient"
+      - "Request"
+      - "Response"

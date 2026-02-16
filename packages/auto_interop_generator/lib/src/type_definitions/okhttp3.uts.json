@@ -1,0 +1,339 @@
+{
+  "package": "com.squareup.okhttp3:okhttp",
+  "source": "gradle",
+  "version": "4.12.0",
+  "classes": [
+    {
+      "name": "OkHttpClient",
+      "kind": "concreteClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "newCall",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "kind": "object",
+                "name": "Request",
+                "nullable": false,
+                "ref": "Request",
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "object",
+            "name": "Call",
+            "nullable": false,
+            "ref": "Call",
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Creates a new call for the given request."
+        },
+        {
+          "name": "close",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Closes the client and releases resources."
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "HTTP client for making network requests."
+    },
+    {
+      "name": "Call",
+      "kind": "abstractClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "execute",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "object",
+                "name": "Response",
+                "nullable": false,
+                "ref": "Response",
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Executes the request synchronously."
+        },
+        {
+          "name": "cancel",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Cancels the request."
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents an in-progress HTTP call."
+    }
+  ],
+  "functions": [],
+  "types": [
+    {
+      "name": "Request",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "url",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "method",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "headers",
+          "type": {
+            "kind": "map",
+            "name": "Map",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "body",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents an HTTP request."
+    },
+    {
+      "name": "Response",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "code",
+          "type": {
+            "kind": "primitive",
+            "name": "int",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "message",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "body",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "headers",
+          "type": {
+            "kind": "map",
+            "name": "Map",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents an HTTP response."
+    }
+  ],
+  "enums": [
+    {
+      "name": "HttpMethod",
+      "values": [
+        {
+          "name": "get",
+          "rawValue": "GET",
+          "documentation": null
+        },
+        {
+          "name": "post",
+          "rawValue": "POST",
+          "documentation": null
+        },
+        {
+          "name": "put",
+          "rawValue": "PUT",
+          "documentation": null
+        },
+        {
+          "name": "delete",
+          "rawValue": "DELETE",
+          "documentation": null
+        }
+      ],
+      "documentation": "HTTP request methods."
+    }
+  ]
+}

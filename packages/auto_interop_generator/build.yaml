@@ -1,0 +1,9 @@
+builders:
+  auto_interop:
+    import: "package:auto_interop_generator/builder.dart"
+    builder_factories: ["autoInteropBuilder"]
+    build_extensions:
+      "auto_interop.yaml":
+        - "lib/generated/auto_interop_bindings.dart"
+    auto_apply: root_package
+    build_to: source

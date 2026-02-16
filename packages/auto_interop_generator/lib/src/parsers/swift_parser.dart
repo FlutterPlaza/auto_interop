@@ -1,0 +1,1039 @@
+import '../schema/unified_type_schema.dart';
+import '../type_mapping/swift_to_dart.dart';
+import 'parser_base.dart';
+
+/// Parses Swift (.swift / .swiftinterface) source files into a
+/// [UnifiedTypeSchema].
+///
+/// Handles:
+/// - Classes (public, open)
+/// - Structs (→ dataClass)
+/// - Protocols (→ abstractClass)
+/// - Enums with associated values (→ sealedClass)
+/// - Simple enums
+/// - Functions with async/await (→ Future)
+/// - AsyncStream/AsyncSequence (→ Stream)
+/// - Closures (→ callback)
+/// - Optionals (→ nullable)
+/// - Extensions (folds methods into the base class)
+/// - Static/class methods
+/// - Access control filtering (only public/open)
+class SwiftParser extends ParserBase {
+  final SwiftToDartMapper _mapper = SwiftToDartMapper();
+
+  @override
+  PackageSource get source => PackageSource.cocoapods;
+
+  @override
+  UnifiedTypeSchema parse({
+    required String content,
+    required String packageName,
+    required String version,
+  }) {
+    final lines = content.split('\n');
+    final classes = <UtsClass>[];
+    final functions = <UtsMethod>[];
+    final types = <UtsClass>[];
+    final enums = <UtsEnum>[];
+    final extensions = <String, List<UtsMethod>>{};
+
+    var i = 0;
+    while (i < lines.length) {
+      final line = lines[i].trim();
+
+      // Skip empty lines, imports, and /// doc comment lines
+      if (line.isEmpty || line.startsWith('import ') ||
+          line.startsWith('///')) {
+        i++;
+        continue;
+      }
+
+      // Collect /** ... */ documentation blocks
+      final docResult = _collectDocBlock(lines, i);
+      if (docResult.endIndex > i) {
+        i = docResult.endIndex;
+        continue;
+      }
+
+      final doc = _lookbackForDoc(lines, i);
+
+      // Skip private/fileprivate/internal declarations
+      if (_isNonPublic(line)) {
+        i = _skipBlock(lines, i);
+        continue;
+      }
+
+      // Extension
+      if (_matchesExtension(line)) {
+        final result = _parseExtension(lines, i);
+        if (result != null) {
+          extensions
+              .putIfAbsent(result.targetName, () => [])
+              .addAll(result.methods);
+          i = result.endIndex;
+          continue;
+        }
+      }
+
+      // Protocol
+      if (_matchesProtocol(line)) {
+        final result = _parseProtocol(lines, i, doc);
+        if (result != null) {
+          classes.add(result.cls);
+          i = result.endIndex;
+          continue;
+        }
+      }
+
+      // Enum with associated values
+      if (_matchesEnum(line)) {
+        final result = _parseEnum(lines, i, doc);
+        if (result != null) {
+          if (result.isSealedClass) {
+            classes.add(result.sealedClass!);
+            for (final sub in result.subclasses) {
+              types.add(sub);
+            }
+          } else {
+            enums.add(result.enumDef!);
+          }
+          i = result.endIndex;
+          continue;
+        }
+      }
+
+      // Struct
+      if (_matchesStruct(line)) {
+        final result = _parseStruct(lines, i, doc);
+        if (result != null) {
+          types.add(result.cls);
+          i = result.endIndex;
+          continue;
+        }
+      }
+
+      // Class
+      if (_matchesClass(line)) {
+        final result = _parseClass(lines, i, doc);
+        if (result != null) {
+          classes.add(result.cls);
+          i = result.endIndex;
+          continue;
+        }
+      }
+
+      // Top-level function
+      if (_matchesFunction(line)) {
+        final method = _parseFunction(line, doc);
+        if (method != null) {
+          functions.add(method);
+        }
+      }
+
+      i++;
+    }
+
+    // Fold extension methods into their base classes
+    for (final entry in extensions.entries) {
+      final targetName = entry.key;
+      final extMethods = entry.value;
+
+      var found = false;
+      for (var ci = 0; ci < classes.length; ci++) {
+        if (classes[ci].name == targetName) {
+          classes[ci] = UtsClass(
+            name: classes[ci].name,
+            kind: classes[ci].kind,
+            fields: classes[ci].fields,
+            methods: [...classes[ci].methods, ...extMethods],
+            superclass: classes[ci].superclass,
+            interfaces: classes[ci].interfaces,
+            sealedSubclasses: classes[ci].sealedSubclasses,
+            documentation: classes[ci].documentation,
+          );
+          found = true;
+          break;
+        }
+      }
+      // If the base class wasn't found in this file, create it
+      if (!found) {
+        classes.add(UtsClass(
+          name: targetName,
+          kind: UtsClassKind.concreteClass,
+          methods: extMethods,
+        ));
+      }
+    }
+
+    return UnifiedTypeSchema(
+      package: packageName,
+      source: PackageSource.cocoapods,
+      version: version,
+      classes: classes,
+      functions: functions,
+      types: types,
+      enums: enums,
+    );
+  }
+
+  // ========== Matchers ==========
+
+  bool _isNonPublic(String line) {
+    if (line.startsWith('private ') || line.startsWith('fileprivate ')) {
+      return true;
+    }
+    if (line.startsWith('internal ') && !line.startsWith('internal func')) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _matchesClass(String line) {
+    if (line.contains('struct ') ||
+        line.contains('protocol ') ||
+        line.contains('enum ') ||
+        line.contains('extension ')) {
+      return false;
+    }
+    return RegExp(r'(?:public\s+|open\s+)?(?:final\s+)?class\s+\w+')
+        .hasMatch(line);
+  }
+
+  bool _matchesStruct(String line) =>
+      RegExp(r'(?:public\s+)?struct\s+\w+').hasMatch(line);
+
+  bool _matchesProtocol(String line) =>
+      RegExp(r'(?:public\s+)?protocol\s+\w+').hasMatch(line);
+
+  bool _matchesEnum(String line) =>
+      RegExp(r'(?:public\s+)?enum\s+\w+').hasMatch(line);
+
+  bool _matchesExtension(String line) =>
+      RegExp(r'extension\s+\w+').hasMatch(line);
+
+  bool _matchesFunction(String line) {
+    return RegExp(r'(?:public\s+)?(?:static\s+|class\s+)?func\s+\w+')
+        .hasMatch(line);
+  }
+
+  // ========== Parsers ==========
+
+  _ParsedClass? _parseClass(List<String> lines, int startIndex, String? doc) {
+    final line = lines[startIndex].trim();
+    final nameMatch =
+        RegExp(r'(?:public\s+|open\s+)?(?:final\s+)?class\s+(\w+)')
+            .firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    final methods = <UtsMethod>[];
+    final fields = <UtsField>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty) continue;
+
+      // Skip non-public members
+      if (bodyLine.startsWith('private ') ||
+          bodyLine.startsWith('fileprivate ')) {
+        j = _skipBlockInBody(bodyLines, j);
+        continue;
+      }
+
+      final memberDoc = _lookbackForDoc(bodyLines, j);
+
+      if (_matchesFunction(bodyLine)) {
+        final method = _parseFunction(bodyLine, memberDoc);
+        if (method != null) {
+          methods.add(method);
+        }
+      } else if (_matchesProperty(bodyLine)) {
+        final field = _parseProperty(bodyLine, memberDoc);
+        if (field != null) {
+          fields.add(field);
+        }
+      }
+    }
+
+    return _ParsedClass(
+      cls: UtsClass(
+        name: name,
+        kind: UtsClassKind.concreteClass,
+        methods: methods,
+        fields: fields,
+        documentation: doc,
+      ),
+      endIndex: endIndex + 1,
+    );
+  }
+
+  _ParsedClass? _parseStruct(List<String> lines, int startIndex, String? doc) {
+    final line = lines[startIndex].trim();
+    final nameMatch =
+        RegExp(r'(?:public\s+)?struct\s+(\w+)').firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    final fields = <UtsField>[];
+    final methods = <UtsMethod>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty) continue;
+
+      if (bodyLine.startsWith('private ') ||
+          bodyLine.startsWith('fileprivate ')) {
+        continue;
+      }
+
+      final memberDoc = _lookbackForDoc(bodyLines, j);
+
+      if (_matchesProperty(bodyLine)) {
+        final field = _parseProperty(bodyLine, memberDoc);
+        if (field != null) {
+          fields.add(field);
+        }
+      } else if (_matchesFunction(bodyLine)) {
+        final method = _parseFunction(bodyLine, memberDoc);
+        if (method != null) {
+          methods.add(method);
+        }
+      }
+    }
+
+    return _ParsedClass(
+      cls: UtsClass(
+        name: name,
+        kind: UtsClassKind.dataClass,
+        fields: fields,
+        methods: methods,
+        documentation: doc,
+      ),
+      endIndex: endIndex + 1,
+    );
+  }
+
+  _ParsedClass? _parseProtocol(
+      List<String> lines, int startIndex, String? doc) {
+    final line = lines[startIndex].trim();
+    final nameMatch =
+        RegExp(r'(?:public\s+)?protocol\s+(\w+)').firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    final methods = <UtsMethod>[];
+    final fields = <UtsField>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty) continue;
+
+      final memberDoc = _lookbackForDoc(bodyLines, j);
+
+      // Protocol property requirement: var name: Type { get }
+      if (_matchesProtocolProperty(bodyLine)) {
+        final field = _parseProtocolProperty(bodyLine, memberDoc);
+        if (field != null) {
+          fields.add(field);
+        }
+      } else if (_matchesFunctionDecl(bodyLine)) {
+        final method = _parseFunctionDecl(bodyLine, memberDoc);
+        if (method != null) {
+          methods.add(method);
+        }
+      }
+    }
+
+    return _ParsedClass(
+      cls: UtsClass(
+        name: name,
+        kind: UtsClassKind.abstractClass,
+        methods: methods,
+        fields: fields,
+        documentation: doc,
+      ),
+      endIndex: endIndex + 1,
+    );
+  }
+
+  _ParsedEnumResult? _parseEnum(
+      List<String> lines, int startIndex, String? doc) {
+    final line = lines[startIndex].trim();
+    final nameMatch = RegExp(r'(?:public\s+)?enum\s+(\w+)').firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    // Detect if this enum has associated values
+    final hasAssociatedValues = bodyLines.any((l) {
+      final trimmed = l.trim();
+      return trimmed.startsWith('case ') && trimmed.contains('(');
+    });
+
+    if (hasAssociatedValues) {
+      return _parseSealedEnum(name, bodyLines, endIndex, doc);
+    }
+
+    return _parseSimpleEnum(name, line, bodyLines, endIndex, doc);
+  }
+
+  _ParsedEnumResult _parseSimpleEnum(String name, String headerLine,
+      List<String> bodyLines, int endIndex, String? doc) {
+    final values = <UtsEnumValue>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty || bodyLine == '}') continue;
+
+      // case value1, value2, value3
+      // case value1
+      // case value = "rawValue"
+      if (bodyLine.startsWith('case ')) {
+        final casePart = bodyLine.substring(5).trim();
+
+        // Handle comma-separated cases: case a, b, c
+        final parts = casePart.split(',');
+        for (final part in parts) {
+          var p = part.trim();
+          if (p.isEmpty) continue;
+
+          String? rawValue;
+          // Handle raw value: case name = "value"
+          if (p.contains('=')) {
+            final eqIdx = p.indexOf('=');
+            rawValue = p.substring(eqIdx + 1).trim();
+            // Strip quotes
+            if (rawValue.startsWith('"') && rawValue.endsWith('"')) {
+              rawValue = rawValue.substring(1, rawValue.length - 1);
+            }
+            p = p.substring(0, eqIdx).trim();
+          }
+
+          values.add(UtsEnumValue(
+            name: p,
+            rawValue: rawValue ?? p,
+          ));
+        }
+      }
+    }
+
+    return _ParsedEnumResult(
+      enumDef: UtsEnum(name: name, values: values, documentation: doc),
+      endIndex: endIndex + 1,
+    );
+  }
+
+  _ParsedEnumResult _parseSealedEnum(
+      String name, List<String> bodyLines, int endIndex, String? doc) {
+    final subclasses = <UtsClass>[];
+    final subclassNames = <String>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty || bodyLine == '}') continue;
+
+      final caseDoc = _lookbackForDoc(bodyLines, j);
+
+      if (bodyLine.startsWith('case ')) {
+        final casePart = bodyLine.substring(5).trim();
+
+        // case name(param: Type, param: Type)
+        final caseMatch =
+            RegExp(r'(\w+)\s*\(([^)]*)\)').firstMatch(casePart);
+        if (caseMatch != null) {
+          final caseName = caseMatch.group(1)!;
+          final paramStr = caseMatch.group(2) ?? '';
+          subclassNames.add(caseName);
+
+          final fields = _parseEnumAssociatedValues(paramStr);
+          subclasses.add(UtsClass(
+            name: caseName,
+            kind: UtsClassKind.dataClass,
+            fields: fields,
+            superclass: name,
+            documentation: caseDoc,
+          ));
+        } else {
+          // case name (no associated values in sealed enum)
+          final simpleMatch = RegExp(r'(\w+)').firstMatch(casePart);
+          if (simpleMatch != null) {
+            final caseName = simpleMatch.group(1)!;
+            subclassNames.add(caseName);
+            subclasses.add(UtsClass(
+              name: caseName,
+              kind: UtsClassKind.concreteClass,
+              superclass: name,
+              documentation: caseDoc,
+            ));
+          }
+        }
+      }
+    }
+
+    return _ParsedEnumResult(
+      sealedClass: UtsClass(
+        name: name,
+        kind: UtsClassKind.sealedClass,
+        sealedSubclasses: subclassNames,
+        documentation: doc,
+      ),
+      subclasses: subclasses,
+      endIndex: endIndex + 1,
+    );
+  }
+
+  List<UtsField> _parseEnumAssociatedValues(String paramStr) {
+    final fields = <UtsField>[];
+    for (final param in _splitParams(paramStr)) {
+      final p = param.trim();
+      if (p.isEmpty) continue;
+
+      // name: Type
+      final match = RegExp(r'(\w+)\s*:\s*(.+)').firstMatch(p);
+      if (match != null) {
+        final name = match.group(1)!;
+        var typeStr = match.group(2)!.trim();
+        final isNullable = typeStr.endsWith('?');
+        if (isNullable) typeStr = typeStr.substring(0, typeStr.length - 1);
+
+        fields.add(UtsField(
+          name: name,
+          type: _mapper.mapType(typeStr),
+          nullable: isNullable,
+        ));
+      }
+    }
+    return fields;
+  }
+
+  _ParsedExtension? _parseExtension(List<String> lines, int startIndex) {
+    final line = lines[startIndex].trim();
+    final nameMatch = RegExp(r'extension\s+(\w+)').firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final targetName = nameMatch.group(1)!;
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    final methods = <UtsMethod>[];
+
+    for (var j = 0; j < bodyLines.length; j++) {
+      final bodyLine = bodyLines[j].trim();
+      if (bodyLine.isEmpty) continue;
+
+      if (bodyLine.startsWith('private ') ||
+          bodyLine.startsWith('fileprivate ')) {
+        j = _skipBlockInBody(bodyLines, j);
+        continue;
+      }
+
+      final memberDoc = _lookbackForDoc(bodyLines, j);
+
+      if (_matchesFunction(bodyLine)) {
+        final method = _parseFunction(bodyLine, memberDoc);
+        if (method != null) {
+          methods.add(method);
+        }
+      }
+    }
+
+    return _ParsedExtension(
+      targetName: targetName,
+      methods: methods,
+      endIndex: endIndex + 1,
+    );
+  }
+
+  // ========== Function/Method Parsing ==========
+
+  UtsMethod? _parseFunction(String line, String? doc) {
+    final isStatic =
+        line.contains('static func') || line.contains('class func');
+    final isAsync = line.contains(' async');
+
+    // Extract function name
+    final nameMatch = RegExp(
+            r'(?:public\s+|open\s+)?(?:static\s+|class\s+)?func\s+(\w+)\s*\(')
+        .firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+
+    // Extract params using depth-tracking (handles nested parens in closures)
+    final openParen = line.indexOf('(', nameMatch.start);
+    if (openParen == -1) return null;
+    final closeParen = _findMatchingParen(line, openParen);
+    if (closeParen == -1) return null;
+
+    final paramStr = line.substring(openParen + 1, closeParen);
+    final afterParams = line.substring(closeParen + 1).trim();
+
+    // Extract return type from what's after the closing paren
+    // Pattern: [async] [throws] [-> ReturnType] [{]
+    String? returnTypeStr;
+    final arrowMatch =
+        RegExp(r'(?:async\s+)?(?:throws\s+)?->\s*(.+?)(?:\s*\{|$)')
+            .firstMatch(afterParams);
+    if (arrowMatch != null) {
+      returnTypeStr = arrowMatch.group(1)?.trim();
+    }
+
+    UtsType returnType;
+    if (returnTypeStr == null || returnTypeStr.isEmpty) {
+      returnType = UtsType.voidType();
+    } else {
+      returnType = _mapper.mapType(returnTypeStr);
+    }
+
+    // For async functions, wrap in Future if not already
+    if (isAsync && returnType.kind != UtsTypeKind.future) {
+      returnType = UtsType.future(returnType);
+    }
+
+    final parameters = _parseSwiftParams(paramStr);
+
+    return UtsMethod(
+      name: name,
+      isStatic: isStatic,
+      isAsync: isAsync || returnType.kind == UtsTypeKind.future ||
+          returnType.kind == UtsTypeKind.stream,
+      parameters: parameters,
+      returnType: returnType,
+      documentation: doc,
+    );
+  }
+
+  /// Parses a function declaration (without body — e.g., in protocols).
+  UtsMethod? _parseFunctionDecl(String line, String? doc) {
+    return _parseFunction(line, doc);
+  }
+
+  bool _matchesFunctionDecl(String line) {
+    return RegExp(r'func\s+\w+').hasMatch(line);
+  }
+
+  List<UtsParameter> _parseSwiftParams(String paramStr) {
+    final params = <UtsParameter>[];
+    for (final param in _splitParams(paramStr)) {
+      final p = param.trim();
+      if (p.isEmpty) continue;
+
+      // Swift parameter patterns:
+      // name: Type
+      // _ name: Type
+      // label name: Type
+      // name: Type = defaultValue
+      // name: (Type) -> Type  (closure)
+
+      // Check for closure type
+      final closureMatch =
+          RegExp(r'(?:(\w+)\s+)?(\w+)\s*:\s*(\(.*\)\s*->\s*.+)')
+              .firstMatch(p);
+      if (closureMatch != null) {
+        final name = closureMatch.group(2)!;
+        final closureTypeStr = closureMatch.group(3)!;
+        final closureType = _parseClosureType(closureTypeStr);
+        final isNullable = closureTypeStr.endsWith('?');
+
+        params.add(UtsParameter(
+          name: name,
+          type: isNullable ? closureType.asNullable() : closureType,
+          isOptional: isNullable,
+        ));
+        continue;
+      }
+
+      // Regular parameter: [label] name: Type [= default]
+      final regularMatch =
+          RegExp(r'(?:(\w+)\s+)?(\w+)\s*:\s*(.+)').firstMatch(p);
+      if (regularMatch != null) {
+        final name = regularMatch.group(2)!;
+        var rest = regularMatch.group(3)!.trim();
+
+        // Check for default value
+        String? defaultValue;
+        final typeAndDefault = _splitTypeAndDefault(rest);
+        rest = typeAndDefault.type;
+        defaultValue = typeAndDefault.defaultValue;
+
+        final isNullable = rest.endsWith('?');
+        if (isNullable) rest = rest.substring(0, rest.length - 1);
+
+        var type = _mapper.mapType(rest.trim());
+        if (isNullable) type = type.asNullable();
+
+        params.add(UtsParameter(
+          name: name,
+          type: type,
+          isOptional: defaultValue != null || isNullable,
+          isNamed: defaultValue != null,
+          defaultValue: defaultValue,
+        ));
+      }
+    }
+    return params;
+  }
+
+  UtsType _parseClosureType(String closureStr) {
+    // Parse: (Type, Type) -> ReturnType
+    // or: ((Type, Type) -> ReturnType)?
+    var str = closureStr.trim();
+
+    // Handle optional closure
+    if (str.endsWith('?')) {
+      str = str.substring(0, str.length - 1).trim();
+    }
+    // Strip outer parens wrapping the whole closure type
+    if (str.startsWith('(') && !str.startsWith('((')) {
+      // Find the -> after the params
+    }
+
+    final arrowIdx = str.lastIndexOf('->');
+    if (arrowIdx == -1) {
+      return UtsType.callback(
+        parameterTypes: [],
+        returnType: UtsType.voidType(),
+      );
+    }
+
+    final paramPart = str.substring(0, arrowIdx).trim();
+    final returnPart = str.substring(arrowIdx + 2).trim();
+
+    // Parse params from (Type, Type)
+    var innerParams = paramPart;
+    if (innerParams.startsWith('(') && innerParams.endsWith(')')) {
+      innerParams = innerParams.substring(1, innerParams.length - 1);
+    }
+
+    final paramTypes = <UtsType>[];
+    if (innerParams.isNotEmpty) {
+      for (final pt in _splitParams(innerParams)) {
+        final t = pt.trim();
+        if (t.isNotEmpty) {
+          paramTypes.add(_mapper.mapType(t));
+        }
+      }
+    }
+
+    final returnType = returnPart == 'Void' || returnPart.isEmpty
+        ? UtsType.voidType()
+        : _mapper.mapType(returnPart);
+
+    return UtsType.callback(
+      parameterTypes: paramTypes,
+      returnType: returnType,
+    );
+  }
+
+  // ========== Property Parsing ==========
+
+  bool _matchesProperty(String line) {
+    return RegExp(r'(?:public\s+|open\s+)?(?:static\s+)?(?:var|let)\s+\w+\s*:')
+        .hasMatch(line);
+  }
+
+  bool _matchesProtocolProperty(String line) {
+    return RegExp(r'var\s+\w+\s*:.*\{\s*get').hasMatch(line);
+  }
+
+  UtsField? _parseProperty(String line, String? doc) {
+    final isReadOnly = line.contains('let ');
+    final match = RegExp(
+            r'(?:public\s+|open\s+)?(?:static\s+)?(?:var|let)\s+(\w+)\s*:\s*([^={\n]+)')
+        .firstMatch(line);
+    if (match == null) return null;
+
+    final name = match.group(1)!;
+    var typeStr = match.group(2)!.trim();
+    final isNullable = typeStr.endsWith('?');
+    if (isNullable) typeStr = typeStr.substring(0, typeStr.length - 1);
+
+    return UtsField(
+      name: name,
+      type: _mapper.mapType(typeStr),
+      nullable: isNullable,
+      isReadOnly: isReadOnly,
+      documentation: doc,
+    );
+  }
+
+  UtsField? _parseProtocolProperty(String line, String? doc) {
+    // var name: Type { get }  or  var name: Type { get set }
+    final match =
+        RegExp(r'var\s+(\w+)\s*:\s*([^{]+)\s*\{(.+)\}').firstMatch(line);
+    if (match == null) return null;
+
+    final name = match.group(1)!;
+    var typeStr = match.group(2)!.trim();
+    final accessors = match.group(3)!.trim();
+    final isReadOnly = !accessors.contains('set');
+    final isNullable = typeStr.endsWith('?');
+    if (isNullable) typeStr = typeStr.substring(0, typeStr.length - 1);
+
+    return UtsField(
+      name: name,
+      type: _mapper.mapType(typeStr),
+      nullable: isNullable,
+      isReadOnly: isReadOnly,
+      documentation: doc,
+    );
+  }
+
+  // ========== Common Helpers ==========
+
+  /// Finds the closing parenthesis matching the opening one at [openPos].
+  int _findMatchingParen(String text, int openPos) {
+    var depth = 0;
+    for (var i = openPos; i < text.length; i++) {
+      if (text[i] == '(') {
+        depth++;
+      } else if (text[i] == ')') {
+        depth--;
+        if (depth == 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  _TypeAndDefault _splitTypeAndDefault(String input) {
+    var depth = 0;
+    for (var i = 0; i < input.length; i++) {
+      switch (input[i]) {
+        case '<':
+        case '(':
+          depth++;
+          break;
+        case '>':
+        case ')':
+          depth--;
+          break;
+        case '=':
+          if (depth == 0) {
+            return _TypeAndDefault(
+              type: input.substring(0, i).trim(),
+              defaultValue: input.substring(i + 1).trim(),
+            );
+          }
+          break;
+      }
+    }
+    return _TypeAndDefault(type: input.trim());
+  }
+
+  int _findBlockEnd(List<String> lines, int startIndex) {
+    var depth = 0;
+    var foundOpen = false;
+    for (var i = startIndex; i < lines.length; i++) {
+      for (final ch in lines[i].runes) {
+        if (ch == 0x7B) {
+          depth++;
+          foundOpen = true;
+        } else if (ch == 0x7D) {
+          depth--;
+          if (foundOpen && depth == 0) return i;
+        }
+      }
+    }
+    return lines.length - 1;
+  }
+
+  int _skipBlock(List<String> lines, int startIndex) {
+    final line = lines[startIndex].trim();
+    if (line.contains('{')) {
+      return _findBlockEnd(lines, startIndex) + 1;
+    }
+    return startIndex + 1;
+  }
+
+  int _skipBlockInBody(List<String> bodyLines, int startIndex) {
+    final line = bodyLines[startIndex].trim();
+    if (line.contains('{')) {
+      var depth = 0;
+      var foundOpen = false;
+      for (var i = startIndex; i < bodyLines.length; i++) {
+        for (final ch in bodyLines[i].runes) {
+          if (ch == 0x7B) {
+            depth++;
+            foundOpen = true;
+          } else if (ch == 0x7D) {
+            depth--;
+            if (foundOpen && depth == 0) return i;
+          }
+        }
+      }
+    }
+    return startIndex;
+  }
+
+  List<String> _splitParams(String params) {
+    final result = <String>[];
+    var depth = 0;
+    var start = 0;
+    for (var i = 0; i < params.length; i++) {
+      switch (params[i]) {
+        case '<':
+        case '(':
+        case '{':
+          depth++;
+          break;
+        case '>':
+        case ')':
+        case '}':
+          depth--;
+          break;
+        case ',':
+          if (depth == 0) {
+            result.add(params.substring(start, i));
+            start = i + 1;
+          }
+          break;
+      }
+    }
+    if (start < params.length) {
+      result.add(params.substring(start));
+    }
+    return result;
+  }
+
+  // ========== Documentation ==========
+
+  String? _lookbackForDoc(List<String> lines, int index) {
+    var i = index - 1;
+
+    // Collect consecutive /// lines
+    final tripleSlashLines = <String>[];
+    while (i >= 0) {
+      final line = lines[i].trim();
+      if (line.startsWith('///')) {
+        tripleSlashLines.insert(0, line.substring(3).trim());
+        i--;
+      } else {
+        break;
+      }
+    }
+    if (tripleSlashLines.isNotEmpty) {
+      return tripleSlashLines.join(' ').trim();
+    }
+
+    // Look for /** ... */ block
+    i = index - 1;
+    while (i >= 0 && lines[i].trim().isEmpty) {
+      i--;
+    }
+    if (i < 0) return null;
+
+    final lastLine = lines[i].trim();
+    if (!lastLine.endsWith('*/')) return null;
+
+    // Single-line /** doc */
+    if (lastLine.startsWith('/**') && lastLine.endsWith('*/')) {
+      return lastLine
+          .replaceFirst('/**', '')
+          .replaceFirst('*/', '')
+          .trim();
+    }
+
+    // Multi-line doc
+    final docLines = <String>[];
+    while (i >= 0) {
+      final line = lines[i].trim();
+      if (line.startsWith('/**')) {
+        final first = line.replaceFirst('/**', '').trim();
+        var cleaned = first;
+        if (cleaned.endsWith('*/')) {
+          cleaned = cleaned.substring(0, cleaned.length - 2).trim();
+        }
+        if (cleaned.isNotEmpty && !cleaned.startsWith('*')) {
+          docLines.insert(0, cleaned);
+        }
+        break;
+      }
+      if (line == '*/') {
+        i--;
+        continue;
+      }
+      if (line.startsWith('*')) {
+        var content = line.substring(1).trim();
+        if (content.endsWith('*/')) {
+          content = content.substring(0, content.length - 2).trim();
+        }
+        if (content.isNotEmpty && !content.startsWith('@')) {
+          docLines.insert(0, content);
+        }
+      }
+      i--;
+    }
+
+    return docLines.isEmpty ? null : docLines.join(' ').trim();
+  }
+
+  _DocResult _collectDocBlock(List<String> lines, int index) {
+    final line = lines[index].trim();
+    if (!line.startsWith('/**')) return _DocResult(null, index);
+
+    for (var i = index; i < lines.length; i++) {
+      if (lines[i].contains('*/')) {
+        return _DocResult(null, i + 1);
+      }
+    }
+    return _DocResult(null, index);
+  }
+}
+
+// ========== Internal Helper Classes ==========
+
+class _ParsedClass {
+  final UtsClass cls;
+  final int endIndex;
+  _ParsedClass({required this.cls, required this.endIndex});
+}
+
+class _ParsedEnumResult {
+  final UtsEnum? enumDef;
+  final UtsClass? sealedClass;
+  final List<UtsClass> subclasses;
+  final int endIndex;
+
+  bool get isSealedClass => sealedClass != null;
+
+  _ParsedEnumResult({
+    this.enumDef,
+    this.sealedClass,
+    this.subclasses = const [],
+    required this.endIndex,
+  });
+}
+
+class _ParsedExtension {
+  final String targetName;
+  final List<UtsMethod> methods;
+  final int endIndex;
+  _ParsedExtension({
+    required this.targetName,
+    required this.methods,
+    required this.endIndex,
+  });
+}
+
+class _DocResult {
+  final String? doc;
+  final int endIndex;
+  _DocResult(this.doc, this.endIndex);
+}
+
+class _TypeAndDefault {
+  final String type;
+  final String? defaultValue;
+  _TypeAndDefault({required this.type, this.defaultValue});
+}

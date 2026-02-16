@@ -1,4 +1,4 @@
-#native_bridge — Universal Native Package Binding Generator
+#auto_interop — Universal Native Package Binding Generator
 
 ## Vision
 
@@ -7,13 +7,13 @@ A `build_runner`-based tool that lets Flutter developers consume **any** native 
 ```yaml
 # pubspec.yaml
 dependencies:
-  native_bridge: ^1.0.0
+  auto_interop: ^1.0.0
 
 dev_dependencies:
-  native_bridge_generator: ^1.0.0
+  auto_interop_generator: ^1.0.0
   build_runner: ^2.4.0
 
-# native_bridge.yaml (new config file)
+# auto_interop.yaml (new config file)
 native_packages:
   - source: npm
     package: "date-fns"
@@ -44,14 +44,14 @@ Then run:
 ```bash
 dart run build_runner build
 # or
-flutter pub run native_bridge:generate
+flutter pub run auto_interop:generate
 ```
 
 And get:
 
 ```dart
 // GENERATED — do not edit
-import 'package:native_bridge/native_bridge.dart';
+import 'package:auto_interop/auto_interop.dart';
 
 class DateFns {
   static Future<String> format(DateTime date, String formatStr) async { ... }
@@ -66,7 +66,7 @@ class DateFns {
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                        native_bridge.yaml                         │
+│                        auto_interop.yaml                         │
 │              (declares which native packages to bind)              │
 └───────────────────────────┬──────────────────────────────────────┘
                             │
@@ -104,9 +104,9 @@ class DateFns {
 ## Package Structure
 
 ```
-native_bridge/                           # Mono-repo
+auto_interop/                           # Mono-repo
 ├── packages/
-│   ├── native_bridge/                   # Runtime package (included in apps)
+│   ├── auto_interop/                   # Runtime package (included in apps)
 │   │   ├── lib/
 │   │   │   ├── src/
 │   │   │   │   ├── channel_manager.dart        # Manages method/event channels
@@ -115,14 +115,14 @@ native_bridge/                           # Mono-repo
 │   │   │   │   ├── lifecycle.dart              # Init/dispose native resources
 │   │   │   │   ├── async_bridge.dart           # Future/Stream wrappers
 │   │   │   │   └── native_object.dart          # Opaque handle for native objects
-│   │   │   └── native_bridge.dart              # Public API
+│   │   │   └── auto_interop.dart              # Public API
 │   │   └── pubspec.yaml
 │   │
-│   ├── native_bridge_generator/         # build_runner codegen (dev dependency)
+│   ├── auto_interop_generator/         # build_runner codegen (dev dependency)
 │   │   ├── lib/
 │   │   │   ├── src/
 │   │   │   │   ├── config/
-│   │   │   │   │   ├── config_parser.dart      # Parse native_bridge.yaml
+│   │   │   │   │   ├── config_parser.dart      # Parse auto_interop.yaml
 │   │   │   │   │   └── package_spec.dart       # Package declaration model
 │   │   │   │   ├── parsers/
 │   │   │   │   │   ├── npm_parser.dart         # Parse TS/JS type definitions
@@ -159,10 +159,10 @@ native_bridge/                           # Mono-repo
 │   │   │   │       └── compatibility_checker.dart # Check platform support
 │   │   │   └── builder.dart                    # build_runner entry point
 │   │   ├── bin/
-│   │   │   └── generate.dart                   # CLI: flutter pub run native_bridge:generate
+│   │   │   └── generate.dart                   # CLI: flutter pub run auto_interop:generate
 │   │   └── pubspec.yaml
 │   │
-│   └── native_bridge_cli/               # Optional CLI tool
+│   └── auto_interop_cli/               # Optional CLI tool
 │       ├── bin/
 │       │   └── nb.dart                         # `nb add npm:date-fns`, `nb generate`
 │       └── pubspec.yaml
@@ -291,10 +291,10 @@ For a binding like `date-fns.format()`:
 
 ```dart
 // GENERATED — lib/generated/date_fns.dart
-import 'package:native_bridge/native_bridge.dart';
+import 'package:auto_interop/auto_interop.dart';
 
 class DateFns {
-  static const _channel = NativeBridgeChannel('date_fns');
+  static const _channel = AutoInteropChannel('date_fns');
   
   /// Formats a date according to the given format string.
   static Future<String> format(
@@ -393,13 +393,13 @@ class DateFnsPlugin: NSObject, FlutterPlugin {
 
 ---
 
-## native_bridge Test Plan
+## auto_interop Test Plan
 
 ```
 test/
 ├── unit/
 │   ├── config/
-│   │   ├── config_parser_test.dart           # Parse native_bridge.yaml correctly
+│   │   ├── config_parser_test.dart           # Parse auto_interop.yaml correctly
 │   │   └── package_spec_test.dart            # Package spec validation
 │   ├── parsers/
 │   │   ├── npm_parser_test.dart              # Parse .d.ts files → UTS
@@ -444,14 +444,14 @@ test/
     ├── npm/                                  # Sample .d.ts files
     ├── swift/                                # Sample .swiftinterface files
     ├── kotlin/                               # Sample .kotlin_metadata files
-    └── configs/                              # Sample native_bridge.yaml files
+    └── configs/                              # Sample auto_interop.yaml files
 ```
 
-### Key Test Cases for native_bridge
+### Key Test Cases for auto_interop
 
 ```
 group('Config Parsing'):
-  ✓ parses valid native_bridge.yaml
+  ✓ parses valid auto_interop.yaml
   ✓ rejects missing source field
   ✓ rejects unsupported source type
   ✓ handles selective imports (only specific functions/classes)
@@ -538,73 +538,94 @@ group('Installers'):
 
 ---
 
-## native_bridge Implementation Phases
+## auto_interop Implementation Phases
 
-### Phase 1: Core Framework (Weeks 1-3)
-- [ ] Config parser (native_bridge.yaml)
-- [ ] Unified Type Schema (UTS) data model
-- [ ] Type mapping registry (all primitives)
-- [ ] Dart binding generator (methods, classes)
-- [ ] Platform channel manager (runtime)
-- **Tests first**
+### Phase 1: Core Framework — COMPLETE
+- [x] Config parser (auto_interop.yaml)
+- [x] Unified Type Schema (UTS) data model (with JSON serialization via `json_serializable`)
+- [x] Type mapping registry (all primitives, collections, async, callbacks, native objects)
+- [x] Dart binding generator (methods, classes, enums, sealed classes)
+- [x] Platform channel manager (runtime — `auto_interop` package)
+- [x] Runtime includes: ChannelManager, TypeConverter, ErrorHandler, Lifecycle, AsyncBridge, CallbackManager, NativeObject
 
-### Phase 2: NPM Parser (Weeks 4-6)
-- [ ] TypeScript .d.ts parser
-- [ ] Handle all TS types → UTS
-- [ ] JS glue generator (web platform)
-- [ ] npm installer (package.json)
-- [ ] Golden tests for popular packages (date-fns, lodash, uuid)
-- **Tests first**
+### Phase 2: NPM Parser — COMPLETE
+- [x] TypeScript .d.ts parser
+- [x] Handle all TS types → UTS (functions, classes, interfaces, generics, unions, callbacks, enums)
+- [x] JS glue generator (web platform — `dart:js_interop` bindings)
+- [x] npm installer (package.json)
+- [x] Golden tests for popular packages (date-fns, lodash, uuid)
+- [x] Pre-built type definition: `date_fns.uts.json`, `lodash.uts.json`, `uuid.uts.json`
 
-### Phase 3: Kotlin/Gradle Parser (Weeks 7-9)
-- [ ] Kotlin metadata parser
-- [ ] Java class file parser
-- [ ] Handle suspend, Flow, sealed classes
-- [ ] Kotlin glue generator
-- [ ] Gradle installer
-- [ ] Golden tests (OkHttp, Gson)
-- **Tests first**
+### Phase 3: Kotlin/Gradle Parser — COMPLETE
+- [x] Kotlin metadata parser
+- [x] Java class file parser
+- [x] Handle suspend, Flow, sealed classes, companion objects
+- [x] Kotlin glue generator
+- [x] Gradle installer
+- [x] Golden tests (OkHttp, Gson)
+- [x] Pre-built type definition: `okhttp3.uts.json`
 
-### Phase 4: Swift Parser (Weeks 10-12)
-- [ ] Swift interface parser
-- [ ] Handle async/await, Combine, closures
-- [ ] Swift glue generator
-- [ ] CocoaPods + SPM installer
-- [ ] Golden tests (Alamofire, SDWebImage)
-- **Tests first**
+### Phase 4: Swift Parser — COMPLETE
+- [x] Swift interface parser
+- [x] Handle async/await, Combine, closures
+- [x] Swift glue generator
+- [x] CocoaPods + SPM installer
+- [x] Golden tests (Alamofire, SDWebImage)
+- [x] Pre-built type definitions: `alamofire.uts.json`, `sdwebimage.uts.json`
 
-### Phase 5: Advanced Features (Weeks 13-15)
-- [ ] Callback support (Dart → native callbacks)
-- [ ] Stream/event channel support
-- [ ] Native object lifecycle management (opaque handles)
-- [ ] Incremental rebuild (only regen changed packages)
-- [ ] Pre-built type definitions for popular packages
-- [ ] CLI tool (`nb add`, `nb generate`, `nb list`)
+### Phase 5: Advanced Features — MOSTLY COMPLETE
+- [x] Callback support (Dart → native callbacks via CallbackManager)
+- [x] Stream/event channel support (AsyncBridge)
+- [x] Native object lifecycle management (opaque handles via NativeObject)
+- [x] Pre-built type definitions for popular packages (6 total via TypeDefinitionLoader)
+- [x] CLI tool (`generate`, `add`, `list`, `help`, `version` commands)
+- [ ] **Incremental rebuild** — basic content-based change detection exists (skip unchanged files), but no dependency graph tracking, build-runner level caching, or granular per-package invalidation
 
-### Phase 6: Polish & Launch (Weeks 16-18)
-- [ ] Integration tests (end-to-end roundtrip)
-- [ ] Documentation site
-- [ ] Example project (3 native packages, all platforms)
-- [ ] pub.dev publish
+### Phase 6: Polish & Launch — IN PROGRESS
+- [x] Integration tests (end-to-end roundtrip — `end_to_end_test.dart`)
+- [x] Example project (3 native packages: date-fns/npm, Alamofire/CocoaPods, OkHttp/Gradle)
+- [x] README documentation with architecture diagrams, quick start, and type mapping table
+- [x] CHANGELOG.md for both packages
+- [x] LICENSE (BSD 3-Clause)
+- [x] Proper pubspec.yaml metadata (homepage, repository, issue_tracker, topics, SDK constraints)
+- [ ] **Analyzer module** — planned but never implemented:
+  - [ ] `api_surface_analyzer.dart` — detect public API surface automatically
+  - [ ] `dependency_resolver.dart` — resolve transitive native dependencies
+  - [ ] `compatibility_checker.dart` — check platform support/compatibility
+- [ ] **Documentation site** — no standalone docs site (only README + plan.md)
+- [ ] **CI/CD pipeline** — no GitHub Actions workflows for testing, linting, or publishing
+- [ ] **pub.dev publish** — packages are ready structurally but not yet published
+- [ ] **Git cleanup** — old `native_bridge` / `native_bridge_generator` packages still in git history as staged deletions; new `auto_interop` packages are untracked
+
+---
+
+## Remaining Work Summary
+
+### Must-Do Before Publish
+1. **Git cleanup** — commit the rename from `native_bridge` → `auto_interop` (staged deletions + untracked new packages)
+2. **Run full test suite** — verify all tests pass after the rename
+3. **pub.dev publish** — `dart pub publish` for both `auto_interop` and `auto_interop_generator`
+
+### Should-Do Before Publish
+4. **CI/CD** — add GitHub Actions workflow (lint, test, coverage, pub.dev dry-run)
+5. **Incremental rebuild** — improve beyond basic content-based detection (track config changes, per-package invalidation)
+
+### Nice-to-Have / Post-Launch
+6. **Analyzer module** — api_surface_analyzer, dependency_resolver, compatibility_checker
+7. **Documentation site** — hosted docs with API reference, guides, tutorials
+8. **Manual UTS overrides** — allow users to provide custom `.uts.json` when parsing fails
+9. **README badges** — CI status, pub.dev version, coverage, license
 
 ---
 
 ## Open Questions & Risks
 
-### flutter_data
-1. **Drift dependency**: Tightly coupling to Drift is powerful but limiting. Should we abstract storage?
-   - *Recommendation*: Drift as default, abstract interface for alternatives.
-2. **Code generation overhead**: Adding another codegen step to projects. Can we use macros when they stabilize?
-   - *Recommendation*: Start with build_runner, migrate to macros when available.
-3. **Backend adapter testing**: Each backend adapter needs a real backend for integration tests.
-   - *Recommendation*: Mock adapters for unit tests, Docker-based backends for CI.
-
-### native_bridge
+### auto_interop
 1. **Parsing reliability**: Native package APIs are complex. Parsers will have gaps.
    - *Recommendation*: Support manual UTS overrides for when parsing fails.
 2. **Runtime performance**: Platform channels add overhead per call.
    - *Recommendation*: Batch calls, cache results, use FFI for hot paths.
 3. **Web support**: npm packages on web don't need platform channels — they need JS interop.
-   - *Recommendation*: Generate `dart:js_interop` bindings for web, platform channels for mobile.
+   - *Recommendation*: Generate `dart:js_interop` bindings for web, platform channels for mobile. *(Implemented)*
 4. **Maintenance burden**: Native packages update → bindings need regeneration.
    - *Recommendation*: Version-lock bindings, CI check for updates.

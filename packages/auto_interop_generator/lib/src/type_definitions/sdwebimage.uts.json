@@ -1,0 +1,512 @@
+{
+  "package": "SDWebImage",
+  "source": "cocoapods",
+  "version": "5.19.0",
+  "classes": [
+    {
+      "name": "SDWebImageManager",
+      "kind": "concreteClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "loadImage",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "url",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "Uint8List",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Loads an image from a URL."
+        },
+        {
+          "name": "prefetch",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [
+            {
+              "name": "urls",
+              "type": {
+                "kind": "list",
+                "name": "List",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": [
+                  {
+                    "kind": "primitive",
+                    "name": "String",
+                    "nullable": false,
+                    "ref": null,
+                    "typeArguments": null,
+                    "parameterTypes": null,
+                    "returnType": null
+                  }
+                ],
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Prefetches images from multiple URLs."
+        },
+        {
+          "name": "clearMemoryCache",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Clears the memory cache."
+        },
+        {
+          "name": "clearDiskCache",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "voidType",
+                "name": "void",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Clears the disk cache."
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Manages image downloading and caching."
+    },
+    {
+      "name": "SDImageCache",
+      "kind": "concreteClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "store",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "data",
+              "type": {
+                "kind": "primitive",
+                "name": "Uint8List",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            },
+            {
+              "name": "key",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "voidType",
+                "name": "void",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Stores an image in the cache."
+        },
+        {
+          "name": "queryImage",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "key",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "Uint8List",
+                "nullable": true,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Retrieves an image from the cache."
+        },
+        {
+          "name": "removeImage",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "key",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "voidType",
+                "name": "void",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Removes an image from the cache."
+        },
+        {
+          "name": "diskCacheSize",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "int",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Returns the total disk cache size in bytes."
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Manages the image cache."
+    },
+    {
+      "name": "SDImageResult",
+      "kind": "sealedClass",
+      "fields": [],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [
+        "success",
+        "failure"
+      ],
+      "documentation": "Represents the result of an image operation."
+    }
+  ],
+  "functions": [],
+  "types": [
+    {
+      "name": "SDWebImageOptions",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "retryFailed",
+          "type": {
+            "kind": "primitive",
+            "name": "bool",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Whether to retry failed URLs."
+        },
+        {
+          "name": "lowPriority",
+          "type": {
+            "kind": "primitive",
+            "name": "bool",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Whether to use low priority."
+        },
+        {
+          "name": "cacheMemoryOnly",
+          "type": {
+            "kind": "primitive",
+            "name": "bool",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Whether to cache in memory only."
+        },
+        {
+          "name": "scaleFactor",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Custom scale factor."
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Configuration for the image loading pipeline."
+    },
+    {
+      "name": "success",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "data",
+          "type": {
+            "kind": "primitive",
+            "name": "Uint8List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "cacheType",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "methods": [],
+      "superclass": "SDImageResult",
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Image loaded successfully."
+    },
+    {
+      "name": "failure",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "error",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "methods": [],
+      "superclass": "SDImageResult",
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Image loading failed."
+    }
+  ],
+  "enums": [
+    {
+      "name": "SDImageContentMode",
+      "values": [
+        {
+          "name": "fill",
+          "rawValue": "fill",
+          "documentation": null
+        },
+        {
+          "name": "aspectFit",
+          "rawValue": "aspectFit",
+          "documentation": null
+        },
+        {
+          "name": "aspectFill",
+          "rawValue": "aspectFill",
+          "documentation": null
+        }
+      ],
+      "documentation": "Image content modes."
+    }
+  ]
+}

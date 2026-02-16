@@ -1,0 +1,141 @@
+{
+  "package": "uuid",
+  "source": "npm",
+  "version": "9.0.0",
+  "classes": [],
+  "functions": [
+    {
+      "name": "v4",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [],
+      "returnType": {
+        "kind": "primitive",
+        "name": "String",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Generates a v4 (random) UUID."
+    },
+    {
+      "name": "v5",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "name",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "namespace",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "String",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Generates a v5 (namespace) UUID."
+    },
+    {
+      "name": "validate",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "uuid",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "bool",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Validates a UUID string."
+    },
+    {
+      "name": "version",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "uuid",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "double",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Detects the version of a UUID."
+    }
+  ],
+  "types": [],
+  "enums": []
+}

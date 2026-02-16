@@ -1,0 +1,305 @@
+{
+  "package": "lodash",
+  "source": "npm",
+  "version": "4.17.21",
+  "classes": [],
+  "functions": [
+    {
+      "name": "chunk",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "array",
+          "type": {
+            "kind": "list",
+            "name": "List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "dynamic",
+                "name": "dynamic",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "size",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": true,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "list",
+        "name": "List",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "list",
+            "name": "List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "dynamic",
+                "name": "dynamic",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Creates an array of elements split into groups the length of size."
+    },
+    {
+      "name": "uniq",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "array",
+          "type": {
+            "kind": "list",
+            "name": "List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "dynamic",
+                "name": "dynamic",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "list",
+        "name": "List",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "dynamic",
+            "name": "dynamic",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Creates a duplicate-free version of an array."
+    },
+    {
+      "name": "get",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "object",
+          "type": {
+            "kind": "dynamic",
+            "name": "dynamic",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "path",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "defaultValue",
+          "type": {
+            "kind": "dynamic",
+            "name": "dynamic",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": true,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "dynamic",
+        "name": "dynamic",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Gets the value at path of object."
+    },
+    {
+      "name": "isEmpty",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "value",
+          "type": {
+            "kind": "dynamic",
+            "name": "dynamic",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "bool",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Checks if value is empty."
+    },
+    {
+      "name": "clamp",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "number",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "lower",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "upper",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "double",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Clamps number within the inclusive lower and upper bounds."
+    }
+  ],
+  "types": [],
+  "enums": []
+}

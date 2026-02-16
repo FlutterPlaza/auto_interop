@@ -1,0 +1,201 @@
+{
+  "package": "date-fns",
+  "source": "npm",
+  "version": "3.6.0",
+  "classes": [],
+  "functions": [
+    {
+      "name": "format",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "date",
+          "type": {
+            "kind": "primitive",
+            "name": "DateTime",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "formatStr",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "String",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Formats a date according to the given format string."
+    },
+    {
+      "name": "addDays",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "date",
+          "type": {
+            "kind": "primitive",
+            "name": "DateTime",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "amount",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "DateTime",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Adds the specified number of days to the given date."
+    },
+    {
+      "name": "differenceInDays",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "dateLeft",
+          "type": {
+            "kind": "primitive",
+            "name": "DateTime",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "dateRight",
+          "type": {
+            "kind": "primitive",
+            "name": "DateTime",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "returnType": {
+        "kind": "primitive",
+        "name": "double",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": null,
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Returns the number of calendar days between two dates."
+    }
+  ],
+  "types": [
+    {
+      "name": "FormatOptions",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "locale",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": null
+        },
+        {
+          "name": "weekStartsOn",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": null
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": null
+    }
+  ],
+  "enums": []
+}
