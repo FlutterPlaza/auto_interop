@@ -57,11 +57,11 @@ void main() {
     });
 
     test('releaseObject calls native releaseObject', () async {
-      await lifecycle.releaseObject('my_channel', 42);
+      await lifecycle.releaseObject('my_channel', '42');
       expect(log.last.method, 'releaseObject');
       expect(log.last.arguments, {
         'channel': 'my_channel',
-        'handle': 42,
+        'handle': '42',
       });
     });
   });

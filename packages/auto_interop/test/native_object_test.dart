@@ -28,17 +28,17 @@ void main() {
 
     test('stores handle and channel name', () {
       final obj = NativeObject<String>(
-        handle: 42,
+        handle: '42',
         channelName: 'test',
       );
-      expect(obj.handle, 42);
+      expect(obj.handle, '42');
       expect(obj.channelName, 'test');
       expect(obj.isDisposed, false);
     });
 
     test('dispose marks as disposed', () async {
       final obj = NativeObject<String>(
-        handle: 1,
+        handle: '1',
         channelName: 'test',
       );
       await obj.dispose();
@@ -47,7 +47,7 @@ void main() {
 
     test('dispose is idempotent', () async {
       final obj = NativeObject<String>(
-        handle: 1,
+        handle: '1',
         channelName: 'test',
       );
       await obj.dispose();
@@ -57,7 +57,7 @@ void main() {
 
     test('ensureNotDisposed succeeds when not disposed', () {
       final obj = NativeObject<String>(
-        handle: 1,
+        handle: '1',
         channelName: 'test',
       );
       expect(() => obj.ensureNotDisposed(), returnsNormally);
@@ -65,7 +65,7 @@ void main() {
 
     test('ensureNotDisposed throws when disposed', () async {
       final obj = NativeObject<String>(
-        handle: 1,
+        handle: '1',
         channelName: 'test',
       );
       await obj.dispose();
@@ -74,7 +74,7 @@ void main() {
 
     test('toString contains handle info', () {
       final obj = NativeObject<String>(
-        handle: 42,
+        handle: '42',
         channelName: 'test',
       );
       expect(obj.toString(), contains('42'));
@@ -83,21 +83,21 @@ void main() {
 
     group('equality', () {
       test('same handle and channel are equal', () {
-        final a = NativeObject<String>(handle: 1, channelName: 'pkg');
-        final b = NativeObject<String>(handle: 1, channelName: 'pkg');
+        final a = NativeObject<String>(handle: '1', channelName: 'pkg');
+        final b = NativeObject<String>(handle: '1', channelName: 'pkg');
         expect(a, equals(b));
         expect(a.hashCode, equals(b.hashCode));
       });
 
       test('different handles are not equal', () {
-        final a = NativeObject<String>(handle: 1, channelName: 'pkg');
-        final b = NativeObject<String>(handle: 2, channelName: 'pkg');
+        final a = NativeObject<String>(handle: '1', channelName: 'pkg');
+        final b = NativeObject<String>(handle: '2', channelName: 'pkg');
         expect(a, isNot(equals(b)));
       });
 
       test('different channels are not equal', () {
-        final a = NativeObject<String>(handle: 1, channelName: 'pkg_a');
-        final b = NativeObject<String>(handle: 1, channelName: 'pkg_b');
+        final a = NativeObject<String>(handle: '1', channelName: 'pkg_a');
+        final b = NativeObject<String>(handle: '1', channelName: 'pkg_b');
         expect(a, isNot(equals(b)));
       });
     });
