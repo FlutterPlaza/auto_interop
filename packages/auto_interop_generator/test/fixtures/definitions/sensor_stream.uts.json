@@ -1,0 +1,171 @@
+{
+  "package": "sensor_stream",
+  "source": "cocoapods",
+  "version": "1.0.0",
+  "nativeImports": {
+    "swift": ["CoreMotion"]
+  },
+  "nativeFields": {
+    "swift": ["private let motionManager = CMMotionManager()"]
+  },
+  "classes": [],
+  "functions": [
+    {
+      "name": "accelerometerEvents",
+      "isStatic": true,
+      "isAsync": false,
+      "parameters": [
+        {
+          "name": "samplingRate",
+          "type": {
+            "kind": "primitive",
+            "name": "int",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": true,
+          "isNamed": true,
+          "defaultValue": "60",
+          "documentation": "Sampling rate in Hz"
+        }
+      ],
+      "returnType": {
+        "kind": "stream",
+        "name": "Stream",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "object",
+            "name": "AccelerometerEvent",
+            "nullable": false,
+            "ref": "AccelerometerEvent",
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Streams accelerometer sensor data.",
+      "nativeBody": {
+        "swift_onListen": "#if os(iOS)\nguard motionManager.isAccelerometerAvailable else {\n    events(FlutterError(code: \"UNAVAILABLE\", message: \"Accelerometer not available on this device\", details: nil))\n    return nil\n}\nlet rate = (args[\"samplingRate\"] as? Int) ?? 60\nmotionManager.accelerometerUpdateInterval = 1.0 / Double(rate)\nmotionManager.startAccelerometerUpdates(to: .main) { [weak self] data, error in\n    if let error = error {\n        self?.eventSink?(FlutterError(code: \"SENSOR_ERROR\", message: error.localizedDescription, details: nil))\n        return\n    }\n    guard let data = data else { return }\n    let event: [String: Any] = [\n        \"x\": data.acceleration.x,\n        \"y\": data.acceleration.y,\n        \"z\": data.acceleration.z,\n        \"timestamp\": ISO8601DateFormatter().string(from: Date())\n    ]\n    self?.eventSink?(event)\n}\n#else\nevents(FlutterError(code: \"PLATFORM_UNSUPPORTED\", message: \"Accelerometer is not available on macOS\", details: nil))\n#endif",
+        "swift_onCancel": "motionManager.stopAccelerometerUpdates()",
+        "kotlin_onListen": "val rate = (args[\"samplingRate\"] as? Int) ?: 60\nval interval = 1000L / rate\n// Start sensor sampling at given rate",
+        "kotlin_onCancel": "// Stop sensor sampling"
+      }
+    },
+    {
+      "name": "stopAll",
+      "isStatic": true,
+      "isAsync": true,
+      "parameters": [],
+      "returnType": {
+        "kind": "future",
+        "name": "Future",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Stops all sensor streams.",
+      "nativeBody": {
+        "swift": "result(nil)",
+        "kotlin": "result.success(null)"
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "AccelerometerEvent",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "x",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "X-axis acceleration"
+        },
+        {
+          "name": "y",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Y-axis acceleration"
+        },
+        {
+          "name": "z",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Z-axis acceleration"
+        },
+        {
+          "name": "timestamp",
+          "type": {
+            "kind": "primitive",
+            "name": "DateTime",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Event timestamp"
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents a single accelerometer reading."
+    }
+  ],
+  "enums": []
+}

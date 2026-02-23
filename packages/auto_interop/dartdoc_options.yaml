@@ -1,0 +1,16 @@
+dartdoc:
+  name: auto_interop
+  categories:
+    "Channel":
+      markdown: doc/categories/channel.md
+    "Type Conversion":
+      markdown: doc/categories/type_conversion.md
+    "Error Handling":
+      markdown: doc/categories/error_handling.md
+    "Lifecycle":
+      markdown: doc/categories/lifecycle.md
+  categoryOrder:
+    - "Channel"
+    - "Type Conversion"
+    - "Error Handling"
+    - "Lifecycle"

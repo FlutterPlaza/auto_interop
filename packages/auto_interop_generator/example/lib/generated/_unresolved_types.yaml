@@ -1,0 +1,86 @@
+# Unresolved native types — auto-generated opaque stubs
+# Override any of these by adding to auto_interop.yaml:
+#   custom_types:
+#     TypeName: "lib/your_file.dart"
+
+date-fns:
+  - DateType
+
+Alamofire:
+  - CancellationToken
+  - ChallengeEvaluation
+  - Configuration
+  - Destination
+  - DispatchWorkItem
+  - Downloadable
+  - FileManager
+  - InputStream
+  - Kind
+  - MultipartEncodingFailureReason
+  - Output
+  - OutputStream
+  - ParameterEncoderFailureReason
+  - ParameterEncodingFailureReason
+  - Parameters
+  - RequestModifier
+  - RequestSetup
+  - ResponseSerializationFailureReason
+  - ResponseValidationFailureReason
+  - SecKey
+  - Self
+  - ServerTrustFailureReason
+  - Success
+  - URLAuthenticationChallenge
+  - URLCredential
+  - URLProtectionSpace
+  - URLRequestValidationFailureReason
+  - URLResponse
+  - URLSession
+  - URLSessionDataTask
+  - URLSessionDownloadTask
+  - URLSessionTask
+  - URLSessionTaskMetrics
+  - URLSessionWebSocketTask
+  - Uploadable
+
+com.squareup.okhttp3:okhttp:
+  - AsyncCall
+  - Backend
+  - Buffer
+  - BufferedSink
+  - BufferedSource
+  - Builder
+  - ByteString
+  - Certificate
+  - Chain
+  - CharArray
+  - Charset
+  - CountDownLatch
+  - Date
+  - Entry
+  - ExecutorService
+  - File
+  - HostnameVerifier
+  - IOException
+  - InetAddress
+  - InetSocketAddress
+  - InputStream
+  - Instant
+  - Listener
+  - Pin
+  - Principal
+  - Proxy
+  - ProxySelector
+  - Runnable
+  - SSLSession
+  - SSLSocket
+  - SSLSocketFactory
+  - Sink
+  - Socket
+  - SocketFactory
+  - Source
+  - Throwable
+  - TimeUnit
+  - Timeout
+  - X509Certificate
+

@@ -345,6 +345,125 @@ void main() {
       });
     });
 
+    group('export default', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('export_default.d.ts'),
+          packageName: 'test',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses export default class', () {
+        expect(schema.classes, hasLength(1));
+        expect(schema.classes[0].name, 'Processor');
+      });
+
+      test('parses export default class methods', () {
+        final cls = schema.classes[0];
+        expect(cls.methods, hasLength(1));
+        expect(cls.methods[0].name, 'run');
+      });
+
+      test('parses export default function', () {
+        expect(schema.functions, hasLength(1));
+        expect(schema.functions[0].name, 'createProcessor');
+      });
+    });
+
+    group('union types', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('union_types.d.ts'),
+          packageName: 'test',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses union type picking first non-null type', () {
+        final parseInput = schema.functions
+            .firstWhere((f) => f.name == 'parseInput');
+        // string | number → picks string
+        expect(parseInput.parameters[0].type.toDartType(), 'String');
+      });
+
+      test('parses nullable union type', () {
+        final findItem = schema.functions
+            .firstWhere((f) => f.name == 'findItem');
+        // string | null → String?
+        expect(findItem.returnType.toDartType(), 'String?');
+      });
+
+      test('parses multi-type nullable union', () {
+        final convert = schema.functions
+            .firstWhere((f) => f.name == 'convert');
+        // Buffer | string | null → picks Buffer → Uint8List?
+        expect(convert.parameters[0].type.toDartType(), 'Uint8List?');
+      });
+    });
+
+    group('callback in class methods', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('callback_in_method.d.ts'),
+          packageName: 'test',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses class with callback params in methods', () {
+        expect(schema.classes, hasLength(1));
+        expect(schema.classes[0].name, 'EventEmitter');
+        expect(schema.classes[0].methods, hasLength(2));
+      });
+
+      test('parses on method with callback', () {
+        final on = schema.classes[0].methods
+            .firstWhere((m) => m.name == 'on');
+        expect(on.parameters, hasLength(2));
+        expect(on.parameters[0].name, 'event');
+        expect(on.parameters[1].name, 'handler');
+      });
+
+      test('parses map method with callback', () {
+        final map = schema.classes[0].methods
+            .firstWhere((m) => m.name == 'map');
+        expect(map.parameters, hasLength(1));
+        expect(map.parameters[0].name, 'fn');
+      });
+    });
+
+    group('rest params warning', () {
+      test('emits warning for rest params', () {
+        final result = parser.parseWithValidation(
+          content: _fixture('rest_params.d.ts'),
+          packageName: 'test',
+          version: '1.0.0',
+        );
+
+        // Should still parse the function
+        expect(result.schema.functions, hasLength(2));
+
+        // log has ...args, so its params should only contain message
+        final log = result.schema.functions
+            .firstWhere((f) => f.name == 'log');
+        expect(log.parameters, hasLength(1));
+        expect(log.parameters[0].name, 'message');
+
+        // Should have a warning about rest params
+        expect(
+          result.warnings.any((w) => w.message.contains('Rest parameter')),
+          isTrue,
+        );
+      });
+    });
+
     group('parseFiles (multi-file)', () {
       test('merges multiple files into single schema', () {
         final schema = parser.parseFiles(

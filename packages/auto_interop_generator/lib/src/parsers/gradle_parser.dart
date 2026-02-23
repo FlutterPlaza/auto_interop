@@ -225,6 +225,7 @@ class GradleParser extends ParserBase {
 
     final methods = <UtsMethod>[];
     final fields = <UtsField>[];
+    final seenMethodNames = <String>{};
     var isAbstract = line.contains('abstract ');
 
     // Check for companion object
@@ -240,7 +241,9 @@ class GradleParser extends ParserBase {
           final compDoc = _lookbackForKDoc(bodyLines, k);
           if (_matchesFunction(compLine)) {
             final method = _parseKotlinFunction(compLine, compDoc);
-            if (method != null && !_isPrivate(method.name)) {
+            if (method != null &&
+                !_isPrivate(method.name) &&
+                seenMethodNames.add(method.name)) {
               methods.add(UtsMethod(
                 name: method.name,
                 isStatic: true,
@@ -266,7 +269,9 @@ class GradleParser extends ParserBase {
 
       if (_matchesFunction(bodyLine)) {
         final method = _parseKotlinFunction(bodyLine, bodyDoc);
-        if (method != null && !_isPrivate(method.name)) {
+        if (method != null &&
+            !_isPrivate(method.name) &&
+            seenMethodNames.add(method.name)) {
           methods.add(method);
         }
       } else if (bodyLine.startsWith('val ') || bodyLine.startsWith('var ')) {
@@ -506,15 +511,27 @@ class GradleParser extends ParserBase {
 
   UtsMethod? _parseKotlinFunction(String line, String? doc) {
     final isSuspend = line.contains('suspend ');
-    // Match: [suspend] fun name(params): ReturnType
-    final match = RegExp(
-            r'(?:suspend\s+)?fun\s+(\w+)\s*\(([^)]*)\)\s*(?::\s*(\S+))?')
-        .firstMatch(line);
-    if (match == null) return null;
+    // Extract function name
+    final nameMatch =
+        RegExp(r'(?:suspend\s+)?fun\s+(\w+)\s*\(').firstMatch(line);
+    if (nameMatch == null) return null;
 
-    final name = match.group(1)!;
-    final paramStr = match.group(2) ?? '';
-    final returnTypeStr = match.group(3);
+    final name = nameMatch.group(1)!;
+
+    // Find matching paren using depth tracking
+    final openParen = line.indexOf('(', nameMatch.start);
+    if (openParen == -1) return null;
+    final closeParen = _findMatchingParen(line, openParen);
+    if (closeParen == -1) return null;
+
+    final paramStr = line.substring(openParen + 1, closeParen);
+
+    // Extract return type using depth tracking
+    final afterParen = line.substring(closeParen + 1).trim();
+    String? returnTypeStr;
+    if (afterParen.startsWith(':')) {
+      returnTypeStr = _extractReturnType(afterParen.substring(1).trim());
+    }
 
     UtsType returnType;
     if (returnTypeStr == null || returnTypeStr.isEmpty) {
@@ -576,12 +593,21 @@ class GradleParser extends ParserBase {
 
   UtsField? _parseKotlinField(String line, String? doc) {
     final isReadOnly = line.startsWith('val ');
-    final match =
-        RegExp(r'(?:val|var)\s+(\w+)\s*:\s*(\S+)').firstMatch(line);
-    if (match == null) return null;
+    final nameMatch =
+        RegExp(r'(?:val|var)\s+(\w+)\s*:\s*').firstMatch(line);
+    if (nameMatch == null) return null;
 
-    final name = match.group(1)!;
-    var typeStr = match.group(2)!;
+    final name = nameMatch.group(1)!;
+    final afterColon = line.substring(nameMatch.end);
+
+    // Extract type using depth tracking (handles Map<String, String>)
+    final typeAndDefault = _splitTypeAndDefault(afterColon);
+    var typeStr = typeAndDefault.type.trim();
+
+    // Remove trailing { for computed properties
+    final braceIdx = _findBraceAtDepthZero(typeStr);
+    if (braceIdx >= 0) typeStr = typeStr.substring(0, braceIdx).trim();
+
     final isNullable = typeStr.endsWith('?');
     if (isNullable) typeStr = typeStr.substring(0, typeStr.length - 1);
 
@@ -686,8 +712,10 @@ class GradleParser extends ParserBase {
     if (line.startsWith('private ') || line.startsWith('protected ')) {
       return false;
     }
-    return RegExp(r'(?:public\s+)?(?:static\s+)?(?:\w+(?:<[^>]*>)?)\s+\w+\s*\(')
-        .hasMatch(line);
+    // Check for a method pattern using depth-tracking:
+    // [modifiers] ReturnType methodName(
+    return _findOpenParenAtDepthZero(line) > 0 &&
+        RegExp(r'\w+\s*\(').hasMatch(line);
   }
 
   // --- Java parsers ---
@@ -706,6 +734,7 @@ class GradleParser extends ParserBase {
     final bodyLines = lines.sublist(startIndex + 1, endIndex);
 
     final methods = <UtsMethod>[];
+    final seenMethodNames = <String>{};
     for (var j = 0; j < bodyLines.length; j++) {
       final bodyLine = bodyLines[j].trim();
       if (bodyLine.isEmpty) continue;
@@ -714,7 +743,7 @@ class GradleParser extends ParserBase {
 
       if (_matchesJavaMethod(bodyLine)) {
         final method = _parseJavaMethod(bodyLine, methodDoc);
-        if (method != null) {
+        if (method != null && seenMethodNames.add(method.name)) {
           methods.add(method);
         }
       }
@@ -752,20 +781,9 @@ class GradleParser extends ParserBase {
       final methodDoc = _lookbackForJavaDoc(bodyLines, j);
 
       // Interface methods: ReturnType methodName(params);
-      final match =
-          RegExp(r'(\w+(?:<[^>]*>)?)\s+(\w+)\s*\(([^)]*)\)\s*;')
-              .firstMatch(bodyLine);
-      if (match != null) {
-        final returnTypeStr = match.group(1)!;
-        final methodName = match.group(2)!;
-        final paramStr = match.group(3) ?? '';
-
-        methods.add(UtsMethod(
-          name: methodName,
-          parameters: _parseJavaParams(paramStr),
-          returnType: _javaMapper.mapType(returnTypeStr),
-          documentation: methodDoc,
-        ));
+      final method = _parseJavaMethod(bodyLine, methodDoc);
+      if (method != null) {
+        methods.add(method);
       }
     }
 
@@ -823,15 +841,38 @@ class GradleParser extends ParserBase {
 
   UtsMethod? _parseJavaMethod(String line, String? doc) {
     final isStatic = line.contains('static ');
-    // Match: [public] [static] ReturnType methodName(params) {
-    final match = RegExp(
-            r'(?:public\s+)?(?:static\s+)?(\w+(?:<[^>]*>)?)\s+(\w+)\s*\(([^)]*)\)')
-        .firstMatch(line);
-    if (match == null) return null;
 
-    final returnTypeStr = match.group(1)!;
-    final name = match.group(2)!;
-    final paramStr = match.group(3) ?? '';
+    // Strip modifiers
+    var clean = line.trim();
+    for (final mod in [
+      'public ',
+      'static ',
+      'final ',
+      'abstract ',
+      'synchronized ',
+    ]) {
+      clean = clean.replaceFirst(mod, '');
+    }
+    clean = clean.trim();
+
+    // Find the opening paren at angle-bracket depth 0
+    final openParen = _findOpenParenAtDepthZero(clean);
+    if (openParen == -1) return null;
+
+    final closeParen = _findMatchingParen(clean, openParen);
+    if (closeParen == -1) return null;
+
+    final paramStr = clean.substring(openParen + 1, closeParen);
+
+    // Everything before ( is "ReturnType methodName"
+    final beforeParen = clean.substring(0, openParen).trim();
+
+    // Split into return type and method name at the last space at depth 0
+    final lastSpaceIdx = _findLastSpaceAtDepthZero(beforeParen);
+    if (lastSpaceIdx == -1) return null;
+
+    final returnTypeStr = beforeParen.substring(0, lastSpaceIdx).trim();
+    final name = beforeParen.substring(lastSpaceIdx + 1).trim();
 
     return UtsMethod(
       name: name,
@@ -892,6 +933,90 @@ class GradleParser extends ParserBase {
       }
     }
     return _TypeAndDefault(type: input.trim());
+  }
+
+  /// Finds the matching closing parenthesis for an opening one at [openPos].
+  int _findMatchingParen(String text, int openPos) {
+    var depth = 0;
+    for (var i = openPos; i < text.length; i++) {
+      if (text[i] == '(') {
+        depth++;
+      } else if (text[i] == ')') {
+        depth--;
+        if (depth == 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  /// Extracts a return type from text after `:`, respecting angle bracket depth.
+  /// Stops at `{` or end of text.
+  String? _extractReturnType(String text) {
+    var depth = 0;
+    for (var i = 0; i < text.length; i++) {
+      switch (text[i]) {
+        case '<':
+          depth++;
+          break;
+        case '>':
+          depth--;
+          break;
+        case '{':
+          if (depth == 0) {
+            final result = text.substring(0, i).trim();
+            return result.isEmpty ? null : result;
+          }
+          break;
+      }
+    }
+    final result = text.trim();
+    return result.isEmpty ? null : result;
+  }
+
+  /// Finds the first `{` at angle-bracket depth 0.
+  int _findBraceAtDepthZero(String text) {
+    var depth = 0;
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] == '<') {
+        depth++;
+      } else if (text[i] == '>') {
+        depth--;
+      } else if (text[i] == '{' && depth == 0) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /// Finds the first `(` at angle-bracket depth 0.
+  int _findOpenParenAtDepthZero(String text) {
+    var depth = 0;
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] == '<') {
+        depth++;
+      } else if (text[i] == '>') {
+        depth--;
+      } else if (text[i] == '(' && depth == 0) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /// Finds the last space at angle-bracket depth 0.
+  int _findLastSpaceAtDepthZero(String text) {
+    var depth = 0;
+    var lastSpace = -1;
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] == '<') {
+        depth++;
+      } else if (text[i] == '>') {
+        depth--;
+      } else if (text[i] == ' ' && depth == 0) {
+        lastSpace = i;
+      }
+    }
+    return lastSpace;
   }
 
   bool _isPrivate(String name) => name.startsWith('_');

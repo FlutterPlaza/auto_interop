@@ -124,10 +124,13 @@ class SwiftParser extends ParserBase {
 
       // Top-level function
       if (_matchesFunction(line)) {
-        final method = _parseFunction(line, doc);
+        final sig = _collectFunctionSignature(lines, i);
+        final method = _parseFunction(sig.text, doc);
         if (method != null) {
           functions.add(method);
         }
+        i = sig.endIndex + 1;
+        continue;
       }
 
       i++;
@@ -182,7 +185,7 @@ class SwiftParser extends ParserBase {
     if (line.startsWith('private ') || line.startsWith('fileprivate ')) {
       return true;
     }
-    if (line.startsWith('internal ') && !line.startsWith('internal func')) {
+    if (line.startsWith('internal ')) {
       return true;
     }
     return false;
@@ -216,6 +219,22 @@ class SwiftParser extends ParserBase {
         .hasMatch(line);
   }
 
+  bool _matchesInit(String line) {
+    return RegExp(
+            r'(?:public\s+|open\s+)?(?:convenience\s+)?(?:required\s+)?init\s*\(')
+        .hasMatch(line);
+  }
+
+  List<UtsParameter> _parseInit(String line) {
+    final openParen = line.indexOf('(');
+    if (openParen == -1) return [];
+    final closeParen = _findMatchingParen(line, openParen);
+    if (closeParen == -1) return [];
+
+    final paramStr = line.substring(openParen + 1, closeParen);
+    return _parseSwiftParams(paramStr);
+  }
+
   // ========== Parsers ==========
 
   _ParsedClass? _parseClass(List<String> lines, int startIndex, String? doc) {
@@ -231,6 +250,7 @@ class SwiftParser extends ParserBase {
 
     final methods = <UtsMethod>[];
     final fields = <UtsField>[];
+    final constructorParams = <UtsParameter>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
       final bodyLine = bodyLines[j].trim();
@@ -245,11 +265,21 @@ class SwiftParser extends ParserBase {
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
+      if (_matchesInit(bodyLine)) {
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final params = _parseInit(sig.text);
+        constructorParams.addAll(params);
+        j = sig.endIndex;
+        continue;
+      }
+
       if (_matchesFunction(bodyLine)) {
-        final method = _parseFunction(bodyLine, memberDoc);
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final method = _parseFunction(sig.text, memberDoc);
         if (method != null) {
           methods.add(method);
         }
+        j = sig.endIndex;
       } else if (_matchesProperty(bodyLine)) {
         final field = _parseProperty(bodyLine, memberDoc);
         if (field != null) {
@@ -264,6 +294,7 @@ class SwiftParser extends ParserBase {
         kind: UtsClassKind.concreteClass,
         methods: methods,
         fields: fields,
+        constructorParameters: constructorParams,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
@@ -282,6 +313,7 @@ class SwiftParser extends ParserBase {
 
     final fields = <UtsField>[];
     final methods = <UtsMethod>[];
+    final constructorParams = <UtsParameter>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
       final bodyLine = bodyLines[j].trim();
@@ -294,16 +326,26 @@ class SwiftParser extends ParserBase {
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
+      if (_matchesInit(bodyLine)) {
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final params = _parseInit(sig.text);
+        constructorParams.addAll(params);
+        j = sig.endIndex;
+        continue;
+      }
+
       if (_matchesProperty(bodyLine)) {
         final field = _parseProperty(bodyLine, memberDoc);
         if (field != null) {
           fields.add(field);
         }
       } else if (_matchesFunction(bodyLine)) {
-        final method = _parseFunction(bodyLine, memberDoc);
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final method = _parseFunction(sig.text, memberDoc);
         if (method != null) {
           methods.add(method);
         }
+        j = sig.endIndex;
       }
     }
 
@@ -313,6 +355,7 @@ class SwiftParser extends ParserBase {
         kind: UtsClassKind.dataClass,
         fields: fields,
         methods: methods,
+        constructorParameters: constructorParams,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
@@ -346,10 +389,12 @@ class SwiftParser extends ParserBase {
           fields.add(field);
         }
       } else if (_matchesFunctionDecl(bodyLine)) {
-        final method = _parseFunctionDecl(bodyLine, memberDoc);
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final method = _parseFunctionDecl(sig.text, memberDoc);
         if (method != null) {
           methods.add(method);
         }
+        j = sig.endIndex;
       }
     }
 
@@ -541,10 +586,12 @@ class SwiftParser extends ParserBase {
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
       if (_matchesFunction(bodyLine)) {
-        final method = _parseFunction(bodyLine, memberDoc);
+        final sig = _collectFunctionSignature(bodyLines, j);
+        final method = _parseFunction(sig.text, memberDoc);
         if (method != null) {
           methods.add(method);
         }
+        j = sig.endIndex;
       }
     }
 
@@ -806,6 +853,57 @@ class SwiftParser extends ParserBase {
     return -1;
   }
 
+  /// Collects a function signature that may span multiple lines.
+  /// Returns the joined text and the last line index.
+  _CollectedSignature _collectFunctionSignature(
+      List<String> lines, int startIndex) {
+    final buffer = StringBuffer();
+    var parenDepth = 0;
+    var foundOpenParen = false;
+    var lastIndex = startIndex;
+
+    for (var i = startIndex; i < lines.length; i++) {
+      final line = lines[i].trim();
+      if (i > startIndex) buffer.write(' ');
+      buffer.write(line);
+      lastIndex = i;
+
+      for (var j = 0; j < line.length; j++) {
+        if (line[j] == '(') {
+          parenDepth++;
+          foundOpenParen = true;
+        } else if (line[j] == ')') {
+          parenDepth--;
+        }
+      }
+
+      // Keep collecting until parens are balanced
+      if (!foundOpenParen || parenDepth > 0) continue;
+
+      // Parens are balanced — check if we have a complete signature
+      if (line.contains('{')) break;
+
+      final currentText = buffer.toString();
+      if (currentText.contains('->')) break;
+
+      // Peek at next line for continuation (return type, throws, async, {)
+      if (i + 1 < lines.length) {
+        final nextLine = lines[i + 1].trim();
+        if (nextLine.isEmpty ||
+            (!nextLine.startsWith('->') &&
+                !nextLine.startsWith('async') &&
+                !nextLine.startsWith('throws') &&
+                !nextLine.startsWith('{'))) {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return _CollectedSignature(text: buffer.toString(), endIndex: lastIndex);
+  }
+
   _TypeAndDefault _splitTypeAndDefault(String input) {
     var depth = 0;
     for (var i = 0; i < input.length; i++) {
@@ -834,14 +932,39 @@ class SwiftParser extends ParserBase {
   int _findBlockEnd(List<String> lines, int startIndex) {
     var depth = 0;
     var foundOpen = false;
+
     for (var i = startIndex; i < lines.length; i++) {
-      for (final ch in lines[i].runes) {
-        if (ch == 0x7B) {
+      final line = lines[i];
+      var inString = false;
+
+      for (var j = 0; j < line.length; j++) {
+        final ch = line[j];
+
+        // Skip line comments
+        if (!inString &&
+            ch == '/' &&
+            j + 1 < line.length &&
+            line[j + 1] == '/') {
+          break;
+        }
+
+        // Toggle string tracking (skip escaped quotes)
+        if (ch == '"' && (j == 0 || line[j - 1] != '\\')) {
+          inString = !inString;
+          continue;
+        }
+
+        if (inString) continue;
+
+        if (ch == '{') {
           depth++;
           foundOpen = true;
-        } else if (ch == 0x7D) {
+        } else if (ch == '}') {
           depth--;
-          if (foundOpen && depth == 0) return i;
+          if (foundOpen && depth == 0) {
+            // Ensure callers can safely do sublist(startIndex + 1, result)
+            return i < startIndex + 1 ? startIndex + 1 : i;
+          }
         }
       }
     }
@@ -862,11 +985,30 @@ class SwiftParser extends ParserBase {
       var depth = 0;
       var foundOpen = false;
       for (var i = startIndex; i < bodyLines.length; i++) {
-        for (final ch in bodyLines[i].runes) {
-          if (ch == 0x7B) {
+        final bodyLine = bodyLines[i];
+        var inString = false;
+
+        for (var j = 0; j < bodyLine.length; j++) {
+          final ch = bodyLine[j];
+
+          if (!inString &&
+              ch == '/' &&
+              j + 1 < bodyLine.length &&
+              bodyLine[j + 1] == '/') {
+            break;
+          }
+
+          if (ch == '"' && (j == 0 || bodyLine[j - 1] != '\\')) {
+            inString = !inString;
+            continue;
+          }
+
+          if (inString) continue;
+
+          if (ch == '{') {
             depth++;
             foundOpen = true;
-          } else if (ch == 0x7D) {
+          } else if (ch == '}') {
             depth--;
             if (foundOpen && depth == 0) return i;
           }
@@ -1030,6 +1172,12 @@ class _DocResult {
   final String? doc;
   final int endIndex;
   _DocResult(this.doc, this.endIndex);
+}
+
+class _CollectedSignature {
+  final String text;
+  final int endIndex;
+  _CollectedSignature({required this.text, required this.endIndex});
 }
 
 class _TypeAndDefault {

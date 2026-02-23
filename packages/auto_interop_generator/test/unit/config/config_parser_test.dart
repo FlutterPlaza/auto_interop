@@ -252,6 +252,162 @@ native_packages:
     });
   });
 
+  group('source_path', () {
+    test('parses source_path when present', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+    source_path: "ios/Pods/Alamofire/Source"
+''');
+      expect(config.packages[0].sourcePath, 'ios/Pods/Alamofire/Source');
+    });
+
+    test('source_path is null when not specified', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.0.0"
+''');
+      expect(config.packages[0].sourcePath, isNull);
+    });
+  });
+
+  group('custom_types', () {
+    test('parses custom_types when present', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+    custom_types:
+      URLRequest: "lib/types/networking.dart"
+      HTTPHeaders: "lib/types/networking.dart"
+''');
+      expect(config.packages[0].customTypes, {
+        'URLRequest': 'lib/types/networking.dart',
+        'HTTPHeaders': 'lib/types/networking.dart',
+      });
+    });
+
+    test('custom_types defaults to empty map', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.0.0"
+''');
+      expect(config.packages[0].customTypes, isEmpty);
+    });
+
+    test('rejects custom_types as non-map', () {
+      expect(
+        () => parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "test"
+    version: "1.0.0"
+    custom_types: "not a map"
+'''),
+        throwsA(isA<ConfigParseException>().having(
+          (e) => e.message,
+          'message',
+          contains("'custom_types' must be a map"),
+        )),
+      );
+    });
+  });
+
+  group('maven_repositories', () {
+    test('parses maven_repositories when present', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+    maven_repositories:
+      - "https://repo1.maven.org/maven2"
+      - "https://jitpack.io"
+''');
+      expect(config.packages[0].mavenRepositories, [
+        'https://repo1.maven.org/maven2',
+        'https://jitpack.io',
+      ]);
+    });
+
+    test('defaults to standard repos when not specified', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+''');
+      expect(config.packages[0].mavenRepositories, [
+        'https://repo1.maven.org/maven2',
+        'https://dl.google.com/dl/android/maven2',
+      ]);
+    });
+
+    test('rejects maven_repositories as non-list', () {
+      expect(
+        () => parser.parseYaml('''
+native_packages:
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+    maven_repositories: "not a list"
+'''),
+        throwsA(isA<ConfigParseException>().having(
+          (e) => e.message,
+          'message',
+          contains("'maven_repositories' must be a list"),
+        )),
+      );
+    });
+  });
+
+  group('overrides_dir', () {
+    test('parses overrides_dir when present', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.0.0"
+overrides_dir: my_overrides
+''');
+      expect(config.overridesDir, 'my_overrides');
+    });
+
+    test('overrides_dir is null when not specified', () {
+      final config = parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.0.0"
+''');
+      expect(config.overridesDir, isNull);
+    });
+
+    test('rejects overrides_dir as non-string', () {
+      expect(
+        () => parser.parseYaml('''
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.0.0"
+overrides_dir: 123
+'''),
+        throwsA(isA<ConfigParseException>().having(
+          (e) => e.message,
+          'message',
+          contains("'overrides_dir' must be a string"),
+        )),
+      );
+    });
+  });
+
   group('PackageSpec', () {
     test('isSelectiveImport is true when imports are specified', () {
       final config = parser.parseYaml('''

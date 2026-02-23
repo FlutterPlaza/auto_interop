@@ -167,10 +167,10 @@ void main() {
     });
 
     group('native object types', () {
-      test('creates NativeObject<OkHttpClient>', () {
+      test('creates nativeObject type for OkHttpClient', () {
         final type = UtsType.nativeObject('OkHttpClient');
         expect(type.kind, UtsTypeKind.nativeObject);
-        expect(type.toDartType(), 'NativeObject<OkHttpClient>');
+        expect(type.toDartType(), 'OkHttpClient');
       });
     });
 
@@ -221,6 +221,64 @@ void main() {
         final a = UtsType.primitive('String');
         final b = UtsType.primitive('String', nullable: true);
         expect(a, isNot(equals(b)));
+      });
+
+      test('List<String> != List<int> (different type arguments)', () {
+        final a = UtsType.list(UtsType.primitive('String'));
+        final b = UtsType.list(UtsType.primitive('int'));
+        expect(a, isNot(equals(b)));
+      });
+
+      test('List<String> == List<String> (same type arguments)', () {
+        final a = UtsType.list(UtsType.primitive('String'));
+        final b = UtsType.list(UtsType.primitive('String'));
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
+      });
+
+      test('Map<String, int> != Map<String, double>', () {
+        final a = UtsType.map(
+            UtsType.primitive('String'), UtsType.primitive('int'));
+        final b = UtsType.map(
+            UtsType.primitive('String'), UtsType.primitive('double'));
+        expect(a, isNot(equals(b)));
+      });
+
+      test('Future<String> != Future<int>', () {
+        final a = UtsType.future(UtsType.primitive('String'));
+        final b = UtsType.future(UtsType.primitive('int'));
+        expect(a, isNot(equals(b)));
+      });
+
+      test('callbacks with different signatures are not equal', () {
+        final a = UtsType.callback(
+          parameterTypes: [UtsType.primitive('String')],
+          returnType: UtsType.voidType(),
+        );
+        final b = UtsType.callback(
+          parameterTypes: [UtsType.primitive('int')],
+          returnType: UtsType.voidType(),
+        );
+        expect(a, isNot(equals(b)));
+      });
+
+      test('callbacks with different return types are not equal', () {
+        final a = UtsType.callback(
+          parameterTypes: [UtsType.primitive('String')],
+          returnType: UtsType.voidType(),
+        );
+        final b = UtsType.callback(
+          parameterTypes: [UtsType.primitive('String')],
+          returnType: UtsType.primitive('int'),
+        );
+        expect(a, isNot(equals(b)));
+      });
+
+      test('nested List<List<String>> == List<List<String>>', () {
+        final a = UtsType.list(UtsType.list(UtsType.primitive('String')));
+        final b = UtsType.list(UtsType.list(UtsType.primitive('String')));
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
       });
     });
 

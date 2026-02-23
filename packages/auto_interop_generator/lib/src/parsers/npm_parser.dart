@@ -17,6 +17,24 @@ import 'parser_base.dart';
 /// - Filtering of private APIs (underscore prefix)
 class NpmParser extends ParserBase {
   final JsToDartMapper _typeMapper = JsToDartMapper();
+  final List<ParseWarning> _warnings = [];
+
+  @override
+  ParseResult parseWithValidation({
+    required String content,
+    required String packageName,
+    required String version,
+  }) {
+    _warnings.clear();
+    final schema = parse(
+      content: content,
+      packageName: packageName,
+      version: version,
+    );
+    final baseResult = validateResult(schema);
+    return ParseResult(schema,
+        warnings: [...baseResult.warnings, ..._warnings]);
+  }
 
   @override
   PackageSource get source => PackageSource.npm;
@@ -126,11 +144,13 @@ class NpmParser extends ParserBase {
 
   bool _isExportedFunction(String line) =>
       line.startsWith('export declare function ') ||
-      line.startsWith('export function ');
+      line.startsWith('export function ') ||
+      line.startsWith('export default function ');
 
   bool _isExportedClass(String line) =>
       line.startsWith('export declare class ') ||
-      line.startsWith('export class ');
+      line.startsWith('export class ') ||
+      line.startsWith('export default class ');
 
   bool _isExportedInterface(String line) =>
       line.startsWith('export interface ');
@@ -156,7 +176,7 @@ class NpmParser extends ParserBase {
 
     // Extract function name (with optional generics)
     final nameMatch = RegExp(
-      r'export\s+(?:declare\s+)?function\s+(\w+)(?:<[^>]*>)?\s*\(',
+      r'export\s+(?:declare\s+|default\s+)?function\s+(\w+)(?:<[^>]*>)?\s*\(',
     ).firstMatch(line);
 
     if (nameMatch == null) return null;
@@ -206,6 +226,61 @@ class NpmParser extends ParserBase {
     return -1;
   }
 
+  /// Parses a class/interface/type-alias method member using depth-tracking.
+  /// Handles: `name<T>(params): ReturnType;` and optionally
+  /// `name(params) => ReturnType;` when [allowArrow] is true.
+  UtsMethod? _parseMethodMember(String memberLine, String? documentation,
+      {bool allowArrow = false}) {
+    // Extract method name
+    final nameMatch = RegExp(r'^(\w+)').firstMatch(memberLine);
+    if (nameMatch == null) return null;
+
+    final methodName = nameMatch.group(1)!;
+
+    // Find the opening paren at angle-bracket depth 0
+    var openParen = -1;
+    var angleDepth = 0;
+    for (var i = nameMatch.end; i < memberLine.length; i++) {
+      if (memberLine[i] == '<') {
+        angleDepth++;
+      } else if (memberLine[i] == '>') {
+        angleDepth--;
+      } else if (memberLine[i] == '(' && angleDepth == 0) {
+        openParen = i;
+        break;
+      }
+    }
+    if (openParen < 0) return null;
+
+    final closeParen = _findMatchingParen(memberLine, openParen);
+    if (closeParen < 0) return null;
+
+    final paramsStr = memberLine.substring(openParen + 1, closeParen);
+    final afterParen = memberLine.substring(closeParen + 1).trim();
+
+    // Extract return type: ": Type;" or "=> Type;"
+    String? returnTypeStr;
+    final colonMatch = RegExp(r'^:\s*(.+?)\s*;?\s*$').firstMatch(afterParen);
+    if (colonMatch != null) {
+      returnTypeStr = colonMatch.group(1)!;
+    } else if (allowArrow) {
+      final arrowMatch =
+          RegExp(r'^=>\s*(.+?)\s*;?\s*$').firstMatch(afterParen);
+      if (arrowMatch != null) {
+        returnTypeStr = arrowMatch.group(1)!.replaceAll(';', '');
+      }
+    }
+    if (returnTypeStr == null) return null;
+
+    return UtsMethod(
+      name: methodName,
+      isAsync: returnTypeStr.startsWith('Promise<'),
+      parameters: _parseParameters(paramsStr),
+      returnType: _mapTsType(returnTypeStr),
+      documentation: documentation,
+    );
+  }
+
   // --- Class parsing ---
 
   _ParsedClass? _parseClass(
@@ -214,7 +289,7 @@ class NpmParser extends ParserBase {
 
     // Extract class name
     final nameMatch = RegExp(
-      r'export\s+(?:declare\s+)?class\s+(\w+)',
+      r'export\s+(?:declare\s+|default\s+)?class\s+(\w+)',
     ).firstMatch(headerLine);
     if (nameMatch == null) return null;
 
@@ -242,21 +317,11 @@ class NpmParser extends ParserBase {
         continue;
       }
 
-      // Parse method
-      final methodMatch = RegExp(
-        r'(\w+)(?:<[^>]*>)?\s*\(([^)]*)\)\s*:\s*(.+?)\s*;',
-      ).firstMatch(memberLine);
-
-      if (methodMatch != null) {
-        final methodName = methodMatch.group(1)!;
-        if (!_isPrivate(methodName)) {
-          methods.add(UtsMethod(
-            name: methodName,
-            isAsync: methodMatch.group(3)!.startsWith('Promise<'),
-            parameters: _parseParameters(methodMatch.group(2)!),
-            returnType: _mapTsType(methodMatch.group(3)!),
-            documentation: memberDoc,
-          ));
+      // Parse method using depth-tracking
+      final method = _parseMethodMember(memberLine, memberDoc);
+      if (method != null) {
+        if (!_isPrivate(method.name)) {
+          methods.add(method);
         }
         memberDoc = null;
         continue;
@@ -323,19 +388,10 @@ class NpmParser extends ParserBase {
         continue;
       }
 
-      // Method signature: name(params): returnType;
-      final methodMatch = RegExp(
-        r'(\w+)(?:<[^>]*>)?\s*\(([^)]*)\)\s*:\s*(.+?)\s*;',
-      ).firstMatch(memberLine);
-
-      if (methodMatch != null) {
-        methods.add(UtsMethod(
-          name: methodMatch.group(1)!,
-          isAsync: methodMatch.group(3)!.startsWith('Promise<'),
-          parameters: _parseParameters(methodMatch.group(2)!),
-          returnType: _mapTsType(methodMatch.group(3)!),
-          documentation: memberDoc,
-        ));
+      // Method signature using depth-tracking
+      final method = _parseMethodMember(memberLine, memberDoc);
+      if (method != null) {
+        methods.add(method);
         memberDoc = null;
         continue;
       }
@@ -406,18 +462,11 @@ class NpmParser extends ParserBase {
         continue;
       }
 
-      // Method signature
-      final methodMatch = RegExp(
-        r'(\w+)\s*(?:<[^>]*>)?\s*\(([^)]*)\)\s*(?:=>|:)\s*(.+?)\s*;?$',
-      ).firstMatch(memberLine);
-
-      if (methodMatch != null) {
-        methods.add(UtsMethod(
-          name: methodMatch.group(1)!,
-          parameters: _parseParameters(methodMatch.group(2)!),
-          returnType: _mapTsType(methodMatch.group(3)!.replaceAll(';', '')),
-          documentation: memberDoc,
-        ));
+      // Method signature using depth-tracking
+      final methodResult = _parseMethodMember(memberLine, memberDoc,
+          allowArrow: true);
+      if (methodResult != null) {
+        methods.add(methodResult);
         memberDoc = null;
         continue;
       }
@@ -531,8 +580,16 @@ class NpmParser extends ParserBase {
       final p = part.trim();
       if (p.isEmpty) continue;
 
-      // Skip rest params (...args: any[])
-      if (p.startsWith('...')) continue;
+      // Warn and skip rest params (...args: any[])
+      if (p.startsWith('...')) {
+        _warnings.add(ParseWarning(
+          'Rest parameter "$p" skipped — not supported.',
+          suggestion:
+              'Consider using a fixed-arity overload or providing '
+              'a manual type definition.',
+        ));
+        continue;
+      }
 
       // Pattern: name?: type or name: type
       final match = RegExp(

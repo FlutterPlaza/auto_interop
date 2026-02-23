@@ -629,6 +629,106 @@ void main() {
       });
     });
 
+    // ========== L13 Parser Robustness ==========
+
+    group('Kotlin: method overload deduplication', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('overloaded_methods.kt'),
+          packageName: 'com.example',
+          version: '1.0.0',
+        );
+      });
+
+      test('deduplicates overloaded methods (first wins)', () {
+        final cls = schema.classes[0];
+        expect(cls.name, 'OverloadedService');
+        // fetch appears twice but should be deduplicated
+        final fetchMethods =
+            cls.methods.where((m) => m.name == 'fetch').toList();
+        expect(fetchMethods, hasLength(1));
+      });
+
+      test('keeps non-overloaded methods', () {
+        final cls = schema.classes[0];
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('transform'));
+      });
+
+      test('first overload wins', () {
+        final cls = schema.classes[0];
+        final fetch = cls.methods.firstWhere((m) => m.name == 'fetch');
+        // First overload has 1 param
+        expect(fetch.parameters, hasLength(1));
+      });
+    });
+
+    group('Kotlin: generic field types', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('generic_fields.kt'),
+          packageName: 'com.example',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses Map<String, String> field', () {
+        final cls = schema.classes[0];
+        final headers = cls.fields.firstWhere((f) => f.name == 'headers');
+        expect(headers.type.toDartType(), 'Map<String, String>');
+      });
+
+      test('parses Map<String, List<String>> field', () {
+        final cls = schema.classes[0];
+        final settings = cls.fields.firstWhere((f) => f.name == 'settings');
+        expect(settings.type.toDartType(), 'Map<String, List<String>>');
+      });
+
+      test('parses simple field type', () {
+        final cls = schema.classes[0];
+        final timeout = cls.fields.firstWhere((f) => f.name == 'timeout');
+        expect(timeout.type.toDartType(), 'int');
+      });
+    });
+
+    group('Kotlin: function-type params', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('function_type_params.kt'),
+          packageName: 'com.example',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses methods with function-type params', () {
+        final cls = schema.classes[0];
+        expect(cls.name, 'EventBus');
+        expect(cls.methods, hasLength(2));
+      });
+
+      test('parses subscribe method', () {
+        final cls = schema.classes[0];
+        final subscribe =
+            cls.methods.firstWhere((m) => m.name == 'subscribe');
+        expect(subscribe.parameters, hasLength(2));
+        expect(subscribe.parameters[0].name, 'event');
+      });
+
+      test('parses transform method', () {
+        final cls = schema.classes[0];
+        final transform =
+            cls.methods.firstWhere((m) => m.name == 'transform');
+        expect(transform.parameters, hasLength(2));
+        expect(transform.returnType.toDartType(), 'int');
+      });
+    });
+
     // ========== Multi-file merging ==========
 
     group('parseFiles (multi-file)', () {

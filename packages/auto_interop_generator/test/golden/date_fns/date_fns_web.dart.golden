@@ -3,6 +3,7 @@
 // Web JS interop bindings for date-fns
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 @JS()
 extension type _JsFormatOptions._(JSObject _) implements JSObject {
@@ -32,8 +33,8 @@ class FormatOptions {
 
   JSObject toJs() {
     final obj = JSObject();
-    if (locale != null) (obj as JSAny?)?.setProperty('locale'.toJS, locale?.toJS);
-    if (weekStartsOn != null) (obj as JSAny?)?.setProperty('weekStartsOn'.toJS, weekStartsOn?.toJS);
+    if (locale != null) obj['locale'] = locale?.toJS;
+    if (weekStartsOn != null) obj['weekStartsOn'] = weekStartsOn?.toJS;
     return obj;
   }
 }

@@ -92,5 +92,73 @@ void main() {
       final channel = AutoInteropChannel('my_package');
       expect(channel.name, 'my_package');
     });
+
+    group('batchInvoke', () {
+      late MethodChannel batchChannel;
+      late AutoInteropChannel batchBridge;
+
+      setUp(() {
+        batchChannel = const MethodChannel('batch_channel');
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(batchChannel, (MethodCall call) async {
+          if (call.method == '_batch') {
+            final args = Map<String, dynamic>.from(call.arguments as Map);
+            final calls = (args['calls'] as List).cast<Map>();
+            final results = <Map<String, dynamic>>[];
+            for (final c in calls) {
+              final method = c['method'] as String;
+              if (method == 'fail') {
+                results.add({
+                  'error': {'code': 'TEST_ERROR', 'message': 'failed'}
+                });
+              } else if (method == 'greet') {
+                final callArgs = Map<String, dynamic>.from(
+                    c['arguments'] as Map? ?? {});
+                results.add(
+                    {'result': 'Hello, ${callArgs['name']}!'});
+              } else {
+                results.add({'result': null});
+              }
+            }
+            return results;
+          }
+          return null;
+        });
+        batchBridge = AutoInteropChannel.withChannel('batch', batchChannel);
+      });
+
+      tearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(batchChannel, null);
+      });
+
+      test('returns results for multiple calls', () async {
+        final results = await batchBridge.batchInvoke([
+          const BatchCall('greet', {'name': 'Alice'}),
+          const BatchCall('greet', {'name': 'Bob'}),
+        ]);
+        expect(results, hasLength(2));
+        expect(results[0].isSuccess, isTrue);
+        expect(results[0].value, 'Hello, Alice!');
+        expect(results[1].value, 'Hello, Bob!');
+      });
+
+      test('handles mixed success and error', () async {
+        final results = await batchBridge.batchInvoke([
+          const BatchCall('greet', {'name': 'Alice'}),
+          const BatchCall('fail'),
+        ]);
+        expect(results, hasLength(2));
+        expect(results[0].isSuccess, isTrue);
+        expect(results[1].isError, isTrue);
+        expect(results[1].errorCode, 'TEST_ERROR');
+        expect(results[1].errorMessage, 'failed');
+      });
+
+      test('handles empty batch', () async {
+        final results = await batchBridge.batchInvoke([]);
+        expect(results, isEmpty);
+      });
+    });
   });
 }

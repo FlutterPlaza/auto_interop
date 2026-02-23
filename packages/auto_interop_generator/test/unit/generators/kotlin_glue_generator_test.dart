@@ -80,7 +80,7 @@ void main() {
         final code =
             generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('onAttachedToEngine'));
-        expect(code, contains('MethodChannel(binding.binaryMessenger, "test")'));
+        expect(code, contains('MethodChannel(binding.binaryMessenger, "auto_interop/test")'));
         expect(code, contains('channel.setMethodCallHandler(this)'));
       });
 
@@ -88,7 +88,7 @@ void main() {
         final code =
             generator.generateKotlinCode(_createMinimalSchema('date-fns'));
         expect(code,
-            contains('MethodChannel(binding.binaryMessenger, "date_fns")'));
+            contains('MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
       });
 
       test('unregisters in onDetachedFromEngine', () {
@@ -283,7 +283,26 @@ void main() {
         ));
         expect(code, contains('try {'));
         expect(code, contains('catch (e: Exception)'));
-        expect(code, contains('result.error('));
+        expect(code, contains('result.error(normalizeErrorCode(e)'));
+      });
+
+      test('emits normalizeErrorCode helper', () {
+        final code = generator.generateKotlinCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'compute',
+              isStatic: true,
+              returnType: UtsType.primitive('int'),
+            ),
+          ],
+        ));
+        expect(code, contains('private fun normalizeErrorCode(e: Exception): String'));
+        expect(code, contains('is java.io.IOException -> "IO_ERROR"'));
+        expect(code, contains('is SecurityException -> "PERMISSION_DENIED"'));
+        expect(code, contains('is IllegalArgumentException -> "INVALID_ARGUMENT"'));
       });
 
       test('extracts Map arguments for object types', () {
@@ -374,7 +393,7 @@ void main() {
 
         // Channel registration
         expect(code,
-            contains('MethodChannel(binding.binaryMessenger, "date_fns")'));
+            contains('MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
 
         // Method dispatch
         expect(code, contains('"format" ->'));

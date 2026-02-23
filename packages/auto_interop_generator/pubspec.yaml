@@ -22,6 +22,7 @@ dependencies:
   code_builder: ^4.10.0
   dart_style: ^2.3.0
   json_annotation: ^4.9.0
+  crypto: ^3.0.0
 
 dev_dependencies:
   test: ^1.25.0
@@ -32,3 +33,4 @@ dev_dependencies:
 
 executables:
   generate: generate
+  ag: ag

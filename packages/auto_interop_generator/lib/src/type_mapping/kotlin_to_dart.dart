@@ -112,6 +112,16 @@ class KotlinToDartMapper {
       }
     }
 
+    // Handle Set<T> / MutableSet<T> → List<T>
+    if (kotlinType.startsWith('Set<') && kotlinType.endsWith('>')) {
+      final inner = kotlinType.substring(4, kotlinType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
+    }
+    if (kotlinType.startsWith('MutableSet<') && kotlinType.endsWith('>')) {
+      final inner = kotlinType.substring(11, kotlinType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
+    }
+
     // Handle Flow<T> → Stream<T>
     if (kotlinType.startsWith('Flow<') && kotlinType.endsWith('>')) {
       final inner = kotlinType.substring(5, kotlinType.length - 1);
@@ -141,11 +151,35 @@ class KotlinToDartMapper {
         return UtsType.primitive('bool', nullable: nullable);
       case 'ByteArray':
         return UtsType.primitive('Uint8List', nullable: nullable);
+      case 'URI':
+      case 'URL':
+        return UtsType.primitive('Uri', nullable: nullable);
+      case 'Duration':
+        return UtsType.primitive('Duration', nullable: nullable);
+      case 'BigDecimal':
+        return UtsType.primitive('double', nullable: nullable);
+      case 'BigInteger':
+        return UtsType.primitive('int', nullable: nullable);
+      case 'UUID':
+      case 'CharSequence':
+        return UtsType.primitive('String', nullable: nullable);
       case 'Unit':
       case 'Nothing':
         return UtsType.voidType();
       case 'Any':
         return UtsType.dynamicType(nullable: nullable);
+      // Native object handles — opaque platform types
+      case 'Exception':
+      case 'Throwable':
+      case 'IOException':
+      case 'InputStream':
+      case 'OutputStream':
+      case 'Certificate':
+      case 'SSLSocket':
+      case 'Executor':
+      case 'Context':
+      case 'Handler':
+        return UtsType.nativeObject(kotlinType, nullable: nullable);
       default:
         return UtsType.object(kotlinType, nullable: nullable);
     }

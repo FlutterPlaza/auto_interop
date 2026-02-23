@@ -47,6 +47,49 @@ void main() {
       );
       expect(exception.toString(), contains('Something went wrong'));
     });
+
+    group('stable error code helpers', () {
+      test('isMissingPlugin', () {
+        const e = AutoInteropException(code: 'MISSING_PLUGIN');
+        expect(e.isMissingPlugin, isTrue);
+        expect(e.isTimeout, isFalse);
+      });
+
+      test('isTimeout', () {
+        const e = AutoInteropException(code: 'TIMEOUT');
+        expect(e.isTimeout, isTrue);
+      });
+
+      test('isNetworkError', () {
+        const e = AutoInteropException(code: 'NETWORK_ERROR');
+        expect(e.isNetworkError, isTrue);
+      });
+
+      test('isIoError', () {
+        const e = AutoInteropException(code: 'IO_ERROR');
+        expect(e.isIoError, isTrue);
+      });
+
+      test('isPermissionDenied', () {
+        const e = AutoInteropException(code: 'PERMISSION_DENIED');
+        expect(e.isPermissionDenied, isTrue);
+      });
+
+      test('isCancelled', () {
+        const e = AutoInteropException(code: 'CANCELLED');
+        expect(e.isCancelled, isTrue);
+      });
+
+      test('isInvalidArgument', () {
+        const e = AutoInteropException(code: 'INVALID_ARGUMENT');
+        expect(e.isInvalidArgument, isTrue);
+      });
+
+      test('isNotFound', () {
+        const e = AutoInteropException(code: 'NOT_FOUND');
+        expect(e.isNotFound, isTrue);
+      });
+    });
   });
 
   group('ErrorHandler', () {

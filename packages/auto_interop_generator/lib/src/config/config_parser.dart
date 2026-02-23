@@ -10,7 +10,11 @@ class AutoInteropConfig {
   /// The native packages to generate bindings for.
   final List<PackageSpec> packages;
 
-  const AutoInteropConfig({required this.packages});
+  /// Optional custom path for the project-level overrides directory.
+  /// Defaults to `auto_interop_overrides/` when null.
+  final String? overridesDir;
+
+  const AutoInteropConfig({required this.packages, this.overridesDir});
 }
 
 /// Parses `auto_interop.yaml` configuration files.
@@ -30,8 +34,7 @@ class ConfigParser {
 
     final nativePackages = doc['native_packages'];
     if (nativePackages == null) {
-      throw ConfigParseException(
-          "Missing required field 'native_packages'");
+      throw ConfigParseException("Missing required field 'native_packages'");
     }
 
     if (nativePackages is! YamlList) {
@@ -42,20 +45,28 @@ class ConfigParser {
     for (var i = 0; i < nativePackages.length; i++) {
       final entry = nativePackages[i];
       if (entry is! YamlMap) {
-        throw ConfigParseException(
-            'Package entry at index $i must be a map');
+        throw ConfigParseException('Package entry at index $i must be a map');
       }
       packages.add(_parsePackageEntry(entry, i));
     }
 
-    return AutoInteropConfig(packages: packages);
+    // Parse optional overrides_dir
+    final overridesDirRaw = doc['overrides_dir'];
+    String? overridesDir;
+    if (overridesDirRaw != null) {
+      if (overridesDirRaw is! String) {
+        throw ConfigParseException("'overrides_dir' must be a string");
+      }
+      overridesDir = overridesDirRaw;
+    }
+
+    return AutoInteropConfig(packages: packages, overridesDir: overridesDir);
   }
 
   /// Parses a YAML file into a [AutoInteropConfig].
   AutoInteropConfig parseFile(File file) {
     if (!file.existsSync()) {
-      throw ConfigParseException(
-          'Config file not found: ${file.path}');
+      throw ConfigParseException('Config file not found: ${file.path}');
     }
     return parseYaml(file.readAsStringSync());
   }
@@ -112,11 +123,57 @@ class ConfigParser {
       }
     }
 
+    // Parse optional 'source_path' field
+    final sourcePath = entry['source_path'] as String?;
+
+    // Parse optional 'source_url' field
+    final sourceUrl = entry['source_url'] as String?;
+
+    // Parse optional 'custom_types' field
+    final customTypesRaw = entry['custom_types'];
+    final customTypes = <String, String>{};
+    if (customTypesRaw != null) {
+      if (customTypesRaw is! YamlMap) {
+        throw ConfigParseException(
+            "'custom_types' must be a map in package entry at index $index");
+      }
+      for (final e in customTypesRaw.entries) {
+        if (e.key is! String || e.value is! String) {
+          throw ConfigParseException(
+              "All custom_types entries must be string → string in package entry at index $index");
+        }
+        customTypes[e.key as String] = e.value as String;
+      }
+    }
+
+    // Parse optional 'maven_repositories' field
+    final mavenReposRaw = entry['maven_repositories'];
+    final mavenRepositories = <String>[];
+    if (mavenReposRaw != null) {
+      if (mavenReposRaw is! YamlList) {
+        throw ConfigParseException(
+            "'maven_repositories' must be a list in package entry at index $index");
+      }
+      for (final item in mavenReposRaw) {
+        if (item is! String) {
+          throw ConfigParseException(
+              "All maven_repositories entries must be strings in package entry at index $index");
+        }
+        mavenRepositories.add(item);
+      }
+    }
+
     return PackageSpec(
       source: _parseSource(sourceStr),
       package: packageName,
       version: version.toString(),
       imports: imports,
+      sourcePath: sourcePath,
+      sourceUrl: sourceUrl,
+      customTypes: customTypes,
+      mavenRepositories: mavenRepositories.isNotEmpty
+          ? mavenRepositories
+          : PackageSpec.defaultMavenRepositories,
     );
   }
 

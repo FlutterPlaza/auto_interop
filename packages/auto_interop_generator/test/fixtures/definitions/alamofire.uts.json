@@ -1,0 +1,534 @@
+{
+  "package": "Alamofire",
+  "source": "cocoapods",
+  "version": "5.9.0",
+  "classes": [
+    {
+      "name": "Session",
+      "kind": "concreteClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "request",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [
+            {
+              "name": "url",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null,
+              "nativeLabel": "_"
+            },
+            {
+              "name": "method",
+              "type": {
+                "kind": "enumType",
+                "name": "HTTPMethod",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            },
+            {
+              "name": "headers",
+              "type": {
+                "kind": "map",
+                "name": "Map",
+                "nullable": true,
+                "ref": null,
+                "typeArguments": [
+                  {
+                    "kind": "primitive",
+                    "name": "String",
+                    "nullable": false,
+                    "ref": null,
+                    "typeArguments": null,
+                    "parameterTypes": null,
+                    "returnType": null
+                  },
+                  {
+                    "kind": "primitive",
+                    "name": "String",
+                    "nullable": false,
+                    "ref": null,
+                    "typeArguments": null,
+                    "parameterTypes": null,
+                    "returnType": null
+                  }
+                ],
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": true,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null,
+              "nativeType": "HTTPHeaders"
+            }
+          ],
+          "returnType": {
+            "kind": "object",
+            "name": "DataRequest",
+            "nullable": false,
+            "ref": "DataRequest",
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Makes an HTTP request."
+        },
+        {
+          "name": "download",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "url",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            },
+            {
+              "name": "destination",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": true,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": true,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Downloads a file from a URL.",
+          "nativeBody": {
+            "swift": "let url = args[\"url\"] as! String\nlet destination = args[\"destination\"] as? String\nlet handle = args[\"_handle\"] as! String\nlet instance = instances[handle] as! Session\nlet downloadRequest = instance.download(url)\ndownloadRequest.responseData { response in\n    switch response.result {\n    case .success(let data):\n        if let dest = destination {\n            try? data.write(to: URL(fileURLWithPath: dest))\n            DispatchQueue.main.async { result(dest) }\n        } else {\n            DispatchQueue.main.async { result(\"downloaded \\(data.count) bytes\") }\n        }\n    case .failure(let error):\n        DispatchQueue.main.async {\n            result(FlutterError(code: \"ALAMOFIRE_ERROR\", message: error.localizedDescription, details: nil))\n        }\n    }\n}"
+          }
+        },
+        {
+          "name": "upload",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [
+            {
+              "name": "data",
+              "type": {
+                "kind": "primitive",
+                "name": "Uint8List",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            },
+            {
+              "name": "url",
+              "type": {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              "isOptional": false,
+              "isNamed": false,
+              "defaultValue": null,
+              "documentation": null
+            }
+          ],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Uploads data to a URL.",
+          "nativeBody": {
+            "swift": "let data = args[\"data\"] as! FlutterStandardTypedData\nlet url = args[\"url\"] as! String\nlet handle = args[\"_handle\"] as! String\nlet instance = instances[handle] as! Session\ninstance.upload(data.data, to: url).responseData { response in\n    switch response.result {\n    case .success:\n        DispatchQueue.main.async { result(\"uploaded \\(data.data.count) bytes\") }\n    case .failure(let error):\n        DispatchQueue.main.async {\n            result(FlutterError(code: \"ALAMOFIRE_ERROR\", message: error.localizedDescription, details: nil))\n        }\n    }\n}"
+          }
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Manages HTTP requests with session management."
+    },
+    {
+      "name": "DataRequest",
+      "kind": "abstractClass",
+      "fields": [],
+      "methods": [
+        {
+          "name": "response",
+          "isStatic": false,
+          "isAsync": true,
+          "parameters": [],
+          "returnType": {
+            "kind": "future",
+            "name": "Future",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "object",
+                "name": "DataResponse",
+                "nullable": false,
+                "ref": "DataResponse",
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Adds a response handler.",
+          "nativeBody": {
+            "swift": "let handle = args[\"_handle\"] as! String\nlet instance = instances[handle] as! Alamofire.DataRequest\ninstance.responseData { response in\n    var dict: [String: Any] = [:]\n    if let data = response.data {\n        dict[\"data\"] = FlutterStandardTypedData(bytes: data)\n    }\n    dict[\"statusCode\"] = response.response?.statusCode ?? 0\n    var headerDict: [String: String] = [:]\n    if let allHeaders = response.response?.allHeaderFields {\n        for (key, value) in allHeaders {\n            headerDict[String(describing: key)] = String(describing: value)\n        }\n    }\n    dict[\"headers\"] = headerDict\n    DispatchQueue.main.async {\n        result(dict)\n    }\n}"
+          }
+        },
+        {
+          "name": "cancel",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Cancels the request."
+        },
+        {
+          "name": "resume",
+          "isStatic": false,
+          "isAsync": false,
+          "parameters": [],
+          "returnType": {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "documentation": "Resumes the request."
+        }
+      ],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents an HTTP data request."
+    }
+  ],
+  "functions": [],
+  "types": [
+    {
+      "name": "URLRequestConfig",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "url",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "The request URL."
+        },
+        {
+          "name": "method",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "The HTTP method."
+        },
+        {
+          "name": "headers",
+          "type": {
+            "kind": "map",
+            "name": "Map",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Optional request headers."
+        },
+        {
+          "name": "body",
+          "type": {
+            "kind": "primitive",
+            "name": "Uint8List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Optional request body."
+        },
+        {
+          "name": "timeoutInterval",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": false,
+          "defaultValue": null,
+          "documentation": "Timeout interval in seconds."
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Configuration for a URL request."
+    },
+    {
+      "name": "DataResponse",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "data",
+          "type": {
+            "kind": "primitive",
+            "name": "Uint8List",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": true,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "The response data."
+        },
+        {
+          "name": "statusCode",
+          "type": {
+            "kind": "primitive",
+            "name": "int",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "The HTTP status code."
+        },
+        {
+          "name": "headers",
+          "type": {
+            "kind": "map",
+            "name": "Map",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": [
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": false,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Response headers."
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Represents the response from an HTTP request."
+    }
+  ],
+  "enums": [
+    {
+      "name": "HTTPMethod",
+      "values": [
+        {
+          "name": "get",
+          "rawValue": "get",
+          "documentation": null
+        },
+        {
+          "name": "post",
+          "rawValue": "post",
+          "documentation": null
+        },
+        {
+          "name": "put",
+          "rawValue": "put",
+          "documentation": null
+        },
+        {
+          "name": "delete",
+          "rawValue": "delete",
+          "documentation": null
+        },
+        {
+          "name": "patch",
+          "rawValue": "patch",
+          "documentation": null
+        },
+        {
+          "name": "head",
+          "rawValue": "head",
+          "documentation": null
+        },
+        {
+          "name": "options",
+          "rawValue": "options",
+          "documentation": null
+        }
+      ],
+      "documentation": "HTTP methods supported by Alamofire."
+    }
+  ]
+}

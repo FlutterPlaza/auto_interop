@@ -47,6 +47,14 @@ class UnifiedTypeSchema {
   /// Enum definitions.
   final List<UtsEnum> enums;
 
+  /// Platform-specific additional imports for nativeBody code.
+  /// Keys are platform names (e.g. "swift", "kotlin"), values are import strings.
+  final Map<String, List<String>>? nativeImports;
+
+  /// Platform-specific additional instance fields for the plugin class.
+  /// Keys are platform names, values are field declaration strings.
+  final Map<String, List<String>>? nativeFields;
+
   const UnifiedTypeSchema({
     required this.package,
     required this.source,
@@ -55,6 +63,8 @@ class UnifiedTypeSchema {
     this.functions = const [],
     this.types = const [],
     this.enums = const [],
+    this.nativeImports,
+    this.nativeFields,
   });
 
   /// Returns all type names that are defined in this schema.

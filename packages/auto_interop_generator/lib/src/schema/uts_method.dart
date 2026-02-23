@@ -25,6 +25,14 @@ class UtsParameter {
   /// Documentation for this parameter.
   final String? documentation;
 
+  /// Native external parameter label (Swift only).
+  /// `"_"` means unlabeled first parameter, `null` means use param name.
+  final String? nativeLabel;
+
+  /// Native wrapper type for conversion.
+  /// When set, generates `NativeType(channelValue)` conversion in glue code.
+  final String? nativeType;
+
   const UtsParameter({
     required this.name,
     required this.type,
@@ -32,6 +40,8 @@ class UtsParameter {
     this.isNamed = false,
     this.defaultValue,
     this.documentation,
+    this.nativeLabel,
+    this.nativeType,
   });
 
   factory UtsParameter.fromJson(Map<String, dynamic> json) =>
@@ -64,6 +74,12 @@ class UtsMethod {
   /// Documentation for this method.
   final String? documentation;
 
+  /// Platform-specific native method body override.
+  /// When present, the generator uses this code verbatim instead of
+  /// auto-generating the native call. Keys are platform names:
+  /// 'swift', 'kotlin', 'js'.
+  final Map<String, String>? nativeBody;
+
   const UtsMethod({
     required this.name,
     this.isStatic = false,
@@ -71,6 +87,7 @@ class UtsMethod {
     this.parameters = const [],
     required this.returnType,
     this.documentation,
+    this.nativeBody,
   });
 
   factory UtsMethod.fromJson(Map<String, dynamic> json) =>

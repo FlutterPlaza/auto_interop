@@ -18,3 +18,7 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Build cache
+.auto_interop_cache.json
+.auto_interop_cache/

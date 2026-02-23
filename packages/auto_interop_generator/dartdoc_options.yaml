@@ -1,0 +1,22 @@
+dartdoc:
+  name: auto_interop_generator
+  categories:
+    "Config":
+      markdown: doc/categories/config.md
+    "Parsers":
+      markdown: doc/categories/parsers.md
+    "Generators":
+      markdown: doc/categories/generators.md
+    "Schema":
+      markdown: doc/categories/schema.md
+    "Analyzer":
+      markdown: doc/categories/analyzer.md
+    "Cache":
+      markdown: doc/categories/cache.md
+  categoryOrder:
+    - "Config"
+    - "Schema"
+    - "Parsers"
+    - "Generators"
+    - "Analyzer"
+    - "Cache"

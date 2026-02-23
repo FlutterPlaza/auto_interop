@@ -193,7 +193,7 @@ class UtsType {
         final ret = returnType?.toDartType() ?? 'void';
         return '$ret Function($params)$suffix';
       case UtsTypeKind.nativeObject:
-        return 'NativeObject<$name>$suffix';
+        return '$name$suffix';
       case UtsTypeKind.enumType:
         return '$name$suffix';
       case UtsTypeKind.voidType:
@@ -215,10 +215,31 @@ class UtsType {
           kind == other.kind &&
           name == other.name &&
           nullable == other.nullable &&
-          ref == other.ref;
+          ref == other.ref &&
+          _listEquals(typeArguments, other.typeArguments) &&
+          _listEquals(parameterTypes, other.parameterTypes) &&
+          returnType == other.returnType;
 
   @override
-  int get hashCode => Object.hash(kind, name, nullable, ref);
+  int get hashCode => Object.hash(
+        kind,
+        name,
+        nullable,
+        ref,
+        typeArguments == null ? null : Object.hashAll(typeArguments!),
+        parameterTypes == null ? null : Object.hashAll(parameterTypes!),
+        returnType,
+      );
+
+  static bool _listEquals(List<UtsType>? a, List<UtsType>? b) {
+    if (identical(a, b)) return true;
+    if (a == null || b == null) return a == b;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 
   @override
   String toString() => 'UtsType(${toDartType()})';

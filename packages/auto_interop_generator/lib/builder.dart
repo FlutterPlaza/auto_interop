@@ -13,10 +13,15 @@
 /// ```
 library;
 
-import 'package:build/build.dart';
+import 'dart:isolate';
 
+import 'package:build/build.dart';
+import 'package:path/path.dart' as p;
+
+import 'src/analyzer/api_surface_analyzer.dart';
 import 'src/config/config_parser.dart';
 import 'src/generators/dart_generator.dart';
+import 'src/resolver/override_loader.dart';
 import 'src/type_definitions/type_definition_loader.dart';
 
 /// Builder factory for build_runner.
@@ -34,6 +39,18 @@ class AutoInteropBuilder implements Builder {
   final DartGenerator _dartGen = DartGenerator();
 
   AutoInteropBuilder(this.options);
+
+  /// Resolves the type definitions directory from the generator package.
+  Future<TypeDefinitionLoader> _createLoader() async {
+    final packageUri =
+        Uri.parse('package:auto_interop_generator/src/type_definitions/');
+    final resolved = await Isolate.resolvePackageUri(packageUri);
+    if (resolved != null) {
+      return TypeDefinitionLoader(definitionsDir: p.fromUri(resolved));
+    }
+    // Fallback to relative path
+    return TypeDefinitionLoader(definitionsDir: 'lib/src/type_definitions');
+  }
 
   @override
   Map<String, List<String>> get buildExtensions => {
@@ -65,16 +82,37 @@ class AutoInteropBuilder implements Builder {
     buffer.writeln("import 'package:auto_interop/auto_interop.dart';");
     buffer.writeln();
 
-    final loader = TypeDefinitionLoader(
-      definitionsDir: 'lib/src/type_definitions',
+    final loader = await _createLoader();
+    final overrideLoader = OverrideLoader(
+      projectDir: config.overridesDir ?? 'auto_interop_overrides',
     );
 
     for (final spec in config.packages) {
-      final schema = loader.loadForPackage(spec.package);
+      // Check overrides first (project then global), then fall back to loader
+      final overrideResult = overrideLoader.load(
+        spec.package,
+        source: spec.source.name,
+        version: spec.version,
+      );
+      final schema =
+          overrideResult?.schema ?? loader.loadForPackage(spec.package);
       if (schema == null) {
-        log.warning(
-            'No pre-built type definition for ${spec.package}. '
+        log.warning('No pre-built type definition for ${spec.package}. '
             'Run the CLI to parse and generate definitions first.');
+        continue;
+      }
+
+      // Run analyzer before generating
+      final analysisResult = const ApiSurfaceAnalyzer().analyze(schema);
+      for (final d in analysisResult.diagnostics) {
+        if (d.isError) {
+          log.severe('[${spec.package}] $d');
+        } else {
+          log.warning('[${spec.package}] $d');
+        }
+      }
+      if (analysisResult.hasErrors) {
+        log.severe('Skipping ${spec.package} due to analysis errors');
         continue;
       }
 

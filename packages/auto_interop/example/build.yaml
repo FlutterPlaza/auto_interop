@@ -1,0 +1,9 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - lib/**
+      - auto_interop.yaml
+    builders:
+      auto_interop_generator|auto_interop:
+        enabled: true

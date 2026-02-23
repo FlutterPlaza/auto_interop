@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  generator:
+    name: Generator package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/auto_interop_generator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Analyze
+        run: dart analyze --fatal-infos
+
+      - name: Run tests
+        run: dart test
+
+      - name: Generate API docs
+        run: dart doc
+
+      - name: Dry-run publish
+        run: dart pub publish --dry-run
+
+  runtime:
+    name: Runtime package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/auto_interop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Generate API docs
+        run: dart doc
+
+      - name: Dry-run publish
+        run: flutter pub publish --dry-run

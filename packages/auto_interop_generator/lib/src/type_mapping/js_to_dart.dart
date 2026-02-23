@@ -133,11 +133,17 @@ class JsToDartMapper {
   /// Handles generic types like `Array<T>`, `Map<K,V>`, `Promise<T>`,
   /// `ReadableStream<T>`.
   UtsType mapType(String jsType, {bool nullable = false}) {
-    // Handle nullable wrapper
-    if (jsType.endsWith(' | null') || jsType.endsWith(' | undefined')) {
-      final baseType =
-          jsType.replaceAll(' | null', '').replaceAll(' | undefined', '');
-      return mapType(baseType, nullable: true);
+    // Handle union types: string | number | null → pick first non-null type
+    if (jsType.contains('|')) {
+      final parts = jsType.split('|').map((s) => s.trim()).toList();
+      final isNullable = nullable ||
+          parts.contains('null') ||
+          parts.contains('undefined');
+      final nonNullParts =
+          parts.where((p) => p != 'null' && p != 'undefined').toList();
+
+      if (nonNullParts.isEmpty) return UtsType.voidType();
+      return mapType(nonNullParts.first, nullable: isNullable);
     }
 
     // Handle Array<T>
@@ -160,6 +166,12 @@ class JsToDartMapper {
     if (jsType.startsWith('ReadableStream<') && jsType.endsWith('>')) {
       final inner = jsType.substring(15, jsType.length - 1);
       return UtsType.stream(mapType(inner), nullable: nullable);
+    }
+
+    // Handle Set<T> → List<T>
+    if (jsType.startsWith('Set<') && jsType.endsWith('>')) {
+      final inner = jsType.substring(4, jsType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
     }
 
     // Handle Map/Record<K, V>
@@ -199,6 +211,19 @@ class JsToDartMapper {
       case 'ArrayBuffer':
       case 'Uint8Array':
         return UtsType.primitive('Uint8List', nullable: nullable);
+      case 'URL':
+        return UtsType.primitive('Uri', nullable: nullable);
+      case 'Blob':
+        return UtsType.primitive('Uint8List', nullable: nullable);
+      // Native object handles — opaque platform types
+      case 'Error':
+      case 'TypeError':
+      case 'Headers':
+      case 'Request':
+      case 'Response':
+      case 'AbortController':
+      case 'AbortSignal':
+        return UtsType.nativeObject(jsType, nullable: nullable);
       default:
         // Assume it's a named object/class type
         return UtsType.object(jsType, nullable: nullable);

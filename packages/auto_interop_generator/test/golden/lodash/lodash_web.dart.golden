@@ -3,13 +3,14 @@
 // Web JS interop bindings for lodash
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 @JS('lodash.chunk')
-external JSArray _jsChunk(JSArray array);
+external JSArray _jsChunk(JSArray array, JSNumber? size);
 @JS('lodash.uniq')
 external JSArray _jsUniq(JSArray array);
 @JS('lodash.get')
-external JSAny? _jsGet(JSAny? object, JSString path);
+external JSAny? _jsGet(JSAny? object, JSString path, JSAny?? defaultValue);
 @JS('lodash.isEmpty')
 external JSBoolean _jsIsEmpty(JSAny? value);
 @JS('lodash.clamp')
@@ -18,7 +19,7 @@ external JSNumber _jsClamp(JSNumber number, JSNumber lower, JSNumber upper);
 class Lodash {
   /// Creates an array of elements split into groups the length of size.
   static List<List<dynamic>> chunk(List<dynamic> array, {double? size}) {
-    final jsResult = _jsChunk(array.toJS);
+    final jsResult = _jsChunk(array.toJS, size?.toJS);
     return jsResult.toDart;
   }
 
@@ -29,8 +30,8 @@ class Lodash {
   }
 
   /// Gets the value at path of object.
-  static dynamic get(dynamic object, String path, {dynamic? defaultValue}) {
-    final jsResult = _jsGet(object.toJS, path.toJS);
+  static dynamic get(dynamic object, String path, {dynamic defaultValue}) {
+    final jsResult = _jsGet(object.toJS, path.toJS, defaultValue?.toJS);
     return jsResult.toDart;
   }
 

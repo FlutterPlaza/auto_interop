@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+import 'type_converter.dart';
+
 /// Manages Dart-to-native callbacks for auto_interop.
 ///
 /// When a Dart function is passed as a callback parameter to a native method,
@@ -73,23 +75,25 @@ class CallbackManager {
     }
 
     final args = call.arguments;
+    dynamic result;
     if (args is List) {
       switch (args.length) {
         case 0:
-          return Function.apply(callback, []);
+          result = Function.apply(callback, []);
         case 1:
-          return Function.apply(callback, [args[0]]);
+          result = Function.apply(callback, [args[0]]);
         case 2:
-          return Function.apply(callback, [args[0], args[1]]);
+          result = Function.apply(callback, [args[0], args[1]]);
         case 3:
-          return Function.apply(callback, [args[0], args[1], args[2]]);
+          result = Function.apply(callback, [args[0], args[1], args[2]]);
         default:
-          return Function.apply(callback, args);
+          result = Function.apply(callback, args);
       }
     } else if (args == null) {
-      return Function.apply(callback, []);
+      result = Function.apply(callback, []);
     } else {
-      return Function.apply(callback, [args]);
+      result = Function.apply(callback, [args]);
     }
+    return TypeConverter.toPlatform(result);
   }
 }

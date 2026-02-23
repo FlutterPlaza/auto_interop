@@ -35,24 +35,39 @@ class AutoInteropLifecycle {
   ///
   /// This must be called before using any native bridge channels.
   /// It is safe to call multiple times — subsequent calls are no-ops.
+  /// If no native lifecycle handler is registered, initialization
+  /// succeeds silently — individual channels handle their own setup.
   Future<void> initialize() async {
     if (_initialized) return;
-    await _lifecycleChannel.invokeMethod<void>('initialize');
+    try {
+      await _lifecycleChannel.invokeMethod<void>('initialize');
+    } on MissingPluginException {
+      // No native lifecycle handler registered — this is fine.
+      // Individual channels will handle their own setup.
+    }
     _initialized = true;
   }
 
   /// Disposes all native bridge resources.
   Future<void> dispose() async {
     if (!_initialized) return;
-    await _lifecycleChannel.invokeMethod<void>('dispose');
+    try {
+      await _lifecycleChannel.invokeMethod<void>('dispose');
+    } on MissingPluginException {
+      // No native lifecycle handler registered.
+    }
     _initialized = false;
   }
 
   /// Releases a native object handle.
-  Future<void> releaseObject(String channelName, int handle) async {
-    await _lifecycleChannel.invokeMethod<void>('releaseObject', {
-      'channel': channelName,
-      'handle': handle,
-    });
+  Future<void> releaseObject(String channelName, String handle) async {
+    try {
+      await _lifecycleChannel.invokeMethod<void>('releaseObject', {
+        'channel': channelName,
+        'handle': handle,
+      });
+    } on MissingPluginException {
+      // No native lifecycle handler registered.
+    }
   }
 }

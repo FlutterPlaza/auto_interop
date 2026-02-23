@@ -118,6 +118,68 @@ void main() {
       });
     });
 
+    group('SDK primitive types', () {
+      test('maps URI to Uri', () {
+        expect(mapper.mapType('URI').toDartType(), 'Uri');
+      });
+
+      test('maps URL to Uri', () {
+        expect(mapper.mapType('URL').toDartType(), 'Uri');
+      });
+
+      test('maps Duration to Duration', () {
+        expect(mapper.mapType('Duration').toDartType(), 'Duration');
+      });
+
+      test('maps BigDecimal to double', () {
+        expect(mapper.mapType('BigDecimal').toDartType(), 'double');
+      });
+
+      test('maps BigInteger to int', () {
+        expect(mapper.mapType('BigInteger').toDartType(), 'int');
+      });
+
+      test('maps UUID to String', () {
+        expect(mapper.mapType('UUID').toDartType(), 'String');
+      });
+
+      test('maps CharSequence to String', () {
+        expect(mapper.mapType('CharSequence').toDartType(), 'String');
+      });
+    });
+
+    group('native object types', () {
+      test('maps Exception to nativeObject', () {
+        final result = mapper.mapType('Exception');
+        expect(result.kind, UtsTypeKind.nativeObject);
+        expect(result.name, 'Exception');
+      });
+
+      test('maps IOException to nativeObject', () {
+        final result = mapper.mapType('IOException');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+
+      test('maps Context to nativeObject', () {
+        final result = mapper.mapType('Context');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+    });
+
+    group('set types', () {
+      test('maps Set<String> to List<String>', () {
+        final result = mapper.mapType('Set<String>');
+        expect(result.kind, UtsTypeKind.list);
+        expect(result.toDartType(), 'List<String>');
+      });
+
+      test('maps MutableSet<Int> to List<int>', () {
+        final result = mapper.mapType('MutableSet<Int>');
+        expect(result.kind, UtsTypeKind.list);
+        expect(result.toDartType(), 'List<int>');
+      });
+    });
+
     group('object types', () {
       test('maps unknown type to object', () {
         final result = mapper.mapType('OkHttpClient');

@@ -7,12 +7,15 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import com.google.code.gson.*
 
 class ComGoogleCodeGsonGsonPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
+    private val instances = mutableMapOf<String, Any>()
+    private var nextHandle = 0
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(binding.binaryMessenger, "com_google_code_gson_gson")
+        channel = MethodChannel(binding.binaryMessenger, "auto_interop/com_google_code_gson_gson")
         channel.setMethodCallHandler(this)
     }
 
@@ -20,76 +23,138 @@ class ComGoogleCodeGsonGsonPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
+    private fun createHandle(obj: Any): String {
+        val handle = "h_${nextHandle}"
+        nextHandle++
+        instances[handle] = obj
+        return handle
+    }
+
+    private fun releaseHandle(handle: String) {
+        instances.remove(handle)
+    }
+
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
+            "Gson._create" -> {
+                val instance = Gson()
+                val handle = createHandle(instance)
+                result.success(handle)
+            }
             "Gson.fromJson" -> {
                 val json = call.argument<String>("json")!!
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as Gson
+                    val nativeResult = instance.fromJson(json = json)
+                    result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Gson.toJson" -> {
                 val src = call.argument<String>("src")!!
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as Gson
+                    val nativeResult = instance.toJson(src = src)
+                    result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
+            }
+            "GsonBuilder._create" -> {
+                val instance = GsonBuilder()
+                val handle = createHandle(instance)
+                result.success(handle)
             }
             "GsonBuilder.setPrettyPrinting" -> {
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as GsonBuilder
+                    val nativeResult = instance.setPrettyPrinting()
+                    result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "GsonBuilder.setDateFormat" -> {
                 val pattern = call.argument<String>("pattern")!!
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as GsonBuilder
+                    val nativeResult = instance.setDateFormat(pattern = pattern)
+                    result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "GsonBuilder.create" -> {
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as GsonBuilder
+                    val nativeResult = instance.create()
+                    result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "JsonElement.getAsString" -> {
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as JsonElement
+                    val nativeResult = instance.getAsString()
+                    result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "JsonElement.getAsInt" -> {
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as JsonElement
+                    val nativeResult = instance.getAsInt()
+                    result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "JsonElement.isJsonObject" -> {
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as JsonElement
+                    val nativeResult = instance.isJsonObject()
+                    result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
+            "_dispose" -> {
+                val handle = call.argument<String>("_handle")!!
+                releaseHandle(handle)
+                result.success(null)
+            }
             else -> result.notImplemented()
+        }
+    }
+
+    private fun normalizeErrorCode(e: Exception): String {
+        return when (e) {
+            is java.io.IOException -> "IO_ERROR"
+            is java.net.SocketException -> "NETWORK_ERROR"
+            is java.net.SocketTimeoutException -> "TIMEOUT"
+            is java.util.concurrent.TimeoutException -> "TIMEOUT"
+            is SecurityException -> "PERMISSION_DENIED"
+            is IllegalArgumentException -> "INVALID_ARGUMENT"
+            is IllegalStateException -> "INVALID_STATE"
+            is UnsupportedOperationException -> "UNSUPPORTED"
+            is NullPointerException -> "NULL_REFERENCE"
+            is IndexOutOfBoundsException -> "OUT_OF_RANGE"
+            is ClassCastException -> "TYPE_ERROR"
+            is NoSuchElementException -> "NOT_FOUND"
+            is ConcurrentModificationException -> "CONCURRENT_MODIFICATION"
+            is kotlinx.coroutines.CancellationException -> "CANCELLED"
+            else -> e::class.simpleName ?: "UNKNOWN"
         }
     }
 }

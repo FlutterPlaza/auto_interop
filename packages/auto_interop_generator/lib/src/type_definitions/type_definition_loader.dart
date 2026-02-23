@@ -5,11 +5,9 @@ import 'package:path/path.dart' as p;
 
 import '../schema/unified_type_schema.dart';
 
-/// Loads pre-built UTS type definitions from .uts.json files.
+/// Loads UTS type definitions from .uts.json files on disk.
 ///
-/// Pre-built type definitions allow skipping the parse step for popular
-/// packages. When a package has a pre-built definition that matches the
-/// requested version, it can be used directly.
+/// Used for loading override files and test fixture definitions.
 class TypeDefinitionLoader {
   /// The directory containing .uts.json files.
   final String definitionsDir;
@@ -17,17 +15,7 @@ class TypeDefinitionLoader {
   /// Creates a loader that reads from the given directory.
   TypeDefinitionLoader({required this.definitionsDir});
 
-  /// Creates a loader using the bundled type definitions.
-  factory TypeDefinitionLoader.bundled() {
-    // Resolve relative to this file's package location
-    final scriptDir = p.dirname(Platform.script.toFilePath());
-    final packageRoot = p.normalize(p.join(scriptDir, '..'));
-    return TypeDefinitionLoader(
-      definitionsDir: p.join(packageRoot, 'lib', 'src', 'type_definitions'),
-    );
-  }
-
-  /// Lists all available pre-built type definition files.
+  /// Lists all available type definition files.
   List<String> listAvailable() {
     final dir = Directory(definitionsDir);
     if (!dir.existsSync()) return [];
@@ -40,7 +28,7 @@ class TypeDefinitionLoader {
       ..sort();
   }
 
-  /// Loads a pre-built type definition by its file name (without extension).
+  /// Loads a type definition by its file name (without extension).
   ///
   /// Returns null if no definition is found.
   UnifiedTypeSchema? load(String name) {
@@ -50,7 +38,7 @@ class TypeDefinitionLoader {
     return UnifiedTypeSchema.fromJson(json);
   }
 
-  /// Loads a pre-built type definition that matches the given package name.
+  /// Loads a type definition that matches the given package name.
   ///
   /// Tries common naming conventions (snake_case, lowercase).
   UnifiedTypeSchema? loadForPackage(String packageName) {
@@ -82,7 +70,7 @@ class TypeDefinitionLoader {
     return null;
   }
 
-  /// Saves a UTS schema as a pre-built type definition.
+  /// Saves a UTS schema as a type definition.
   void save(String name, UnifiedTypeSchema schema) {
     final dir = Directory(definitionsDir);
     if (!dir.existsSync()) dir.createSync(recursive: true);

@@ -715,7 +715,8 @@ void main() {
         expect(code, isNot(contains('PointInterface')));
       });
 
-      test('abstract class becomes abstract interface class', () {
+      test('abstract class with instance methods becomes concrete handle proxy',
+          () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'test',
           source: PackageSource.npm,
@@ -734,10 +735,15 @@ void main() {
             ),
           ],
         ));
-        expect(
-            code, contains('abstract interface class Repository {'));
+        // Abstract classes with instance methods become concrete handle proxies
+        expect(code, contains('class Repository {'));
+        expect(code, contains('final String _handle;'));
+        expect(code, contains('static Repository fromHandle('));
+        expect(code, contains("'_handle': _handle,"));
         // Abstract classes don't get a separate RepositoryInterface
         expect(code, isNot(contains('RepositoryInterface')));
+        // Abstract classes don't get a create() factory
+        expect(code, isNot(contains('create()')));
       });
 
       test(
@@ -763,6 +769,431 @@ void main() {
         ));
         expect(code, isNot(contains('UtilsInterface')));
         expect(code, contains('class Utils {'));
+      });
+    });
+
+    group('Uri serialization', () {
+      test('serializes Uri parameters with .toString()', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'open',
+              isStatic: true,
+              parameters: [
+                UtsParameter(
+                    name: 'url', type: UtsType.primitive('Uri')),
+              ],
+              returnType: UtsType.voidType(),
+            ),
+          ],
+        ));
+        expect(code, contains('url.toString()'));
+      });
+
+      test('deserializes Uri return values with Uri.parse()', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getUrl',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.primitive('Uri'),
+            ),
+          ],
+        ));
+        expect(code, contains("invoke<String>('getUrl')"));
+        expect(code, contains('Uri.parse(result)'));
+      });
+
+      test('deserializes Uri from map fields with Uri.parse()', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Link',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'url', type: UtsType.primitive('Uri')),
+              ],
+            ),
+          ],
+        ));
+        expect(code, contains("Uri.parse(map['url'] as String)"));
+        expect(code, contains("'url': url.toString()"));
+      });
+    });
+
+    group('nativeObject serialization', () {
+      test('serializes nativeObject parameters with ._handle', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'send',
+              isStatic: true,
+              parameters: [
+                UtsParameter(
+                    name: 'request',
+                    type: UtsType.nativeObject('URLRequest')),
+              ],
+              returnType: UtsType.voidType(),
+            ),
+          ],
+        ));
+        expect(code, contains('request._handle'));
+      });
+
+      test('deserializes nativeObject from map fields with fromHandle', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Container',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(
+                    name: 'error',
+                    type: UtsType.nativeObject('NSError')),
+              ],
+            ),
+          ],
+        ));
+        expect(code, contains("NSError.fromHandle(map['error'] as String)"));
+        expect(code, contains("'error': error._handle"));
+      });
+    });
+
+    group('stub class generation', () {
+      test('generates opaque stub for external nativeObject types', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getError',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.nativeObject('NSError'),
+            ),
+          ],
+        ));
+        expect(code, contains('class NSError {'));
+        expect(code, contains('final String _handle;'));
+        expect(code, contains('NSError._(this._handle);'));
+        expect(code, contains('static NSError fromHandle(String handle)'));
+      });
+
+      test('does not generate stub for defined types', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'MyClass',
+              methods: [
+                UtsMethod(
+                  name: 'doWork',
+                  returnType: UtsType.nativeObject('MyClass'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // MyClass is defined in schema, so no stub should be generated
+        // It should appear once as the actual class (+ interface), not as a stub
+        // Use word boundary to avoid matching MyClassInterface
+        expect(
+            RegExp(r'class MyClass\b[^I]').allMatches(code).length, equals(1));
+      });
+
+      test('emits import for custom type overrides instead of stub', () {
+        final code = generator.generateDartCode(
+          UnifiedTypeSchema(
+            package: 'test',
+            source: PackageSource.npm,
+            version: '1.0.0',
+            functions: [
+              UtsMethod(
+                name: 'getReq',
+                isStatic: true,
+                parameters: [],
+                returnType: UtsType.nativeObject('URLRequest'),
+              ),
+            ],
+          ),
+          customTypes: {'URLRequest': 'lib/types/networking.dart'},
+        );
+        expect(code, contains("import 'lib/types/networking.dart';"));
+        expect(code, isNot(contains('class URLRequest {')));
+      });
+    });
+
+    group('double-nullable fix', () {
+      test('does not produce double ?? for already-nullable optional params', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'doWork',
+              isStatic: true,
+              parameters: [
+                UtsParameter(
+                  name: 'error',
+                  type: UtsType.object('AFError', nullable: true),
+                  isNamed: true,
+                  isOptional: true,
+                ),
+              ],
+              returnType: UtsType.voidType(),
+            ),
+          ],
+          types: [
+            UtsClass(
+              name: 'AFError',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'message', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
+        ));
+        // Should contain AFError? but NOT AFError??
+        expect(code, contains('AFError?'));
+        expect(code, isNot(contains('AFError??')));
+      });
+
+      test('still makes non-nullable optional params nullable', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'doWork',
+              isStatic: true,
+              parameters: [
+                UtsParameter(
+                  name: 'name',
+                  type: UtsType.primitive('String'),
+                  isNamed: true,
+                  isOptional: true,
+                ),
+              ],
+              returnType: UtsType.voidType(),
+            ),
+          ],
+        ));
+        expect(code, contains('String? name'));
+      });
+    });
+
+    group('empty enum fix', () {
+      test('generates placeholder for enums with zero values', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          enums: [
+            UtsEnum(name: 'EmptyEnum', values: []),
+          ],
+        ));
+        expect(code, contains('enum EmptyEnum'));
+        expect(code, contains('_placeholder;'));
+      });
+
+      test('still generates enums with values normally', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          enums: [
+            UtsEnum(name: 'Color', values: [
+              UtsEnumValue(name: 'red'),
+            ]),
+          ],
+        ));
+        expect(code, contains('enum Color'));
+        expect(code, isNot(contains('_placeholder')));
+      });
+    });
+
+    group('Object method conflict fix', () {
+      test('filters toString from interface methods', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'MyObj',
+              methods: [
+                UtsMethod(
+                  name: 'toString',
+                  returnType: UtsType.primitive('String'),
+                ),
+                UtsMethod(
+                  name: 'doWork',
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // Interface should not contain toString
+        final interfaceBlock = code.substring(
+          code.indexOf('abstract interface class MyObjInterface'),
+          code.indexOf('}', code.indexOf('abstract interface class MyObjInterface')) + 1,
+        );
+        expect(interfaceBlock, isNot(contains('toString')));
+        expect(interfaceBlock, contains('doWork'));
+      });
+
+      test('filters hashCode from class methods', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'MyObj',
+              methods: [
+                UtsMethod(
+                  name: 'hashCode',
+                  returnType: UtsType.primitive('int'),
+                ),
+                UtsMethod(
+                  name: 'doWork',
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // Class body should not contain hashCode method
+        expect(code, isNot(contains("'MyObj.hashCode'")));
+        expect(code, contains("'MyObj.doWork'"));
+      });
+    });
+
+    group('empty data class fix', () {
+      test('generates toMap for zero-field data class', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'FormatOptions',
+              kind: UtsClassKind.dataClass,
+              fields: [],
+            ),
+          ],
+        ));
+        expect(code, contains('class FormatOptions'));
+        expect(code, contains('FormatOptions.fromMap'));
+        expect(code, contains('Map<String, dynamic> toMap()'));
+      });
+
+      test('empty data class toMap returns empty map', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Empty',
+              kind: UtsClassKind.dataClass,
+              fields: [],
+            ),
+          ],
+        ));
+        expect(code, contains('Map<String, dynamic> toMap() => {'));
+      });
+    });
+
+    group('dart:core stub blocklist fix', () {
+      test('does not generate stub for Duration', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getTimeout',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.nativeObject('Duration'),
+            ),
+          ],
+        ));
+        expect(code, isNot(contains('class Duration {')));
+      });
+
+      test('does not generate stub for Error', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getError',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.nativeObject('Error'),
+            ),
+          ],
+        ));
+        expect(code, isNot(contains('class Error {')));
+      });
+
+      test('does not generate stub for Exception', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getException',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.nativeObject('Exception'),
+            ),
+          ],
+        ));
+        expect(code, isNot(contains('class Exception {')));
+      });
+
+      test('still generates stub for non-dart:core native objects', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'getReq',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.nativeObject('URLRequest'),
+            ),
+          ],
+        ));
+        expect(code, contains('class URLRequest {'));
       });
     });
 

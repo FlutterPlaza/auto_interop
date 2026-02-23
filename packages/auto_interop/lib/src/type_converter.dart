@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 /// Converts Dart types to platform channel-compatible types and back.
 ///
 /// Platform channels support a limited set of types. This class handles
@@ -7,6 +9,9 @@ class TypeConverter {
   static Object? toPlatform(Object? value) {
     if (value == null) return null;
     if (value is DateTime) return value.toUtc().toIso8601String();
+    if (value is Duration) return value.inMicroseconds;
+    if (value is Uri) return value.toString();
+    if (value is Uint8List) return value;
     if (value is List) return value.map(toPlatform).toList();
     if (value is Map) {
       return value.map(
@@ -26,16 +31,17 @@ class TypeConverter {
     if (dartType == 'DateTime' && value is String) {
       return DateTime.parse(value);
     }
+    // Preserve typed byte data from platform channels (FlutterStandardTypedData)
+    if (value is Uint8List) return value;
     if (value is List) {
       return value.map((e) => fromPlatform(e, dartType: dartType)).toList();
     }
     if (value is Map) {
-      return value.map(
-        (key, val) => MapEntry(
-          fromPlatform(key),
-          fromPlatform(val),
-        ),
-      );
+      return <dynamic, dynamic>{
+        for (final entry in value.entries)
+          fromPlatform(entry.key, dartType: dartType):
+              fromPlatform(entry.value),
+      };
     }
     return value;
   }

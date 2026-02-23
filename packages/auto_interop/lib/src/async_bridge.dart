@@ -39,6 +39,12 @@ class AutoInteropEventChannel {
       if (error is PlatformException) {
         throw AutoInteropException.fromPlatformException(error);
       }
+      if (error is MissingPluginException) {
+        throw AutoInteropException(
+          code: 'MISSING_PLUGIN',
+          message: error.message,
+        );
+      }
       throw error;
     });
   }

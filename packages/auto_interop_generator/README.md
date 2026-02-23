@@ -539,7 +539,7 @@ class FormatOptions {
 **For classes with methods:**
 ```dart
 class DateFns {
-  static const _channel = AutoInteropChannel('date_fns');
+  static final _channel = AutoInteropChannel('date_fns');
 
   static Future<String> format(DateTime date, String formatStr) async {
     final result = await _channel.invoke<String>('format', {
@@ -582,7 +582,11 @@ static Stream<double> observe(String sensor) {
 - Argument extraction with `call.argument<Type>("name")`
 - Type conversion for `DateTime` (ISO 8601 via `SimpleDateFormat`)
 - Error handling with `result.error()`
-- `// TODO` placeholders for actual native library calls
+- Instance registry for object handle management
+- Real native library calls with proper import, construction, and method dispatch
+- Coroutine support for `suspend` methods via `CoroutineScope`
+- Data class encode/decode helpers for structured types
+- Enum string↔value conversion
 
 ### Swift Glue Generator
 
@@ -594,7 +598,11 @@ static Stream<double> observe(String sensor) {
 - Argument extraction with `args["name"] as! Type`
 - Type conversion for `DateTime` (ISO 8601 via `ISO8601DateFormatter`)
 - Error handling with `FlutterError`
-- `// TODO` placeholders for actual native library calls
+- Instance registry for object handle management
+- Real native library calls with proper import, construction, and method dispatch
+- `Task { }` wrapping for `async` methods with `DispatchQueue.main.async` result delivery
+- Struct encode/decode helpers for structured types
+- Enum string↔value conversion
 
 ### JS Glue Generator
 

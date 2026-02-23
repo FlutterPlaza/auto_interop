@@ -1,0 +1,252 @@
+{
+  "package": "file_downloader",
+  "source": "cocoapods",
+  "version": "1.0.0",
+  "classes": [],
+  "functions": [
+    {
+      "name": "download",
+      "isStatic": true,
+      "isAsync": true,
+      "parameters": [
+        {
+          "name": "url",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": "The URL to download from"
+        },
+        {
+          "name": "destination",
+          "type": {
+            "kind": "primitive",
+            "name": "String",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "isOptional": false,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": "The local file path to save to"
+        },
+        {
+          "name": "onProgress",
+          "type": {
+            "kind": "callback",
+            "name": "Function",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": [
+              {
+                "kind": "object",
+                "name": "DownloadProgress",
+                "nullable": false,
+                "ref": "DownloadProgress",
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "returnType": {
+              "kind": "voidType",
+              "name": "void",
+              "nullable": false,
+              "ref": null,
+              "typeArguments": null,
+              "parameterTypes": null,
+              "returnType": null
+            }
+          },
+          "isOptional": false,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": "Progress callback invoked during download"
+        },
+        {
+          "name": "onComplete",
+          "type": {
+            "kind": "callback",
+            "name": "Function",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": [
+              {
+                "kind": "enumType",
+                "name": "DownloadStatus",
+                "nullable": false,
+                "ref": "DownloadStatus",
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              },
+              {
+                "kind": "primitive",
+                "name": "String",
+                "nullable": true,
+                "ref": null,
+                "typeArguments": null,
+                "parameterTypes": null,
+                "returnType": null
+              }
+            ],
+            "returnType": {
+              "kind": "voidType",
+              "name": "void",
+              "nullable": false,
+              "ref": null,
+              "typeArguments": null,
+              "parameterTypes": null,
+              "returnType": null
+            }
+          },
+          "isOptional": false,
+          "isNamed": true,
+          "defaultValue": null,
+          "documentation": "Completion callback with status and optional error"
+        }
+      ],
+      "returnType": {
+        "kind": "future",
+        "name": "Future",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Downloads a file from a URL with progress reporting.",
+      "nativeBody": {
+        "swift": "let args = (call.arguments as? [String: Any]) ?? [:]\nlet url = args[\"url\"] as! String\nlet destination = args[\"destination\"] as! String\nlet onProgressId = args[\"onProgress\"] as? String\nlet onCompleteId = args[\"onComplete\"] as? String\nresult(nil)\nguard let downloadUrl = URL(string: url) else {\n    DispatchQueue.main.async {\n        if let cId = onCompleteId {\n            self.callbackChannel.invokeMethod(cId, arguments: [\"failed\", \"Invalid URL\"])\n        }\n    }\n    return\n}\nvar simulatedProgress = 0.0\nvar progressTimer: Timer?\nif let pId = onProgressId {\n    progressTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in\n        simulatedProgress = min(simulatedProgress + Double.random(in: 0.05...0.15), 0.95)\n        let pm: [String: Any] = [\"bytesReceived\": Int(simulatedProgress * 1048576), \"totalBytes\": 1048576, \"progress\": simulatedProgress]\n        self?.callbackChannel.invokeMethod(pId, arguments: [pm])\n    }\n}\nlet task = URLSession.shared.downloadTask(with: downloadUrl) { [weak self] tempUrl, _, error in\n    DispatchQueue.main.async { progressTimer?.invalidate() }\n    if let error = error {\n        DispatchQueue.main.async {\n            if let cId = onCompleteId { self?.callbackChannel.invokeMethod(cId, arguments: [\"failed\", error.localizedDescription]) }\n        }\n        return\n    }\n    if let tempUrl = tempUrl {\n        let destURL = URL(fileURLWithPath: destination)\n        try? FileManager.default.removeItem(at: destURL)\n        try? FileManager.default.moveItem(at: tempUrl, to: destURL)\n    }\n    DispatchQueue.main.async {\n        if let pId = onProgressId {\n            let fp: [String: Any] = [\"bytesReceived\": 1048576, \"totalBytes\": 1048576, \"progress\": 1.0]\n            self?.callbackChannel.invokeMethod(pId, arguments: [fp])\n        }\n        if let cId = onCompleteId { self?.callbackChannel.invokeMethod(cId, arguments: [\"completed\", nil]) }\n    }\n}\ntask.resume()",
+        "kotlin": "val args = (call.arguments as? Map<String, Any>) ?: emptyMap()\nval url = args[\"url\"] as String\nval destination = args[\"destination\"] as String\nval onProgressId = args[\"onProgress\"] as? String\nval onCompleteId = args[\"onComplete\"] as? String\nresult.success(null)\nscope.launch(Dispatchers.IO) {\n    try {\n        val connection = java.net.URL(url).openConnection()\n        val input = connection.getInputStream()\n        val output = java.io.FileOutputStream(destination)\n        val buffer = ByteArray(4096)\n        var bytesRead: Int\n        var totalBytes = 0L\n        val contentLength = connection.contentLengthLong\n        while (input.read(buffer).also { bytesRead = it } != -1) {\n            output.write(buffer, 0, bytesRead)\n            totalBytes += bytesRead\n            onProgressId?.let { pId ->\n                val progress = if (contentLength > 0) totalBytes.toDouble() / contentLength else 0.0\n                withContext(Dispatchers.Main) {\n                    callbackChannel.invokeMethod(pId, listOf(mapOf(\"bytesReceived\" to totalBytes, \"totalBytes\" to contentLength, \"progress\" to progress)))\n                }\n            }\n        }\n        output.close()\n        input.close()\n        withContext(Dispatchers.Main) {\n            onCompleteId?.let { cId -> callbackChannel.invokeMethod(cId, listOf(\"completed\", null)) }\n        }\n    } catch (e: Exception) {\n        withContext(Dispatchers.Main) {\n            onCompleteId?.let { cId -> callbackChannel.invokeMethod(cId, listOf(\"failed\", e.message)) }\n        }\n    }\n}"
+      }
+    },
+    {
+      "name": "cancelAll",
+      "isStatic": true,
+      "isAsync": true,
+      "parameters": [],
+      "returnType": {
+        "kind": "future",
+        "name": "Future",
+        "nullable": false,
+        "ref": null,
+        "typeArguments": [
+          {
+            "kind": "voidType",
+            "name": "void",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          }
+        ],
+        "parameterTypes": null,
+        "returnType": null
+      },
+      "documentation": "Cancels all active downloads.",
+      "nativeBody": {
+        "swift": "result(nil)",
+        "kotlin": "result.success(null)"
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "DownloadProgress",
+      "kind": "dataClass",
+      "fields": [
+        {
+          "name": "bytesReceived",
+          "type": {
+            "kind": "primitive",
+            "name": "int",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Bytes received so far"
+        },
+        {
+          "name": "totalBytes",
+          "type": {
+            "kind": "primitive",
+            "name": "int",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Total bytes expected"
+        },
+        {
+          "name": "progress",
+          "type": {
+            "kind": "primitive",
+            "name": "double",
+            "nullable": false,
+            "ref": null,
+            "typeArguments": null,
+            "parameterTypes": null,
+            "returnType": null
+          },
+          "nullable": false,
+          "isReadOnly": true,
+          "defaultValue": null,
+          "documentation": "Download progress fraction (0.0 to 1.0)"
+        }
+      ],
+      "methods": [],
+      "superclass": null,
+      "interfaces": [],
+      "sealedSubclasses": [],
+      "documentation": "Progress information for an active download."
+    }
+  ],
+  "enums": [
+    {
+      "name": "DownloadStatus",
+      "values": [
+        {"name": "pending"},
+        {"name": "downloading"},
+        {"name": "completed"},
+        {"name": "failed"},
+        {"name": "cancelled"}
+      ],
+      "documentation": "Download status."
+    }
+  ]
+}

@@ -481,6 +481,133 @@ void main() {
       });
     });
 
+    group('multi-line signatures', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('multiline_signature.swift'),
+          packageName: 'TestPackage',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses class with multi-line methods', () {
+        expect(schema.classes, hasLength(1));
+        expect(schema.classes[0].name, 'MultilineClient');
+      });
+
+      test('parses multi-line method parameters', () {
+        final fetchData = schema.classes[0].methods
+            .firstWhere((m) => m.name == 'fetchData');
+        expect(fetchData.parameters, hasLength(3));
+        expect(fetchData.parameters[0].name, 'url');
+        expect(fetchData.parameters[1].name, 'method');
+        expect(fetchData.parameters[2].name, 'timeout');
+      });
+
+      test('parses multi-line async method', () {
+        final upload = schema.classes[0].methods
+            .firstWhere((m) => m.name == 'upload');
+        expect(upload.isAsync, true);
+        expect(upload.parameters, hasLength(2));
+      });
+
+      test('still parses single-line methods', () {
+        final simple = schema.classes[0].methods
+            .firstWhere((m) => m.name == 'simple');
+        expect(simple.parameters, hasLength(1));
+        expect(simple.returnType.toDartType(), 'int');
+      });
+
+      test('parses all methods', () {
+        expect(schema.classes[0].methods, hasLength(3));
+      });
+    });
+
+    group('init constructors', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('init_constructor.swift'),
+          packageName: 'TestPackage',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses class constructor parameters', () {
+        final cls = schema.classes[0];
+        expect(cls.name, 'NetworkSession');
+        expect(cls.constructorParameters, hasLength(2));
+        expect(cls.constructorParameters[0].name, 'baseURL');
+        expect(cls.constructorParameters[0].type.toDartType(), 'String');
+        expect(cls.constructorParameters[1].name, 'timeout');
+        expect(cls.constructorParameters[1].type.toDartType(), 'int');
+      });
+
+      test('class still has methods and fields', () {
+        final cls = schema.classes[0];
+        expect(cls.methods, hasLength(1));
+        expect(cls.methods[0].name, 'request');
+        expect(cls.fields, hasLength(1));
+        expect(cls.fields[0].name, 'baseURL');
+      });
+
+      test('parses struct constructor parameters', () {
+        final config = schema.types[0];
+        expect(config.name, 'Config');
+        expect(config.constructorParameters, hasLength(2));
+        expect(config.constructorParameters[0].name, 'host');
+        expect(config.constructorParameters[1].name, 'port');
+        expect(config.constructorParameters[1].isOptional, true);
+      });
+    });
+
+    group('internal filter', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('internal_filter.swift'),
+          packageName: 'TestPackage',
+          version: '1.0.0',
+        );
+      });
+
+      test('includes public class', () {
+        expect(schema.classes, hasLength(1));
+        expect(schema.classes[0].name, 'PublicService');
+      });
+
+      test('filters internal functions', () {
+        expect(schema.functions, isEmpty);
+      });
+    });
+
+    group('string-aware block finding', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('string_in_body.swift'),
+          packageName: 'TestPackage',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses class despite braces in strings', () {
+        expect(schema.classes, hasLength(1));
+        expect(schema.classes[0].name, 'Formatter');
+      });
+
+      test('parses all methods despite braces in strings and comments', () {
+        expect(schema.classes[0].methods, hasLength(2));
+        expect(schema.classes[0].methods[0].name, 'format');
+        expect(schema.classes[0].methods[1].name, 'render');
+      });
+    });
+
     group('edge cases', () {
       test('handles empty content', () {
         final schema = parser.parse(

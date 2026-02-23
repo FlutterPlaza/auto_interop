@@ -1,0 +1,142 @@
+native_packages:
+  # ── CocoaPods (iOS/macOS) ──
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+    imports:
+      - "Session"
+      - "DataRequest"
+
+  - source: cocoapods
+    package: "sensor_stream"
+    version: "1.0.0"
+
+  - source: cocoapods
+    package: "file_downloader"
+    version: "1.0.0"
+
+  - source: cocoapods
+    package: "SDWebImage"
+    version: "~> 5.19"
+
+  - source: cocoapods
+    package: "Realm"
+    version: "~> 10.49"
+
+  - source: cocoapods
+    package: "SwiftyJSON"
+    version: "~> 5.0"
+
+  - source: cocoapods
+    package: "Kingfisher"
+    version: "~> 7.12"
+
+  - source: cocoapods
+    package: "SnapKit"
+    version: "~> 5.7"
+
+  - source: cocoapods
+    package: "Moya"
+    version: "~> 15.0"
+
+  - source: cocoapods
+    package: "KeychainAccess"
+    version: "~> 4.2"
+
+  - source: cocoapods
+    package: "lottie-ios"
+    version: "~> 4.4"
+
+  - source: cocoapods
+    package: "Charts"
+    version: "~> 5.1"
+
+  - source: cocoapods
+    package: "CryptoSwift"
+    version: "~> 1.8"
+
+  # ── Gradle (Android) ──
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+    imports:
+      - "OkHttpClient"
+      - "Request"
+      - "Response"
+
+  - source: gradle
+    package: "com.google.code.gson:gson"
+    version: "2.10.1"
+
+  - source: gradle
+    package: "com.squareup.retrofit2:retrofit"
+    version: "2.9.0"
+
+  - source: gradle
+    package: "io.reactivex.rxjava3:rxjava"
+    version: "3.1.8"
+
+  - source: gradle
+    package: "com.squareup.picasso:picasso"
+    version: "2.8"
+
+  - source: gradle
+    package: "com.github.bumptech.glide:glide"
+    version: "4.16.0"
+
+  - source: gradle
+    package: "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+    version: "1.8.0"
+
+  - source: gradle
+    package: "com.jakewharton.timber:timber"
+    version: "5.0.1"
+
+  - source: gradle
+    package: "androidx.room:room-runtime"
+    version: "2.6.1"
+
+  - source: gradle
+    package: "com.airbnb.android:lottie"
+    version: "6.4.0"
+
+  # ── npm (Web/JS) ──
+  - source: npm
+    package: "date-fns"
+    version: "^3.6.0"
+
+  - source: npm
+    package: "lodash"
+    version: "^4.17.21"
+
+  - source: npm
+    package: "uuid"
+    version: "^9.0.1"
+
+  - source: npm
+    package: "axios"
+    version: "^1.7.2"
+
+  - source: npm
+    package: "dayjs"
+    version: "^1.11.11"
+
+  - source: npm
+    package: "crypto-js"
+    version: "^4.2.0"
+
+  - source: npm
+    package: "rxjs"
+    version: "^7.8.1"
+
+  - source: npm
+    package: "zod"
+    version: "^3.23.8"
+
+  - source: npm
+    package: "nanoid"
+    version: "^5.0.7"
+
+  - source: npm
+    package: "marked"
+    version: "^12.0.2"

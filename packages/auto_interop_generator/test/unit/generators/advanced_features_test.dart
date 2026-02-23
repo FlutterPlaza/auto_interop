@@ -98,13 +98,13 @@ void main() {
         final schema = _createSchemaWithStream();
         final code = dartGen.generateDartCode(schema);
         expect(code, contains("_eventChannel.receiveStream<String>"));
-        expect(code, contains("method: 'observe'"));
+        expect(code, contains("method: 'RealtimeClient.observe'"));
       });
 
       test('stream method with parameters passes arguments', () {
         final schema = _createSchemaWithStreamAndParams();
         final code = dartGen.generateDartCode(schema);
-        expect(code, contains("method: 'watchChanges'"));
+        expect(code, contains("method: 'FileWatcher.watchChanges'"));
         expect(code, contains("'path': path"));
       });
 
@@ -175,10 +175,10 @@ void main() {
         expect(code, isNot(contains('EventChannel')));
       });
 
-      test('generates stream TODO comment', () {
+      test('generates stream comment', () {
         final schema = _createSchemaWithStream();
         final code = kotlinGen.generateKotlinCode(schema);
-        expect(code, contains('TODO: Set up stream'));
+        expect(code, contains('Stream: events forwarded via eventSink'));
       });
     });
 
@@ -215,10 +215,10 @@ void main() {
         expect(code, isNot(contains('FlutterStreamHandler')));
       });
 
-      test('generates stream TODO comment', () {
+      test('generates stream comment', () {
         final schema = _createSchemaWithStream();
         final code = swiftGen.generateSwiftCode(schema);
-        expect(code, contains('TODO: Set up stream'));
+        expect(code, contains('Stream: events forwarded via eventSink'));
       });
     });
   });
@@ -228,7 +228,7 @@ void main() {
       test('generates NativeObject return type', () {
         final schema = _createSchemaWithNativeObject();
         final code = dartGen.generateDartCode(schema);
-        expect(code, contains('NativeObject<Connection>'));
+        expect(code, contains('Connection'));
       });
     });
 
@@ -275,7 +275,7 @@ void main() {
 
     test('nativeObject type produces correct Dart type string', () {
       final type = UtsType.nativeObject('Connection');
-      expect(type.toDartType(), 'NativeObject<Connection>');
+      expect(type.toDartType(), 'Connection');
     });
 
     test('future type produces correct Dart type string', () {
@@ -316,6 +316,166 @@ void main() {
       final code1 = dartGen.generateDartCode(schema);
       final code2 = dartGen.generateDartCode(schema);
       expect(code1, code2);
+    });
+  });
+
+  group('Stream deserialization', () {
+    group('DartGenerator', () {
+      test('object element type generates .map() with fromMap', () {
+        final schema = _createSchemaWithObjectStream();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('.map((raw)'));
+        expect(code, contains('AccelerometerEvent.fromMap'));
+        expect(code, contains('receiveStream<Map<Object?, Object?>>'));
+      });
+
+      test('enum element type generates .map() with values.byName', () {
+        final schema = _createSchemaWithEnumStream();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('.map((raw) => Status.values.byName(raw))'));
+        expect(code, contains('receiveStream<String>'));
+      });
+
+      test('DateTime element type generates .map() with DateTime.parse', () {
+        final schema = _createSchemaWithDateTimeStream();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('.map((raw) => DateTime.parse(raw))'));
+        expect(code, contains('receiveStream<String>'));
+      });
+
+      test('primitive element type has no .map() deserialization', () {
+        final schema = _createSchemaWithStream();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, isNot(contains('.map((raw)')));
+        expect(code, contains('receiveStream<String>'));
+      });
+    });
+  });
+
+  group('Callback wrapping with deserialization', () {
+    group('DartGenerator', () {
+      test('callback with object param generates wrapper', () {
+        final schema = _createSchemaWithObjectCallback();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('final _onProgressId = CallbackManager.instance.register'));
+        expect(code, contains('DownloadProgress.fromMap'));
+        expect(code, contains("'onProgress': _onProgressId"));
+      });
+
+      test('callback with primitive params keeps simple registration', () {
+        final schema = _createSchemaWithCallback();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('CallbackManager.instance.register(onEvent)'));
+        expect(code, isNot(contains('_onEventId')));
+      });
+
+      test('callback with enum param generates wrapper', () {
+        final schema = _createSchemaWithEnumCallback();
+        final code = dartGen.generateDartCode(schema);
+        expect(code, contains('final _onStatusId = CallbackManager.instance.register'));
+        expect(code, contains('Status.values.byName'));
+        expect(code, contains("'onStatus': _onStatusId"));
+      });
+    });
+  });
+
+  group('Callback channel generation', () {
+    group('SwiftGlueGenerator', () {
+      test('generates callbackChannel when callbacks present', () {
+        final schema = _createSchemaWithObjectCallback();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('private var callbackChannel: FlutterMethodChannel!'));
+        expect(code, contains('FlutterMethodChannel(name: "auto_interop/callbacks"'));
+      });
+
+      test('no callbackChannel without callbacks', () {
+        final schema = _createSchemaWithRegularMethods();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, isNot(contains('callbackChannel')));
+      });
+    });
+
+    group('KotlinGlueGenerator', () {
+      test('generates callbackChannel when callbacks present', () {
+        final schema = _createSchemaWithObjectCallback();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('private lateinit var callbackChannel: MethodChannel'));
+        expect(code, contains('MethodChannel(binding.binaryMessenger, "auto_interop/callbacks")'));
+      });
+
+      test('no callbackChannel without callbacks', () {
+        final schema = _createSchemaWithRegularMethods();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, isNot(contains('callbackChannel')));
+      });
+    });
+  });
+
+  group('Kotlin nativeBody support', () {
+    test('uses verbatim kotlin nativeBody when present', () {
+      final schema = _createSchemaWithKotlinNativeBody();
+      final code = kotlinGen.generateKotlinCode(schema);
+      expect(code, contains('// custom kotlin logic'));
+      expect(code, contains('result.success("custom")'));
+    });
+
+    test('auto-generates when no nativeBody', () {
+      final schema = _createSchemaWithRegularMethods();
+      final code = kotlinGen.generateKotlinCode(schema);
+      // Auto-generated code has argument extraction
+      expect(code, contains('call.argument'));
+    });
+  });
+
+  group('Swift onListen/onCancel dispatch', () {
+    test('single stream method emits nativeBody directly', () {
+      final schema = _createSchemaWithSingleStreamNativeBody();
+      final code = swiftGen.generateSwiftCode(schema);
+      expect(code, contains('func onListen'));
+      expect(code, contains('self.eventSink = events'));
+      expect(code, contains('Timer.scheduledTimer'));
+    });
+
+    test('multiple stream methods dispatch via switch', () {
+      final schema = _createSchemaWithMultipleStreams();
+      final code = swiftGen.generateSwiftCode(schema);
+      expect(code, contains('switch method'));
+      expect(code, contains('case "accel"'));
+      expect(code, contains('case "gyro"'));
+    });
+
+    test('onCancel includes custom nativeBody when present', () {
+      final schema = _createSchemaWithSingleStreamNativeBody();
+      final code = swiftGen.generateSwiftCode(schema);
+      expect(code, contains('func onCancel'));
+      expect(code, contains('timer.invalidate'));
+      expect(code, contains('self.eventSink = nil'));
+    });
+  });
+
+  group('Kotlin onListen/onCancel dispatch', () {
+    test('single stream method emits nativeBody directly', () {
+      final schema = _createSchemaWithSingleStreamKotlinNativeBody();
+      final code = kotlinGen.generateKotlinCode(schema);
+      expect(code, contains('override fun onListen'));
+      expect(code, contains('eventSink = events'));
+      expect(code, contains('start sensor'));
+    });
+
+    test('multiple stream methods dispatch via when', () {
+      final schema = _createSchemaWithMultipleKotlinStreams();
+      final code = kotlinGen.generateKotlinCode(schema);
+      expect(code, contains('when (method)'));
+      expect(code, contains('"accel"'));
+      expect(code, contains('"gyro"'));
+    });
+
+    test('onCancel includes custom nativeBody when present', () {
+      final schema = _createSchemaWithSingleStreamKotlinNativeBody();
+      final code = kotlinGen.generateKotlinCode(schema);
+      expect(code, contains('override fun onCancel'));
+      expect(code, contains('stop sensor'));
+      expect(code, contains('eventSink = null'));
     });
   });
 }
@@ -554,6 +714,249 @@ UnifiedTypeSchema _createSchemaWithNativeObject() {
             returnType: UtsType.nativeObject('Connection'),
           ),
         ],
+      ),
+    ],
+  );
+}
+
+// --- New helper schemas for stream deserialization, callback wrapping, etc. ---
+
+UnifiedTypeSchema _createSchemaWithObjectStream() {
+  return UnifiedTypeSchema(
+    package: 'sensor',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accelerometerEvents',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.object('AccelerometerEvent')),
+      ),
+    ],
+    types: [
+      UtsClass(
+        name: 'AccelerometerEvent',
+        kind: UtsClassKind.dataClass,
+        fields: [
+          UtsField(name: 'x', type: UtsType.primitive('double')),
+          UtsField(name: 'y', type: UtsType.primitive('double')),
+        ],
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithEnumStream() {
+  return UnifiedTypeSchema(
+    package: 'status-monitor',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'statusUpdates',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.enumType('Status')),
+      ),
+    ],
+    enums: [
+      UtsEnum(name: 'Status', values: [
+        UtsEnumValue(name: 'active'),
+        UtsEnumValue(name: 'inactive'),
+      ]),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithDateTimeStream() {
+  return UnifiedTypeSchema(
+    package: 'timer',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'timestamps',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('DateTime')),
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithObjectCallback() {
+  return UnifiedTypeSchema(
+    package: 'downloader',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'downloadFile',
+        isStatic: true,
+        isAsync: true,
+        parameters: [
+          UtsParameter(
+            name: 'url',
+            type: UtsType.primitive('String'),
+          ),
+          UtsParameter(
+            name: 'onProgress',
+            type: UtsType.callback(
+              parameterTypes: [UtsType.object('DownloadProgress')],
+              returnType: UtsType.voidType(),
+            ),
+            isNamed: true,
+            isOptional: true,
+          ),
+        ],
+        returnType: UtsType.future(UtsType.primitive('String')),
+      ),
+    ],
+    types: [
+      UtsClass(
+        name: 'DownloadProgress',
+        kind: UtsClassKind.dataClass,
+        fields: [
+          UtsField(name: 'bytesReceived', type: UtsType.primitive('int')),
+          UtsField(name: 'totalBytes', type: UtsType.primitive('int')),
+        ],
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithEnumCallback() {
+  return UnifiedTypeSchema(
+    package: 'monitor',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'observe',
+        isStatic: true,
+        parameters: [
+          UtsParameter(
+            name: 'onStatus',
+            type: UtsType.callback(
+              parameterTypes: [UtsType.enumType('Status')],
+              returnType: UtsType.voidType(),
+            ),
+          ),
+        ],
+        returnType: UtsType.voidType(),
+      ),
+    ],
+    enums: [
+      UtsEnum(name: 'Status', values: [
+        UtsEnumValue(name: 'active'),
+        UtsEnumValue(name: 'inactive'),
+      ]),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithKotlinNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'custom-lib',
+    source: PackageSource.gradle,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'doSomething',
+        isStatic: true,
+        parameters: [],
+        returnType: UtsType.primitive('String'),
+        nativeBody: {
+          'kotlin': '// custom kotlin logic\nresult.success("custom")',
+        },
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithSingleStreamNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'sensor',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accel',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'swift_onListen': 'Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in\n    self.eventSink?(1.0)\n}',
+          'swift_onCancel': 'timer.invalidate()',
+        },
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithMultipleStreams() {
+  return UnifiedTypeSchema(
+    package: 'multi-sensor',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accel',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'swift_onListen': 'startAccel()',
+        },
+      ),
+      UtsMethod(
+        name: 'gyro',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'swift_onListen': 'startGyro()',
+        },
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithSingleStreamKotlinNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'sensor',
+    source: PackageSource.gradle,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accel',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'kotlin_onListen': '// start sensor',
+          'kotlin_onCancel': '// stop sensor',
+        },
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithMultipleKotlinStreams() {
+  return UnifiedTypeSchema(
+    package: 'multi-sensor',
+    source: PackageSource.gradle,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accel',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'kotlin_onListen': 'startAccel()',
+        },
+      ),
+      UtsMethod(
+        name: 'gyro',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'kotlin_onListen': 'startGyro()',
+        },
       ),
     ],
   );

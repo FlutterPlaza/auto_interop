@@ -3,6 +3,7 @@
 // Web JS interop bindings for uuid
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 @JS('uuid.v4')
 external JSString _jsV4();

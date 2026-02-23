@@ -127,6 +127,21 @@ class SwiftToDartMapper {
       }
     }
 
+    // Handle Set<T> → List<T> (Dart Set isn't channel-friendly)
+    if (swiftType.startsWith('Set<') && swiftType.endsWith('>')) {
+      final inner = swiftType.substring(4, swiftType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
+    }
+
+    // Handle Result<Success, Failure> → Future<Success>
+    if (swiftType.startsWith('Result<') && swiftType.endsWith('>')) {
+      final inner = swiftType.substring(7, swiftType.length - 1);
+      final parts = _splitGenericArgs(inner);
+      if (parts.isNotEmpty) {
+        return UtsType.future(mapType(parts[0].trim()), nullable: nullable);
+      }
+    }
+
     // Handle async: no direct type syntax, handled at method level
 
     // Handle AsyncSequence (→ Stream)
@@ -160,11 +175,40 @@ class SwiftToDartMapper {
         return UtsType.primitive('DateTime', nullable: nullable);
       case 'Data':
         return UtsType.primitive('Uint8List', nullable: nullable);
+      case 'URL':
+        return UtsType.primitive('Uri', nullable: nullable);
+      case 'Duration':
+        return UtsType.primitive('Duration', nullable: nullable);
+      case 'TimeInterval':
+        return UtsType.primitive('double', nullable: nullable);
+      case 'NSNumber':
+        return UtsType.primitive('num', nullable: nullable);
+      case 'NSInteger':
+      case 'NSUInteger':
+        return UtsType.primitive('int', nullable: nullable);
+      case 'UUID':
+      case 'NSUUID':
+      case 'NSString':
+        return UtsType.primitive('String', nullable: nullable);
       case 'Void':
         return UtsType.voidType();
       case 'Any':
       case 'AnyObject':
         return UtsType.dynamicType(nullable: nullable);
+      // Native object handles — opaque platform types
+      case 'URLRequest':
+      case 'URLResponse':
+      case 'HTTPURLResponse':
+      case 'URLSession':
+      case 'URLSessionTask':
+      case 'URLSessionConfiguration':
+      case 'Error':
+      case 'NSError':
+      case 'DispatchQueue':
+      case 'OperationQueue':
+      case 'Notification':
+      case 'NSObject':
+        return UtsType.nativeObject(swiftType, nullable: nullable);
       default:
         return UtsType.object(swiftType, nullable: nullable);
     }

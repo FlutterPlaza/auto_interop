@@ -7,47 +7,152 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.*
+import com.squareup.okhttp3.*
 
 class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
+    private val instances = mutableMapOf<String, Any>()
+    private var nextHandle = 0
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(binding.binaryMessenger, "com_squareup_okhttp3_okhttp")
+        channel = MethodChannel(binding.binaryMessenger, "auto_interop/com_squareup_okhttp3_okhttp")
         channel.setMethodCallHandler(this)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        scope.cancel()
+    }
+
+    private fun createHandle(obj: Any): String {
+        val handle = "h_${nextHandle}"
+        nextHandle++
+        instances[handle] = obj
+        return handle
+    }
+
+    private fun releaseHandle(handle: String) {
+        instances.remove(handle)
+    }
+
+    private fun decodeRequest(map: Map<String, Any?>): Request {
+        return Request(
+            url = map["url"] as String,
+            method = map["method"] as String,
+            headers = map["headers"] as Map<String, String>,
+            body = map["body"] as? String
+        )
+    }
+
+    private fun encode(obj: Request): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
+        map["url"] = obj.url
+        map["method"] = obj.method
+        map["headers"] = obj.headers
+        obj.body?.let { map["body"] = it }
+        return map
+    }
+
+    private fun decodeResponse(map: Map<String, Any?>): Response {
+        return Response(
+            code = map["code"] as Int,
+            message = map["message"] as String,
+            body = map["body"] as? String,
+            headers = map["headers"] as Map<String, String>
+        )
+    }
+
+    private fun encode(obj: Response): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
+        map["code"] = obj.code
+        map["message"] = obj.message
+        obj.body?.let { map["body"] = it }
+        map["headers"] = obj.headers
+        return map
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
+            "OkHttpClient._create" -> {
+                val instance = OkHttpClient()
+                val handle = createHandle(instance)
+                result.success(handle)
+            }
             "OkHttpClient.newCall" -> {
                 val request = call.argument<Map<String, Any?>>("request")!!
                 try {
-                    // TODO: Call native method
-                    result.success(null /* TODO: convert native result */)
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as OkHttpClient
+                    val nativeResult = instance.newCall(request = decodeRequest(request))
+                    result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.close" -> {
-                // TODO: Call native method
-                result.success(null)
-            }
-            "Call.execute" -> {
                 try {
-                    // TODO: Call native async method
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as OkHttpClient
+                    instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error("ERROR", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
+                }
+            }
+            "Call.execute" -> {
+                val handle = call.argument<String>("_handle")!!
+                val instance = instances[handle] as Call
+                scope.launch {
+                    try {
+                        val nativeResult = instance.execute()
+                        withContext(Dispatchers.Main) {
+                            result.success(encode(nativeResult))
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
+                        }
+                    }
                 }
             }
             "Call.cancel" -> {
-                // TODO: Call native method
+                try {
+                    val handle = call.argument<String>("_handle")!!
+                    val instance = instances[handle] as Call
+                    instance.cancel()
+                    result.success(null)
+                } catch (e: Exception) {
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
+                }
+            }
+            "_dispose" -> {
+                val handle = call.argument<String>("_handle")!!
+                releaseHandle(handle)
                 result.success(null)
             }
             else -> result.notImplemented()
+        }
+    }
+
+    private fun normalizeErrorCode(e: Exception): String {
+        return when (e) {
+            is java.io.IOException -> "IO_ERROR"
+            is java.net.SocketException -> "NETWORK_ERROR"
+            is java.net.SocketTimeoutException -> "TIMEOUT"
+            is java.util.concurrent.TimeoutException -> "TIMEOUT"
+            is SecurityException -> "PERMISSION_DENIED"
+            is IllegalArgumentException -> "INVALID_ARGUMENT"
+            is IllegalStateException -> "INVALID_STATE"
+            is UnsupportedOperationException -> "UNSUPPORTED"
+            is NullPointerException -> "NULL_REFERENCE"
+            is IndexOutOfBoundsException -> "OUT_OF_RANGE"
+            is ClassCastException -> "TYPE_ERROR"
+            is NoSuchElementException -> "NOT_FOUND"
+            is ConcurrentModificationException -> "CONCURRENT_MODIFICATION"
+            is kotlinx.coroutines.CancellationException -> "CANCELLED"
+            else -> e::class.simpleName ?: "UNKNOWN"
         }
     }
 }

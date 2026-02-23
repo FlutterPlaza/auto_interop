@@ -154,6 +154,14 @@ class JavaToDartMapper {
       }
     }
 
+    // Handle Set<T> / HashSet<T> → List<T>
+    if ((javaType.startsWith('Set<') || javaType.startsWith('HashSet<')) &&
+        javaType.endsWith('>')) {
+      final start = javaType.indexOf('<') + 1;
+      final inner = javaType.substring(start, javaType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
+    }
+
     // Handle arrays (T[])
     if (javaType.endsWith('[]')) {
       final inner = javaType.substring(0, javaType.length - 2);
@@ -185,11 +193,33 @@ class JavaToDartMapper {
       case 'boolean':
       case 'Boolean':
         return UtsType.primitive('bool', nullable: nullable);
+      case 'URI':
+      case 'URL':
+      case 'java.net.URI':
+      case 'java.net.URL':
+        return UtsType.primitive('Uri', nullable: nullable);
+      case 'Duration':
+        return UtsType.primitive('Duration', nullable: nullable);
+      case 'BigDecimal':
+        return UtsType.primitive('double', nullable: nullable);
+      case 'BigInteger':
+        return UtsType.primitive('int', nullable: nullable);
+      case 'UUID':
+      case 'CharSequence':
+        return UtsType.primitive('String', nullable: nullable);
       case 'void':
       case 'Void':
         return UtsType.voidType();
       case 'Object':
         return UtsType.dynamicType(nullable: nullable);
+      // Native object handles — opaque platform types
+      case 'Exception':
+      case 'Throwable':
+      case 'IOException':
+      case 'InputStream':
+      case 'OutputStream':
+      case 'Context':
+        return UtsType.nativeObject(javaType, nullable: nullable);
       default:
         return UtsType.object(javaType, nullable: nullable);
     }

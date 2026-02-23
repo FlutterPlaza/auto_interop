@@ -86,6 +86,18 @@ class UtsClass {
   /// Documentation for this class.
   final String? documentation;
 
+  /// Optional constructor parameters for builder-pattern classes.
+  ///
+  /// When set, the native glue generates a Builder pattern construction
+  /// instead of a simple no-arg constructor. For example, if OkHttpClient
+  /// has `constructorParameters: [UtsParameter(name: 'connectTimeout', ...)]`,
+  /// the Kotlin glue generates:
+  /// ```kotlin
+  /// OkHttpClient.Builder().connectTimeout(params).build()
+  /// ```
+  /// and the Dart binding generates a `create({int? connectTimeout})` factory.
+  final List<UtsParameter> constructorParameters;
+
   const UtsClass({
     required this.name,
     this.kind = UtsClassKind.concreteClass,
@@ -95,6 +107,7 @@ class UtsClass {
     this.interfaces = const [],
     this.sealedSubclasses = const [],
     this.documentation,
+    this.constructorParameters = const [],
   });
 
   factory UtsClass.fromJson(Map<String, dynamic> json) =>

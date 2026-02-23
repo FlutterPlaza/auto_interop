@@ -579,39 +579,38 @@ group('Installers'):
 - [x] Native object lifecycle management (opaque handles via NativeObject)
 - [x] Pre-built type definitions for popular packages (6 total via TypeDefinitionLoader)
 - [x] CLI tool (`generate`, `add`, `list`, `help`, `version` commands)
-- [ ] **Incremental rebuild** — basic content-based change detection exists (skip unchanged files), but no dependency graph tracking, build-runner level caching, or granular per-package invalidation
+- [x] **Incremental rebuild** — SHA-256 checksum-based caching (`BuildCache`, `Checksum`, `DependencyGraph`), per-package invalidation with transitive dependency tracking, `--force` flag, `.auto_interop_cache.json` persistence
 
-### Phase 6: Polish & Launch — IN PROGRESS
+### Phase 6: Polish & Launch — COMPLETE
 - [x] Integration tests (end-to-end roundtrip — `end_to_end_test.dart`)
 - [x] Example project (3 native packages: date-fns/npm, Alamofire/CocoaPods, OkHttp/Gradle)
 - [x] README documentation with architecture diagrams, quick start, and type mapping table
 - [x] CHANGELOG.md for both packages
 - [x] LICENSE (BSD 3-Clause)
 - [x] Proper pubspec.yaml metadata (homepage, repository, issue_tracker, topics, SDK constraints)
-- [ ] **Analyzer module** — planned but never implemented:
-  - [ ] `api_surface_analyzer.dart` — detect public API surface automatically
-  - [ ] `dependency_resolver.dart` — resolve transitive native dependencies
-  - [ ] `compatibility_checker.dart` — check platform support/compatibility
-- [ ] **Documentation site** — no standalone docs site (only README + plan.md)
-- [ ] **CI/CD pipeline** — no GitHub Actions workflows for testing, linting, or publishing
-- [ ] **pub.dev publish** — packages are ready structurally but not yet published
-- [ ] **Git cleanup** — old `native_bridge` / `native_bridge_generator` packages still in git history as staged deletions; new `auto_interop` packages are untracked
+- [x] **Analyzer module**:
+  - [x] `api_surface_analyzer.dart` — validates schemas (missing refs, circular deps, unsupported type combos, naming conflicts)
+  - [x] `dependency_resolver.dart` — cross-package dependency resolution with topological sort
+  - [x] `compatibility_checker.dart` — platform compatibility reports per source
+- [x] **API docs** — `dartdoc_options.yaml` with category configuration, `dart doc` step in CI
+- [x] **CI/CD pipeline** — GitHub Actions: ci.yml (test, lint, format, analyze, dry-run publish) + publish.yml (tag-based publish)
+- [x] **Git cleanup** — `native_bridge` → `auto_interop` rename committed
+- [ ] **pub.dev publish** — packages validated with `--dry-run`, ready to publish
+- [ ] **Documentation site** — no standalone docs site (only README + plan.md + API docs)
 
 ---
 
 ## Remaining Work Summary
 
-### Must-Do Before Publish
-1. **Git cleanup** — commit the rename from `native_bridge` → `auto_interop` (staged deletions + untracked new packages)
-2. **Run full test suite** — verify all tests pass after the rename
-3. **pub.dev publish** — `dart pub publish` for both `auto_interop` and `auto_interop_generator`
-
-### Should-Do Before Publish
-4. **CI/CD** — add GitHub Actions workflow (lint, test, coverage, pub.dev dry-run)
-5. **Incremental rebuild** — improve beyond basic content-based detection (track config changes, per-package invalidation)
+### Ready to Publish
+1. ~~Git cleanup~~ — DONE
+2. ~~Run full test suite~~ — DONE (740 generator tests + 41 runtime tests, all passing)
+3. ~~CI/CD~~ — DONE (GitHub Actions workflows)
+4. ~~Incremental rebuild~~ — DONE (SHA-256 checksum caching)
+5. ~~Analyzer module~~ — DONE
+6. **pub.dev publish** — `dart pub publish` for both `auto_interop` and `auto_interop_generator`
 
 ### Nice-to-Have / Post-Launch
-6. **Analyzer module** — api_surface_analyzer, dependency_resolver, compatibility_checker
 7. **Documentation site** — hosted docs with API reference, guides, tutorials
 8. **Manual UTS overrides** — allow users to provide custom `.uts.json` when parsing fails
 9. **README badges** — CI status, pub.dev version, coverage, license

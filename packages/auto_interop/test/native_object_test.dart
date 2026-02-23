@@ -80,5 +80,26 @@ void main() {
       expect(obj.toString(), contains('42'));
       expect(obj.toString(), contains('String'));
     });
+
+    group('equality', () {
+      test('same handle and channel are equal', () {
+        final a = NativeObject<String>(handle: 1, channelName: 'pkg');
+        final b = NativeObject<String>(handle: 1, channelName: 'pkg');
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
+      });
+
+      test('different handles are not equal', () {
+        final a = NativeObject<String>(handle: 1, channelName: 'pkg');
+        final b = NativeObject<String>(handle: 2, channelName: 'pkg');
+        expect(a, isNot(equals(b)));
+      });
+
+      test('different channels are not equal', () {
+        final a = NativeObject<String>(handle: 1, channelName: 'pkg_a');
+        final b = NativeObject<String>(handle: 1, channelName: 'pkg_b');
+        expect(a, isNot(equals(b)));
+      });
+    });
   });
 }

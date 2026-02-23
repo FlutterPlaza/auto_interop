@@ -45,16 +45,15 @@ void main() {
         expect(code, contains('Swift platform channel handler for Alamofire'));
       });
 
-      test('imports Flutter', () {
+      test('uses conditional imports for macOS/iOS', () {
         final code =
             generator.generateSwiftCode(_createMinimalSchema('test'));
+        expect(code, contains('#if os(macOS)'));
+        expect(code, contains('import FlutterMacOS'));
+        expect(code, contains('#else'));
         expect(code, contains('import Flutter'));
-      });
-
-      test('imports UIKit', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
         expect(code, contains('import UIKit'));
+        expect(code, contains('#endif'));
       });
     });
 
@@ -76,7 +75,7 @@ void main() {
       test('creates method channel with snake_case name', () {
         final code = generator
             .generateSwiftCode(_createMinimalSchema('my-package'));
-        expect(code, contains('"my_package"'));
+        expect(code, contains('"auto_interop/my_package"'));
       });
 
       test('has handle method', () {
@@ -218,15 +217,14 @@ void main() {
         expect(code, contains('result(nil)'));
       });
 
-      test('non-void methods have error handling', () {
+      test('sync non-void methods call directly without do/catch', () {
         final schema = _createSchemaWithMethod();
         final code = generator.generateSwiftCode(schema);
-        expect(code, contains('do {'));
-        expect(code, contains('} catch {'));
-        expect(code, contains('FlutterError'));
+        expect(code, contains('let nativeResult ='));
+        expect(code, contains('result(nativeResult)'));
       });
 
-      test('async methods have error handling', () {
+      test('async methods have error handling with normalizeErrorCode', () {
         final schema = UnifiedTypeSchema(
           package: 'test',
           source: PackageSource.cocoapods,
@@ -242,6 +240,27 @@ void main() {
         final code = generator.generateSwiftCode(schema);
         expect(code, contains('do {'));
         expect(code, contains('} catch {'));
+        expect(code, contains('normalizeErrorCode(error)'));
+      });
+
+      test('emits normalizeErrorCode helper', () {
+        final schema = UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'fetch',
+              isAsync: true,
+              returnType: UtsType.future(UtsType.primitive('String')),
+            ),
+          ],
+        );
+        final code = generator.generateSwiftCode(schema);
+        expect(code, contains('private func normalizeErrorCode(_ error: Error) -> String'));
+        expect(code, contains('NSURLErrorDomain'));
+        expect(code, contains('"TIMEOUT"'));
+        expect(code, contains('"NETWORK_ERROR"'));
       });
     });
 
@@ -269,6 +288,137 @@ void main() {
         );
         final code = generator.generateSwiftCode(schema);
         expect(code, contains('case "ImageLoader.load":'));
+      });
+    });
+
+    group('nativeLabel and nativeType', () {
+      test('nativeLabel "_" produces unlabeled argument', () {
+        final schema = UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Foo',
+              methods: [
+                UtsMethod(
+                  name: 'bar',
+                  parameters: [
+                    UtsParameter(
+                      name: 'url',
+                      type: UtsType.primitive('String'),
+                      nativeLabel: '_',
+                    ),
+                    UtsParameter(
+                      name: 'method',
+                      type: UtsType.primitive('String'),
+                    ),
+                  ],
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        );
+        final code = generator.generateSwiftCode(schema);
+        // The native call should have unlabeled first arg: bar(url, method: method)
+        expect(code, contains('instance.bar(url, method: method)'));
+      });
+
+      test('nativeLabel with custom label', () {
+        final schema = UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Router',
+              methods: [
+                UtsMethod(
+                  name: 'doSomething',
+                  parameters: [
+                    UtsParameter(
+                      name: 'target',
+                      type: UtsType.primitive('String'),
+                      nativeLabel: 'to',
+                    ),
+                  ],
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        );
+        final code = generator.generateSwiftCode(schema);
+        expect(code, contains('instance.doSomething(to: target)'));
+      });
+
+      test('nativeType wraps required argument', () {
+        final schema = UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Client',
+              methods: [
+                UtsMethod(
+                  name: 'process',
+                  parameters: [
+                    UtsParameter(
+                      name: 'data',
+                      type: UtsType.map(
+                        UtsType.primitive('String'),
+                        UtsType.primitive('String'),
+                      ),
+                      nativeType: 'HTTPHeaders',
+                    ),
+                  ],
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        );
+        final code = generator.generateSwiftCode(schema);
+        expect(code, contains('instance.process(data: HTTPHeaders(data))'));
+      });
+
+      test('nativeType wraps optional argument with nil check', () {
+        final schema = UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Client',
+              methods: [
+                UtsMethod(
+                  name: 'process',
+                  parameters: [
+                    UtsParameter(
+                      name: 'headers',
+                      type: UtsType(
+                        kind: UtsTypeKind.map,
+                        name: 'Map',
+                        nullable: true,
+                        typeArguments: [
+                          UtsType.primitive('String'),
+                          UtsType.primitive('String'),
+                        ],
+                      ),
+                      isOptional: true,
+                      nativeType: 'HTTPHeaders',
+                    ),
+                  ],
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        );
+        final code = generator.generateSwiftCode(schema);
+        expect(code, contains('headers != nil ? HTTPHeaders(headers!) : nil'));
       });
     });
 

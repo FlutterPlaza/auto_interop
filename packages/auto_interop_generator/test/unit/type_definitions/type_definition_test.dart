@@ -6,7 +6,7 @@ import 'package:auto_interop_generator/src/type_definitions/type_definition_load
 import 'package:test/test.dart';
 
 void main() {
-  final defsDir = 'lib/src/type_definitions';
+  final defsDir = 'test/fixtures/definitions';
 
   group('TypeDefinitionLoader', () {
     late TypeDefinitionLoader loader;
@@ -185,13 +185,13 @@ void main() {
 }
 
 UnifiedTypeSchema _loadDefinition(String name) {
-  final file = File('lib/src/type_definitions/$name.uts.json');
+  final file = File('test/fixtures/definitions/$name.uts.json');
   final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
   return UnifiedTypeSchema.fromJson(json);
 }
 
 void _verifyRoundtrip(String name) {
-  final file = File('lib/src/type_definitions/$name.uts.json');
+  final file = File('test/fixtures/definitions/$name.uts.json');
   final originalJson = file.readAsStringSync();
   final schema =
       UnifiedTypeSchema.fromJson(jsonDecode(originalJson) as Map<String, dynamic>);

@@ -98,6 +98,36 @@ void main() {
       });
     });
 
+    group('union types', () {
+      test('picks first non-null type from union', () {
+        final result = mapper.mapType('string | number');
+        expect(result.toDartType(), 'String');
+        expect(result.nullable, false);
+      });
+
+      test('handles union with null and undefined', () {
+        final result = mapper.mapType('string | number | null');
+        expect(result.toDartType(), 'String?');
+        expect(result.nullable, true);
+      });
+
+      test('handles Buffer | string | null', () {
+        final result = mapper.mapType('Buffer | string | null');
+        expect(result.toDartType(), 'Uint8List?');
+        expect(result.nullable, true);
+      });
+
+      test('handles null | undefined returns void', () {
+        final result = mapper.mapType('null | undefined');
+        expect(result.kind, UtsTypeKind.voidType);
+      });
+
+      test('preserves existing nullable union behavior', () {
+        final result = mapper.mapType('boolean | undefined');
+        expect(result.toDartType(), 'bool?');
+      });
+    });
+
     group('collection types', () {
       test('maps Array<string> to List<String>', () {
         final result = mapper.mapType('Array<string>');
@@ -145,6 +175,52 @@ void main() {
         final result = mapper.mapType('ReadableStream<string>');
         expect(result.kind, UtsTypeKind.stream);
         expect(result.toDartType(), 'Stream<String>');
+      });
+    });
+
+    group('SDK primitive types', () {
+      test('maps URL to Uri', () {
+        expect(mapper.mapType('URL').toDartType(), 'Uri');
+      });
+
+      test('maps Blob to Uint8List', () {
+        expect(mapper.mapType('Blob').toDartType(), 'Uint8List');
+      });
+    });
+
+    group('native object types', () {
+      test('maps Error to nativeObject', () {
+        final result = mapper.mapType('Error');
+        expect(result.kind, UtsTypeKind.nativeObject);
+        expect(result.name, 'Error');
+      });
+
+      test('maps TypeError to nativeObject', () {
+        final result = mapper.mapType('TypeError');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+
+      test('maps Headers to nativeObject', () {
+        final result = mapper.mapType('Headers');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+
+      test('maps Response to nativeObject', () {
+        final result = mapper.mapType('Response');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+
+      test('maps AbortController to nativeObject', () {
+        final result = mapper.mapType('AbortController');
+        expect(result.kind, UtsTypeKind.nativeObject);
+      });
+    });
+
+    group('set types', () {
+      test('maps Set<string> to List<String>', () {
+        final result = mapper.mapType('Set<string>');
+        expect(result.kind, UtsTypeKind.list);
+        expect(result.toDartType(), 'List<String>');
       });
     });
 
