@@ -4,8 +4,7 @@
 build/
 pubspec.lock
 
-# Generated files
-*.g.dart
+# Generated files (*.g.dart committed for CI analysis)
 
 # IDE
 .idea/

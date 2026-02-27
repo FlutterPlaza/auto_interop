@@ -818,16 +818,6 @@ class CliRunner {
         .toLowerCase();
   }
 
-  static Map<String, dynamic>? _parseJson(String content) {
-    try {
-      return Map<String, dynamic>.from(
-        (const JsonDecoder().convert(content)) as Map,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-
   List<String>? _findOnlyFilter(List<String> args) {
     for (var i = 0; i < args.length - 1; i++) {
       if (args[i] == '--only') {

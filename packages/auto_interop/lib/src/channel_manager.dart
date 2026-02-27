@@ -170,8 +170,6 @@ class BatchResult {
   /// The error message if the call failed, or `null` on success.
   final String? errorMessage;
 
-  const BatchResult._(this.value, this.errorCode, this.errorMessage);
-
   /// Creates a successful result.
   const BatchResult.success(this.value)
       : errorCode = null,

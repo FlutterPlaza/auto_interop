@@ -672,11 +672,10 @@ class DartGenerator extends GeneratorBase {
           final vVar = 'v$depth';
           final keyDartType = keyType?.toDartType() ?? 'String';
           final keyDeser = keyNeedsDeser
-              ? _deserializeListElement(schema, keyType!, kVar,
-                  depth: depth + 1)
+              ? _deserializeListElement(schema, keyType, kVar, depth: depth + 1)
               : '$kVar as $keyDartType';
           final valueDeser = valueNeedsDeser
-              ? _deserializeListElement(schema, valueType!, vVar,
+              ? _deserializeListElement(schema, valueType, vVar,
                   depth: depth + 1)
               : vVar;
           return '$varName.map(($kVar, $vVar) => MapEntry($keyDeser, $valueDeser))';
@@ -738,11 +737,10 @@ class DartGenerator extends GeneratorBase {
           final vVar = 'v$depth';
           final keyDartType = keyType?.toDartType() ?? 'String';
           final keyDeser = keyNeedsDeser
-              ? _deserializeListElement(schema, keyType!, kVar,
-                  depth: depth + 1)
+              ? _deserializeListElement(schema, keyType, kVar, depth: depth + 1)
               : '$kVar as $keyDartType';
           final valueDeser = valueNeedsDeser
-              ? _deserializeListElement(schema, valueType!, vVar,
+              ? _deserializeListElement(schema, valueType, vVar,
                   depth: depth + 1)
               : vVar;
           return '($varName as Map).map(($kVar, $vVar) => MapEntry($keyDeser, $valueDeser))';
@@ -1139,10 +1137,10 @@ class DartGenerator extends GeneratorBase {
         final kVar = 'k$depth';
         final vVar = 'v$depth';
         final keySer = keyNeedsSer
-            ? _serializeExpr(schema, keyType!, kVar, depth: depth + 1)
+            ? _serializeExpr(schema, keyType, kVar, depth: depth + 1)
             : kVar;
         final valueSer = valueNeedsSer
-            ? _serializeExpr(schema, valueType!, vVar, depth: depth + 1)
+            ? _serializeExpr(schema, valueType, vVar, depth: depth + 1)
             : vVar;
         return '$expr.map(($kVar, $vVar) => MapEntry($keySer, $valueSer))';
       }
@@ -1225,10 +1223,10 @@ class DartGenerator extends GeneratorBase {
           valueType != null && _needsTypeSerialization(valueType);
       if (keyNeedsSer || valueNeedsSer) {
         final keySer = keyNeedsSer
-            ? _serializeExpr(schema, keyType!, 'k0', depth: 1)
+            ? _serializeExpr(schema, keyType, 'k0', depth: 1)
             : 'k0';
         final valueSer = valueNeedsSer
-            ? _serializeExpr(schema, valueType!, 'v0', depth: 1)
+            ? _serializeExpr(schema, valueType, 'v0', depth: 1)
             : 'v0';
         return '${field.name}?.map((k0, v0) => MapEntry($keySer, $valueSer))';
       }
@@ -1318,10 +1316,10 @@ class DartGenerator extends GeneratorBase {
       if (keyNeedsDeser || valueNeedsDeser) {
         final keyDartType = keyType?.toDartType() ?? 'String';
         final keyDeser = keyNeedsDeser
-            ? _deserializeListElement(schema, keyType!, 'k0', depth: 1)
+            ? _deserializeListElement(schema, keyType, 'k0', depth: 1)
             : 'k0 as $keyDartType';
         final valueDeser = valueNeedsDeser
-            ? _deserializeListElement(schema, valueType!, 'v0', depth: 1)
+            ? _deserializeListElement(schema, valueType, 'v0', depth: 1)
             : 'v0';
         if (nullable) {
           return 'map[$key] != null ? (map[$key] as Map).map((k0, v0) => MapEntry($keyDeser, $valueDeser)) : null';
