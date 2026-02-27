@@ -39,11 +39,11 @@ class SwiftParser extends ParserBase {
 
     var i = 0;
     while (i < lines.length) {
-      final line = lines[i].trim();
+      final rawLine = lines[i].trim();
 
       // Skip empty lines, imports, and /// doc comment lines
-      if (line.isEmpty || line.startsWith('import ') ||
-          line.startsWith('///')) {
+      if (rawLine.isEmpty || rawLine.startsWith('import ') ||
+          rawLine.startsWith('///')) {
         i++;
         continue;
       }
@@ -56,6 +56,15 @@ class SwiftParser extends ParserBase {
       }
 
       final doc = _lookbackForDoc(lines, i);
+
+      // Strip attributes before matcher checks
+      final line = _stripAttributes(rawLine);
+
+      // Skip typealias declarations
+      if (line.startsWith('typealias ')) {
+        i++;
+        continue;
+      }
 
       // Skip private/fileprivate/internal declarations
       if (_isNonPublic(line)) {
@@ -253,8 +262,10 @@ class SwiftParser extends ParserBase {
     final constructorParams = <UtsParameter>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
-      final bodyLine = bodyLines[j].trim();
-      if (bodyLine.isEmpty) continue;
+      final rawBodyLine = bodyLines[j].trim();
+      if (rawBodyLine.isEmpty) continue;
+
+      final bodyLine = _stripAttributes(rawBodyLine);
 
       // Skip non-public members
       if (bodyLine.startsWith('private ') ||
@@ -316,8 +327,10 @@ class SwiftParser extends ParserBase {
     final constructorParams = <UtsParameter>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
-      final bodyLine = bodyLines[j].trim();
-      if (bodyLine.isEmpty) continue;
+      final rawBodyLine = bodyLines[j].trim();
+      if (rawBodyLine.isEmpty) continue;
+
+      final bodyLine = _stripAttributes(rawBodyLine);
 
       if (bodyLine.startsWith('private ') ||
           bodyLine.startsWith('fileprivate ')) {
@@ -377,8 +390,10 @@ class SwiftParser extends ParserBase {
     final fields = <UtsField>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
-      final bodyLine = bodyLines[j].trim();
-      if (bodyLine.isEmpty) continue;
+      final rawBodyLine = bodyLines[j].trim();
+      if (rawBodyLine.isEmpty) continue;
+
+      final bodyLine = _stripAttributes(rawBodyLine);
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
@@ -574,8 +589,10 @@ class SwiftParser extends ParserBase {
     final methods = <UtsMethod>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
-      final bodyLine = bodyLines[j].trim();
-      if (bodyLine.isEmpty) continue;
+      final rawBodyLine = bodyLines[j].trim();
+      if (rawBodyLine.isEmpty) continue;
+
+      final bodyLine = _stripAttributes(rawBodyLine);
 
       if (bodyLine.startsWith('private ') ||
           bodyLine.startsWith('fileprivate ')) {
@@ -838,6 +855,29 @@ class SwiftParser extends ParserBase {
   }
 
   // ========== Common Helpers ==========
+
+  /// Strips leading Swift attributes like @discardableResult, @available(...).
+  String _stripAttributes(String line) {
+    var result = line;
+    while (result.startsWith('@')) {
+      final parenIdx = result.indexOf('(');
+      final spaceIdx = result.indexOf(' ');
+
+      if (parenIdx >= 0 && (spaceIdx < 0 || parenIdx < spaceIdx)) {
+        final closeIdx = _findMatchingParen(result, parenIdx);
+        if (closeIdx >= 0) {
+          result = result.substring(closeIdx + 1).trim();
+        } else {
+          break;
+        }
+      } else if (spaceIdx >= 0) {
+        result = result.substring(spaceIdx + 1).trim();
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
 
   /// Finds the closing parenthesis matching the opening one at [openPos].
   int _findMatchingParen(String text, int openPos) {

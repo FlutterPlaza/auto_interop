@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>auto_interop — Type-safe Dart bindings for any native package</title>
+  <meta name="description" content="auto_interop generates type-safe Dart bindings for npm, CocoaPods, SPM, and Gradle packages with zero boilerplate.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" id="prism-dark" disabled>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Mobile Header -->
+<header class="mobile-header">
+  <button class="hamburger" aria-label="Open navigation" onclick="toggleSidebar()">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <span style="font-weight:600;font-size:15px;">auto_interop</span>
+  <button class="theme-toggle" onclick="cycleTheme()" title="Toggle theme">
+    <span class="theme-icon">&#9788;</span>
+  </button>
+</header>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h2>auto_interop</h2>
+    <span>v0.2.0 &middot; Documentation</span>
+  </div>
+  <div class="sidebar-search">
+    <input type="text" id="search" placeholder="Search docs..." autocomplete="off">
+  </div>
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#cli">CLI Reference</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#uts">Unified Type Schema</a></li>
+    <li><a href="#type-mappings">Type Mappings</a></li>
+    <li><a href="#customization">Customization</a></li>
+    <li><a href="#runtime-api">Runtime API</a></li>
+    <li><a href="#generated-code">Generated Code</a></li>
+    <li><a href="#platform-guides">Platform Guides</a></li>
+    <li><a href="#advanced">Advanced Topics</a></li>
+    <li><a href="#ast-parsing">AST Parsing</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="cycleTheme()" title="Toggle theme">
+      <span class="theme-icon">&#9788;</span> <span class="theme-label">Auto</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Main Content -->
+<main class="content">
+
+<!-- Section 1: Hero -->
+<section id="hero">
+  <h1>auto_interop</h1>
+  <p style="font-size:1.2rem;color:var(--text-primary);margin-bottom:8px;">Type-safe Dart bindings for <strong>any</strong> native package</p>
+  <p>Consume npm, CocoaPods, SPM, and Gradle packages from Flutter with zero boilerplate. Configure once, generate forever.</p>
+
+  <div class="badges">
+    <img src="https://img.shields.io/badge/pub.dev-v0.2.0-blue" alt="pub.dev">
+    <img src="https://img.shields.io/badge/license-BSD--3--Clause-green" alt="License">
+    <img src="https://img.shields.io/badge/Flutter-3.10+-02569B?logo=flutter" alt="Flutter">
+    <img src="https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart" alt="Dart">
+  </div>
+
+  <div class="cta-group">
+    <a href="#getting-started" class="cta cta-primary">Get Started</a>
+    <a href="https://github.com/user/auto_interop" class="cta cta-secondary">GitHub</a>
+    <a href="https://pub.dev/packages/auto_interop" class="cta cta-secondary">pub.dev</a>
+  </div>
+</section>
+
+<!-- Section 2: Overview -->
+<section id="overview">
+  <h2>Overview</h2>
+
+  <p><strong>auto_interop</strong> is a build_runner-based code generator that lets Flutter developers consume <em>any</em> native package by auto-generating type-safe Dart bindings. You declare which packages you need in a YAML config file, and auto_interop parses their public APIs, creates an intermediate Unified Type Schema (UTS), and emits platform-specific glue code plus clean Dart interfaces.</p>
+
+  <p>Unlike manual platform channel wiring, auto_interop handles serialization, error normalization, native object lifecycle, and async dispatch automatically. When the native package updates, regenerate to get updated bindings instantly.</p>
+
+  <p>The generator supports dual parsing modes (regex + AST), incremental builds with SHA-256 checksums, and a cloud registry of pre-built type definitions for popular packages.</p>
+
+  <h3>Architecture</h3>
+  <div class="ascii-diagram">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474;                      auto_interop.yaml                       &#9474;
+&#9474;            (declares which native packages to bind)           &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                          &#9474;
+          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9532;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+          &#9660;               &#9660;               &#9660;
+   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488; &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488; &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+   &#9474;  NPM Parser  &#9474; &#9474;  Pod Parser  &#9474; &#9474; Gradle Parser&#9474;
+   &#9474;  (TS .d.ts)  &#9474; &#9474;  (Swift)     &#9474; &#9474; (Kotlin)     &#9474;
+   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496; &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496; &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+          &#9474;                &#9474;                &#9474;
+          &#9660;                &#9660;                &#9660;
+   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+   &#9474;          Unified Type Schema (UTS)            &#9474;
+   &#9474;  (intermediate representation of all APIs)    &#9474;
+   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                          &#9474;
+          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9532;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+          &#9660;               &#9660;               &#9660;
+   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488; &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488; &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+   &#9474; Dart Binding &#9474; &#9474; Kotlin/Swift&#9474; &#9474; JS Interop  &#9474;
+   &#9474; Generator    &#9474; &#9474; Glue Gen    &#9474; &#9474; Generator   &#9474;
+   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496; &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496; &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
+
+  <h3>Key Features</h3>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>Multi-Platform</h4>
+      <p>npm, CocoaPods, SPM, and Gradle &mdash; iOS, Android, macOS, and Web from one config.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Dual Parsing</h4>
+      <p>Regex parsers for speed, AST parsers for accuracy. Automatic fallback chain.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Incremental Builds</h4>
+      <p>SHA-256 checksums + dependency graph. Only rebuilds what changed.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Cloud Registry</h4>
+      <p>Pre-built type definitions for popular packages. Instant generation, no parsing needed.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Schema Overrides</h4>
+      <p>Override any parsed schema with custom .uts.json files. Project-level or global.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Glue Routing</h4>
+      <p>Swift files auto-routed to ios/Runner, Kotlin to android/app. Xcode project patched automatically.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Batch Calls</h4>
+      <p>N method calls in 1 round-trip via batchInvoke. Reduces platform channel overhead.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Native Object Lifecycle</h4>
+      <p>Opaque handles with Finalizer safety net. Deterministic or GC-driven cleanup.</p>
+    </div>
+  </div>
+
+  <h3>Platform Support</h3>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Language</th><th>Platform</th><th>Installer</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>npm</td><td>TypeScript / JS</td><td>Web</td><td><code>npm install</code></td></tr>
+      <tr><td>CocoaPods</td><td>Swift</td><td>iOS / macOS</td><td>Podfile</td></tr>
+      <tr><td>SPM</td><td>Swift</td><td>iOS / macOS</td><td>Package.swift</td></tr>
+      <tr><td>Gradle</td><td>Kotlin</td><td>Android</td><td>build.gradle</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Section 3: Getting Started -->
+<section id="getting-started">
+  <h2>Getting Started</h2>
+
+  <h3>Prerequisites</h3>
+  <ul>
+    <li>Flutter 3.10+ and Dart 3.0+</li>
+    <li>For AST parsing (optional): Node.js (npm), Xcode command-line tools (Swift), Kotlin compiler (Gradle)</li>
+  </ul>
+
+  <h3>1. Install dependencies</h3>
+  <pre><code class="language-yaml"># pubspec.yaml
+dependencies:
+  auto_interop: ^0.1.0
+
+dev_dependencies:
+  auto_interop_generator: ^0.1.0
+  build_runner: ^2.4.0</code></pre>
+
+  <h3>2. Configure native packages</h3>
+  <pre><code class="language-yaml"># auto_interop.yaml
+native_packages:
+  - source: npm
+    package: "date-fns"
+    version: "^3.6.0"
+    imports:
+      - "format"
+      - "addDays"
+
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"</code></pre>
+
+  <h3>3. Generate bindings</h3>
+  <pre><code class="language-bash"># Using build_runner (recommended for CI/CD)
+dart run build_runner build
+
+# Or using the CLI directly
+dart run auto_interop_generator:generate</code></pre>
+
+  <h3>4. Use the generated code</h3>
+  <pre><code class="language-dart">import 'package:auto_interop/auto_interop.dart';
+import 'generated/date_fns.dart';
+
+void main() async {
+  await AutoInteropLifecycle.instance.initialize();
+
+  final formatted = await DateFns.instance.format(
+    DateTime.now(), 'yyyy-MM-dd',
+  );
+  print(formatted); // 2024-01-15
+}</code></pre>
+
+  <h3>What gets generated</h3>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Dart Binding</th><th>Platform Glue</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>npm</td><td><code>lib/generated/date_fns.dart</code></td><td>JS interop (inline)</td></tr>
+      <tr><td>CocoaPods / SPM</td><td><code>lib/generated/alamofire.dart</code></td><td><code>ios/Runner/AlamofirePlugin.swift</code></td></tr>
+      <tr><td>Gradle</td><td><code>lib/generated/okhttp.dart</code></td><td><code>android/app/.../OkhttpPlugin.kt</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Section 4: Configuration -->
+<section id="configuration">
+  <h2>Configuration</h2>
+
+  <p>All configuration lives in <code>auto_interop.yaml</code> at your project root. The file declares which native packages to bind and how to resolve them.</p>
+
+  <h3>Full annotated format</h3>
+  <pre><code class="language-yaml"># auto_interop.yaml
+native_packages:
+  - source: npm              # npm | cocoapods | spm | gradle
+    package: "date-fns"       # Package name (npm name / pod name / Maven coordinate)
+    version: "^3.6.0"         # Version constraint
+    imports:                   # (Optional) Selective imports — only these APIs
+      - "format"
+      - "addDays"
+      - "differenceInDays"
+    source_path: "./local/date-fns"  # (Optional) Local source directory
+    source_url: "https://..."        # (Optional) Custom download URL
+    custom_types:                     # (Optional) Map unrecognized types to Dart
+      FormatOptions: "Map&lt;String, dynamic&gt;"
+
+  - source: cocoapods
+    package: "Alamofire"
+    version: "~> 5.9"
+
+  - source: gradle
+    package: "com.squareup.okhttp3:okhttp"
+    version: "4.12.0"
+    maven_repositories:        # (Optional) Additional Maven repos
+      - "https://maven.google.com"
+      - "https://jitpack.io"
+
+# (Optional) Global config
+overrides_dir: "auto_interop_overrides"  # Directory for .uts.json override files</code></pre>
+
+  <h3>Config options</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>source</code></td><td>Yes</td><td>Package source: <code>npm</code>, <code>cocoapods</code>, <code>spm</code>, or <code>gradle</code></td></tr>
+      <tr><td><code>package</code></td><td>Yes</td><td>Package identifier (npm name, pod name, or Maven coordinate)</td></tr>
+      <tr><td><code>version</code></td><td>Yes</td><td>Version constraint (semver range, CocoaPods operator, etc.)</td></tr>
+      <tr><td><code>imports</code></td><td>No</td><td>Selective import list &mdash; only generate bindings for these symbols</td></tr>
+      <tr><td><code>source_path</code></td><td>No</td><td>Local directory containing the native source files</td></tr>
+      <tr><td><code>source_url</code></td><td>No</td><td>Custom URL to download source files from</td></tr>
+      <tr><td><code>custom_types</code></td><td>No</td><td>Map of unrecognized type names to Dart types</td></tr>
+      <tr><td><code>maven_repositories</code></td><td>No</td><td>Additional Maven repository URLs for Gradle packages</td></tr>
+      <tr><td><code>overrides_dir</code></td><td>No</td><td>Directory for project-level .uts.json schema overrides</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Per-platform examples</h3>
+  <h4>npm (Web)</h4>
+  <pre><code class="language-yaml">- source: npm
+  package: "lodash"
+  version: "^4.17.0"
+  imports: ["debounce", "throttle", "cloneDeep"]</code></pre>
+
+  <h4>CocoaPods (iOS/macOS)</h4>
+  <pre><code class="language-yaml">- source: cocoapods
+  package: "SDWebImage"
+  version: "~> 5.18"</code></pre>
+
+  <h4>SPM (iOS/macOS)</h4>
+  <pre><code class="language-yaml">- source: spm
+  package: "Alamofire"
+  version: "5.9.0"
+  source_url: "https://github.com/Alamofire/Alamofire"</code></pre>
+
+  <h4>Gradle (Android)</h4>
+  <pre><code class="language-yaml">- source: gradle
+  package: "com.squareup.okhttp3:okhttp"
+  version: "4.12.0"
+  maven_repositories:
+    - "https://maven.google.com"</code></pre>
+</section>
+
+<!-- Section 5: CLI Reference -->
+<section id="cli">
+  <h2>CLI Reference</h2>
+
+  <p>The CLI is invoked via <code>dart run auto_interop_generator:generate</code> followed by a command and options.</p>
+
+  <h3>Commands overview</h3>
+  <table>
+    <thead>
+      <tr><th>Command</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>generate</code></td><td>Generate Dart bindings from <code>auto_interop.yaml</code> (default command)</td></tr>
+      <tr><td><code>parse</code></td><td>Parse native source files into a <code>.uts.json</code> type definition</td></tr>
+      <tr><td><code>list</code></td><td>List cached parsed type definitions</td></tr>
+      <tr><td><code>add</code></td><td>Add a native package to <code>auto_interop.yaml</code></td></tr>
+      <tr><td><code>registry</code></td><td>Manage the cloud definition registry</td></tr>
+      <tr><td><code>setup</code></td><td>Check toolchains and pre-compile AST helpers</td></tr>
+      <tr><td><code>clean</code></td><td>Clear cache (forces rebuild on next generate)</td></tr>
+      <tr><td><code>delete</code></td><td>Clean + remove generated Dart files</td></tr>
+      <tr><td><code>purge</code></td><td>Delete + remove routed Swift/Kotlin glue files</td></tr>
+      <tr><td><code>help</code></td><td>Show help message</td></tr>
+    </tbody>
+  </table>
+
+  <h3><code>generate</code></h3>
+  <p>The default command. Reads <code>auto_interop.yaml</code>, resolves schemas, and generates Dart bindings + platform glue.</p>
+  <table>
+    <thead>
+      <tr><th>Flag</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--config &lt;path&gt;</code></td><td>Path to config file (default: <code>auto_interop.yaml</code>)</td></tr>
+      <tr><td><code>--output &lt;dir&gt;</code></td><td>Output directory (default: <code>lib/generated</code>)</td></tr>
+      <tr><td><code>--only &lt;packages&gt;</code></td><td>Generate only specified packages (comma-separated)</td></tr>
+      <tr><td><code>--force</code></td><td>Force regeneration of all packages (ignore cache)</td></tr>
+      <tr><td><code>--dry-run</code></td><td>Preview what would be generated without writing files</td></tr>
+      <tr><td><code>--verbose</code></td><td>Show detailed output (checksums, cache state, file lists)</td></tr>
+      <tr><td><code>--no-analyze</code></td><td>Skip API surface analysis</td></tr>
+      <tr><td><code>--no-download</code></td><td>Skip auto-downloading native packages</td></tr>
+      <tr><td><code>--no-registry</code></td><td>Skip cloud registry lookup</td></tr>
+      <tr><td><code>--no-ast</code></td><td>Skip AST-based parsing (use regex parsers only)</td></tr>
+      <tr><td><code>--override &lt;files&gt;</code></td><td>Load user-provided <code>.uts.json</code> files (comma-separated)</td></tr>
+    </tbody>
+  </table>
+
+  <h3><code>parse</code></h3>
+  <p>Parse native source files into a standalone <code>.uts.json</code> type definition. Useful for inspecting what the generator sees.</p>
+  <table>
+    <thead>
+      <tr><th>Flag</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--package &lt;name&gt;</code></td><td>Package name (required)</td></tr>
+      <tr><td><code>--version &lt;ver&gt;</code></td><td>Package version (default: <code>0.0.0</code>)</td></tr>
+      <tr><td><code>--source &lt;type&gt;</code></td><td>Parser to use: <code>cocoapods</code>, <code>spm</code>, <code>gradle</code>, <code>npm</code> (auto-detected)</td></tr>
+      <tr><td><code>--output &lt;path&gt;</code></td><td>Write output to file instead of stdout</td></tr>
+      <tr><td><code>--save</code></td><td>Save result to parse cache</td></tr>
+      <tr><td><code>--no-analyze</code></td><td>Skip API surface analysis</td></tr>
+      <tr><td><code>--no-ast</code></td><td>Skip AST-based parsing</td></tr>
+    </tbody>
+  </table>
+
+  <h3><code>add</code></h3>
+  <pre><code class="language-bash"># Usage: add &lt;source&gt; &lt;package&gt; &lt;version&gt;
+dart run auto_interop_generator:generate add npm date-fns ^3.0.0
+dart run auto_interop_generator:generate add cocoapods Alamofire "~> 5.9"
+dart run auto_interop_generator:generate add gradle com.squareup.okhttp3:okhttp 4.12.0</code></pre>
+
+  <h3><code>registry</code></h3>
+  <pre><code class="language-bash"># List available packages in the cloud registry
+dart run auto_interop_generator:generate registry list
+
+# Force-fetch a specific definition
+dart run auto_interop_generator:generate registry fetch npm/date-fns 3.6.0</code></pre>
+
+  <h3><code>clean</code> / <code>delete</code> / <code>purge</code></h3>
+  <pre><code class="language-bash"># Clear cache for a specific package
+dart run auto_interop_generator:generate clean date-fns
+
+# Clear all caches
+dart run auto_interop_generator:generate clean --all
+
+# Clean + remove generated Dart files
+dart run auto_interop_generator:generate delete --all
+
+# Delete + remove routed Swift/Kotlin glue files
+dart run auto_interop_generator:generate purge --all</code></pre>
+
+  <h3>Common workflows</h3>
+  <pre><code class="language-bash"># Add a package and generate in one go
+dart run auto_interop_generator:generate add npm lodash ^4.17.0
+dart run auto_interop_generator:generate
+
+# Regenerate only Alamofire with verbose output
+dart run auto_interop_generator:generate generate --only Alamofire --force --verbose
+
+# Preview what would change without writing files
+dart run auto_interop_generator:generate generate --dry-run
+
+# Parse a local Swift package and inspect the schema
+dart run auto_interop_generator:generate parse --package MyLib --source cocoapods --output my_lib.uts.json
+
+# Pre-warm AST helper caches (avoids 30s delay on first generate)
+dart run auto_interop_generator:generate setup</code></pre>
+</section>
+
+<!-- Section 6: Architecture -->
+<section id="architecture">
+  <h2>Architecture</h2>
+
+  <h3>Generation pipeline</h3>
+  <div class="ascii-diagram">Config &#8594; Download &#8594; Parse &#8594; UTS Schema &#8594; Analyze &#8594; Generate &#8594; Route Output
+
+  1. Read auto_interop.yaml
+  2. Download native source (or use source_path / registry)
+  3. Parse API surface (regex or AST parser)
+  4. Produce Unified Type Schema (intermediate JSON)
+  5. Run API surface analyzer (warnings/errors)
+  6. Generate Dart binding + platform glue code
+  7. Route glue files to platform dirs (ios/Runner, android/app)</div>
+
+  <h3>Schema resolution priority</h3>
+  <p>When resolving the type schema for a package, auto_interop checks these sources in order:</p>
+  <ol>
+    <li><strong>CLI override</strong> &mdash; <code>--override my_overrides.uts.json</code></li>
+    <li><strong>Project overrides</strong> &mdash; <code>&lt;overrides_dir&gt;/&lt;package&gt;.uts.json</code></li>
+    <li><strong>Global overrides</strong> &mdash; <code>~/.auto_interop/overrides/&lt;source&gt;/&lt;package&gt;.uts.json</code></li>
+    <li><strong>Registry cache</strong> &mdash; locally cached cloud definitions (7-day TTL)</li>
+    <li><strong>Registry fetch</strong> &mdash; download from GitHub-hosted registry</li>
+    <li><strong>Source parsing</strong> &mdash; download + parse the native source code</li>
+  </ol>
+
+  <h3>Package structure</h3>
+  <pre><code class="language-bash">auto_interop/
+  packages/
+    auto_interop/              # Runtime library
+      lib/src/
+        channel_manager.dart   # AutoInteropChannel (method channels)
+        async_bridge.dart      # AutoInteropEventChannel (event channels)
+        lifecycle.dart         # AutoInteropLifecycle (init/dispose)
+        error_handler.dart     # AutoInteropException + ErrorHandler
+        callback_manager.dart  # CallbackManager (Dart&#8594;native callbacks)
+        native_object.dart     # NativeObject&lt;T&gt; (opaque handles)
+        type_converter.dart    # TypeConverter (serialization)
+
+    auto_interop_generator/    # Code generator
+      lib/src/
+        cli/                   # CLI runner, Xcode project patcher
+        config/                # YAML config parser
+        parsers/               # Regex parsers (npm, Swift, Gradle)
+        parsers/ast/           # AST parsers (TypeScript, Swift, Kotlin)
+        schema/                # Unified Type Schema definitions
+        generators/            # Dart, Swift, Kotlin, JS code generators
+        resolver/              # Schema resolver, registry client, overrides
+        cache/                 # Build cache, parse cache, checksums
+        analyzer/              # API surface analyzer, dependency resolver
+        type_mapping/          # Language-specific type mapping tables</code></pre>
+</section>
+
+<!-- Section 7: Unified Type Schema -->
+<section id="uts">
+  <h2>Unified Type Schema</h2>
+
+  <p>The <strong>Unified Type Schema (UTS)</strong> is the intermediate representation that sits between parsing and code generation. Every native API &mdash; regardless of source language &mdash; is normalized into UTS before any Dart or glue code is emitted.</p>
+
+  <h3>Type kinds</h3>
+  <table>
+    <thead>
+      <tr><th>Kind</th><th>Description</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>primitive</code></td><td>Built-in scalar types</td><td><code>int</code>, <code>String</code>, <code>bool</code>, <code>double</code></td></tr>
+      <tr><td><code>object</code></td><td>Class/struct instance</td><td><code>FormatOptions</code>, <code>Request</code></td></tr>
+      <tr><td><code>list</code></td><td>Ordered collection</td><td><code>List&lt;String&gt;</code></td></tr>
+      <tr><td><code>map</code></td><td>Key-value collection</td><td><code>Map&lt;String, dynamic&gt;</code></td></tr>
+      <tr><td><code>callback</code></td><td>Function type (Dart&#8594;native)</td><td><code>void Function(String)</code></td></tr>
+      <tr><td><code>stream</code></td><td>Async event sequence</td><td><code>Stream&lt;int&gt;</code></td></tr>
+      <tr><td><code>future</code></td><td>Single async result</td><td><code>Future&lt;String&gt;</code></td></tr>
+      <tr><td><code>nativeObject</code></td><td>Opaque handle to platform object</td><td><code>NativeObject&lt;Session&gt;</code></td></tr>
+      <tr><td><code>enumType</code></td><td>Enumeration</td><td><code>HTTPMethod</code></td></tr>
+      <tr><td><code>voidType</code></td><td>No return value</td><td><code>void</code></td></tr>
+      <tr><td><code>dynamic</code></td><td>Untyped / any</td><td><code>dynamic</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Class kinds</h3>
+  <table>
+    <thead>
+      <tr><th>Kind</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>concreteClass</code></td><td>Regular instantiable class with methods and constructor</td></tr>
+      <tr><td><code>abstractClass</code></td><td>Cannot be instantiated &mdash; only used as a type reference</td></tr>
+      <tr><td><code>dataClass</code></td><td>Value type (struct/record) &mdash; serialized as a Map over the channel</td></tr>
+      <tr><td><code>sealedClass</code></td><td>Sealed hierarchy with known subclasses</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Schema classes</h3>
+  <p>The core schema is built from these types:</p>
+  <ul>
+    <li><strong>UnifiedTypeSchema</strong> &mdash; top-level container: <code>package</code>, <code>source</code>, <code>version</code>, <code>classes</code>, <code>functions</code>, <code>types</code>, <code>enums</code>, <code>nativeImports</code>, <code>nativeFields</code></li>
+    <li><strong>UtsClass</strong> &mdash; <code>name</code>, <code>kind</code>, <code>fields</code>, <code>methods</code>, <code>superclass</code>, <code>interfaces</code>, <code>constructorParameters</code>, <code>documentation</code></li>
+    <li><strong>UtsMethod</strong> &mdash; <code>name</code>, <code>isStatic</code>, <code>isAsync</code>, <code>parameters</code>, <code>returnType</code>, <code>documentation</code>, <code>nativeBody</code></li>
+    <li><strong>UtsParameter</strong> &mdash; <code>name</code>, <code>type</code>, <code>isOptional</code>, <code>isNamed</code>, <code>defaultValue</code>, <code>nativeLabel</code>, <code>nativeType</code></li>
+    <li><strong>UtsField</strong> &mdash; <code>name</code>, <code>type</code>, <code>nullable</code>, <code>isReadOnly</code>, <code>defaultValue</code></li>
+    <li><strong>UtsType</strong> &mdash; <code>kind</code>, <code>name</code>, <code>nullable</code>, <code>ref</code>, <code>typeArguments</code>, <code>parameterTypes</code>, <code>returnType</code></li>
+    <li><strong>UtsEnum</strong> &mdash; <code>name</code>, <code>values</code> (list of <code>UtsEnumValue</code> with <code>name</code> and optional <code>rawValue</code>)</li>
+  </ul>
+
+  <h3>JSON example (abridged)</h3>
+  <pre><code class="language-json">{
+  "package": "Alamofire",
+  "source": "cocoapods",
+  "version": "5.9.0",
+  "classes": [
+    {
+      "name": "Session",
+      "kind": "concreteClass",
+      "methods": [
+        {
+          "name": "request",
+          "isAsync": false,
+          "parameters": [
+            {
+              "name": "url",
+              "type": { "kind": "primitive", "name": "String" },
+              "nativeLabel": "_"
+            },
+            {
+              "name": "method",
+              "type": { "kind": "primitive", "name": "String" }
+            },
+            {
+              "name": "headers",
+              "type": { "kind": "map", "name": "Map", "nullable": true },
+              "nativeType": "HTTPHeaders"
+            }
+          ],
+          "returnType": { "kind": "nativeObject", "name": "DataRequest" }
+        },
+        {
+          "name": "download",
+          "isAsync": true,
+          "nativeBody": {
+            "swift": "try await instance.download(url, to: destination).serializingData().value"
+          },
+          "parameters": [ ... ],
+          "returnType": { "kind": "primitive", "name": "String" }
+        }
+      ]
+    }
+  ],
+  "nativeImports": {
+    "swift": ["Alamofire"]
+  }
+}</code></pre>
+</section>
+
+<!-- Section 8: Type Mappings -->
+<section id="type-mappings">
+  <h2>Type Mappings</h2>
+
+  <p>auto_interop maps native types to Dart types using language-specific mapping tables. These tables handle primitives, generics, nullability, and special types.</p>
+
+  <h3>TypeScript/JS &rarr; Dart</h3>
+  <table>
+    <thead>
+      <tr><th>TypeScript</th><th>Dart</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>number</code></td><td><code>double</code></td><td></td></tr>
+      <tr><td><code>string</code></td><td><code>String</code></td><td></td></tr>
+      <tr><td><code>boolean</code></td><td><code>bool</code></td><td></td></tr>
+      <tr><td><code>Date</code></td><td><code>DateTime</code></td><td>ISO 8601 encoding</td></tr>
+      <tr><td><code>void</code> / <code>null</code> / <code>undefined</code></td><td><code>void</code></td><td></td></tr>
+      <tr><td><code>any</code> / <code>unknown</code></td><td><code>dynamic</code></td><td></td></tr>
+      <tr><td><code>Buffer</code> / <code>Uint8Array</code></td><td><code>Uint8List</code></td><td>Byte array encoding</td></tr>
+      <tr><td><code>URL</code></td><td><code>Uri</code></td><td></td></tr>
+      <tr><td><code>Array&lt;T&gt;</code> / <code>T[]</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Promise&lt;T&gt;</code></td><td><code>Future&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>ReadableStream&lt;T&gt;</code></td><td><code>Stream&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Map&lt;K, V&gt;</code> / <code>Record&lt;K, V&gt;</code></td><td><code>Map&lt;K, V&gt;</code></td><td></td></tr>
+      <tr><td><code>Set&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td>Sets mapped to lists</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Swift &rarr; Dart</h3>
+  <table>
+    <thead>
+      <tr><th>Swift</th><th>Dart</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Int</code>, <code>Int8&ndash;64</code>, <code>UInt</code></td><td><code>int</code></td><td></td></tr>
+      <tr><td><code>Double</code>, <code>Float</code>, <code>CGFloat</code></td><td><code>double</code></td><td></td></tr>
+      <tr><td><code>String</code>, <code>UUID</code>, <code>NSString</code></td><td><code>String</code></td><td></td></tr>
+      <tr><td><code>Bool</code></td><td><code>bool</code></td><td></td></tr>
+      <tr><td><code>Date</code></td><td><code>DateTime</code></td><td>ISO 8601 encoding</td></tr>
+      <tr><td><code>Data</code></td><td><code>Uint8List</code></td><td>Byte array encoding</td></tr>
+      <tr><td><code>URL</code></td><td><code>Uri</code></td><td></td></tr>
+      <tr><td><code>T?</code> / <code>Optional&lt;T&gt;</code></td><td><code>T?</code></td><td>Nullable</td></tr>
+      <tr><td><code>[T]</code> / <code>Array&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>[K: V]</code> / <code>Dictionary&lt;K, V&gt;</code></td><td><code>Map&lt;K, V&gt;</code></td><td></td></tr>
+      <tr><td><code>Set&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Result&lt;S, F&gt;</code></td><td><code>Future&lt;S&gt;</code></td><td></td></tr>
+      <tr><td><code>AsyncStream&lt;T&gt;</code></td><td><code>Stream&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Void</code></td><td><code>void</code></td><td></td></tr>
+      <tr><td><code>Any</code> / <code>AnyObject</code></td><td><code>dynamic</code></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Kotlin &rarr; Dart</h3>
+  <table>
+    <thead>
+      <tr><th>Kotlin</th><th>Dart</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Int</code>, <code>Short</code>, <code>Byte</code>, <code>Long</code></td><td><code>int</code></td><td></td></tr>
+      <tr><td><code>Double</code>, <code>Float</code></td><td><code>double</code></td><td></td></tr>
+      <tr><td><code>String</code>, <code>CharSequence</code></td><td><code>String</code></td><td></td></tr>
+      <tr><td><code>Boolean</code></td><td><code>bool</code></td><td></td></tr>
+      <tr><td><code>ByteArray</code></td><td><code>Uint8List</code></td><td></td></tr>
+      <tr><td><code>URI</code> / <code>URL</code></td><td><code>Uri</code></td><td></td></tr>
+      <tr><td><code>Duration</code></td><td><code>Duration</code></td><td></td></tr>
+      <tr><td><code>T?</code></td><td><code>T?</code></td><td>Nullable</td></tr>
+      <tr><td><code>List&lt;T&gt;</code> / <code>MutableList&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Map&lt;K, V&gt;</code></td><td><code>Map&lt;K, V&gt;</code></td><td></td></tr>
+      <tr><td><code>Set&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Flow&lt;T&gt;</code></td><td><code>Stream&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Deferred&lt;T&gt;</code></td><td><code>Future&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Unit</code></td><td><code>void</code></td><td></td></tr>
+      <tr><td><code>Any</code></td><td><code>dynamic</code></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Java &rarr; Dart</h3>
+  <table>
+    <thead>
+      <tr><th>Java</th><th>Dart</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>int</code> / <code>Integer</code>, <code>long</code> / <code>Long</code>, <code>short</code>, <code>byte</code></td><td><code>int</code></td><td></td></tr>
+      <tr><td><code>double</code> / <code>Double</code>, <code>float</code> / <code>Float</code></td><td><code>double</code></td><td></td></tr>
+      <tr><td><code>String</code>, <code>CharSequence</code></td><td><code>String</code></td><td></td></tr>
+      <tr><td><code>boolean</code> / <code>Boolean</code></td><td><code>bool</code></td><td></td></tr>
+      <tr><td><code>byte[]</code></td><td><code>Uint8List</code></td><td></td></tr>
+      <tr><td><code>URI</code> / <code>URL</code></td><td><code>Uri</code></td><td></td></tr>
+      <tr><td><code>Optional&lt;T&gt;</code></td><td><code>T?</code></td><td>Nullable</td></tr>
+      <tr><td><code>List&lt;T&gt;</code> / <code>ArrayList&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>Map&lt;K, V&gt;</code> / <code>HashMap&lt;K, V&gt;</code></td><td><code>Map&lt;K, V&gt;</code></td><td></td></tr>
+      <tr><td><code>Set&lt;T&gt;</code> / <code>HashSet&lt;T&gt;</code></td><td><code>List&lt;T&gt;</code></td><td></td></tr>
+      <tr><td><code>void</code> / <code>Void</code></td><td><code>void</code></td><td></td></tr>
+      <tr><td><code>Object</code></td><td><code>dynamic</code></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Channel encoding strategies</h3>
+  <table>
+    <thead>
+      <tr><th>Dart Type</th><th>Channel Encoding</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>int</code>, <code>double</code>, <code>String</code>, <code>bool</code></td><td>Pass-through (standard codec)</td></tr>
+      <tr><td><code>DateTime</code></td><td>ISO 8601 string</td></tr>
+      <tr><td><code>Duration</code></td><td>Microseconds (int)</td></tr>
+      <tr><td><code>Uri</code></td><td>String</td></tr>
+      <tr><td><code>Uint8List</code></td><td>Byte array (standard codec)</td></tr>
+      <tr><td><code>List&lt;T&gt;</code></td><td>List (recursive conversion)</td></tr>
+      <tr><td><code>Map&lt;K, V&gt;</code></td><td>Map (recursive conversion)</td></tr>
+      <tr><td>Data classes</td><td>Map&lt;String, dynamic&gt; via toMap/fromMap</td></tr>
+      <tr><td>Native objects</td><td>String handle ID</td></tr>
+      <tr><td>Callbacks</td><td>String callback ID</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Section 9: Customization -->
+<section id="customization">
+  <h2>Customization</h2>
+
+  <p>auto_interop provides several escape hatches for when the parsed schema doesn't match what you need. These are specified in <code>.uts.json</code> override files or directly in the schema.</p>
+
+  <h3><code>nativeBody</code></h3>
+  <p>Override the generated method body with verbatim platform code. The generator emits your code exactly as-is instead of the default dispatch logic.</p>
+  <pre><code class="language-json">{
+  "name": "download",
+  "isAsync": true,
+  "nativeBody": {
+    "swift": "try await instance.download(url, to: dest).serializingData().value",
+    "kotlin": "withContext(Dispatchers.IO) { instance.download(url, dest) }",
+    "js": "await fetch(url).then(r => r.blob())"
+  }
+}</code></pre>
+
+  <p>For stream methods, additional keys are available:</p>
+  <ul>
+    <li><code>swift_onListen</code> / <code>swift_onCancel</code> &mdash; EventChannel listen/cancel handlers</li>
+    <li><code>kotlin_onListen</code> / <code>kotlin_onCancel</code> &mdash; EventChannel listen/cancel handlers</li>
+  </ul>
+
+  <h3><code>nativeLabel</code></h3>
+  <p>Swift external parameter labels. Set to <code>"_"</code> for unlabeled parameters, or a custom label string.</p>
+  <pre><code class="language-json">{
+  "name": "url",
+  "type": { "kind": "primitive", "name": "String" },
+  "nativeLabel": "_"
+}</code></pre>
+  <p>This generates <code>instance.request(_ url: String)</code> instead of <code>instance.request(url: url)</code> in Swift.</p>
+
+  <h3><code>nativeType</code></h3>
+  <p>Wrap a parameter with a native type conversion. The glue code will wrap the channel value with the specified constructor.</p>
+  <pre><code class="language-json">{
+  "name": "headers",
+  "type": { "kind": "map", "name": "Map" },
+  "nativeType": "HTTPHeaders"
+}</code></pre>
+  <p>Generated Swift: <code>let headers = HTTPHeaders(args["headers"] as! [String: String])</code></p>
+
+  <h3><code>nativeImports</code> / <code>nativeFields</code></h3>
+  <p>Add platform-specific imports and plugin instance fields to the generated glue code.</p>
+  <pre><code class="language-json">{
+  "nativeImports": {
+    "swift": ["Alamofire", "Foundation"],
+    "kotlin": ["com.squareup.okhttp3.*"]
+  },
+  "nativeFields": {
+    "swift": ["private var cache: NSCache&lt;NSString, AnyObject&gt; = NSCache()"],
+    "kotlin": ["private val cache = LruCache&lt;String, Any&gt;(100)"]
+  }
+}</code></pre>
+
+  <h3>Schema overrides</h3>
+  <p>Override any parsed schema with custom <code>.uts.json</code> files. The override is deep-merged with the parsed schema.</p>
+
+  <h4>Project-level overrides</h4>
+  <p>Place files in the <code>overrides_dir</code> (default: <code>auto_interop_overrides/</code>):</p>
+  <pre><code class="language-bash">auto_interop_overrides/
+  alamofire.uts.json          # Matches package "Alamofire"
+  date_fns.uts.json           # Matches package "date-fns"
+  com_squareup_okhttp3.uts.json</code></pre>
+
+  <h4>Global overrides</h4>
+  <pre><code class="language-bash">~/.auto_interop/overrides/
+  cocoapods/Alamofire.uts.json
+  npm/date-fns.uts.json
+  gradle/com.squareup.okhttp3:okhttp.uts.json</code></pre>
+
+  <h4>CLI override</h4>
+  <pre><code class="language-bash">dart run auto_interop_generator:generate generate --override my_alamofire.uts.json</code></pre>
+
+  <h3>Override resolution priority</h3>
+  <ol>
+    <li>CLI <code>--override</code> file</li>
+    <li>Project overrides directory</li>
+    <li>Global overrides directory</li>
+    <li>Registry cache (7-day TTL)</li>
+    <li>Registry fetch (GitHub-hosted)</li>
+    <li>Source parsing (download + parse)</li>
+  </ol>
+</section>
+
+<!-- Section 10: Runtime API -->
+<section id="runtime-api">
+  <h2>Runtime API</h2>
+
+  <p>The <code>auto_interop</code> runtime package provides the foundation that generated bindings use to communicate with native code.</p>
+
+  <h3>AutoInteropChannel</h3>
+  <p>Manages platform method channels for native bindings. Each native package gets its own channel identified by a unique name.</p>
+  <pre><code class="language-dart">class AutoInteropChannel {
+  AutoInteropChannel(String name);
+
+  /// Invoke a method and return the result, cast to T.
+  /// Optional timeout throws AutoInteropException with code 'TIMEOUT'.
+  Future&lt;T&gt; invoke&lt;T&gt;(String method,
+      [Map&lt;String, dynamic&gt;? arguments, Duration? timeout]);
+
+  /// Invoke a method that returns a List.
+  Future&lt;List&lt;T&gt;&gt; invokeList&lt;T&gt;(String method,
+      [Map&lt;String, dynamic&gt;? arguments, Duration? timeout]);
+
+  /// Invoke a method that returns a Map.
+  Future&lt;Map&lt;K, V&gt;&gt; invokeMap&lt;K, V&gt;(String method,
+      [Map&lt;String, dynamic&gt;? arguments, Duration? timeout]);
+
+  /// Invoke multiple methods in a single round-trip.
+  /// Returns List&lt;BatchResult&gt; in the same order as calls.
+  Future&lt;List&lt;BatchResult&gt;&gt; batchInvoke(List&lt;BatchCall&gt; calls,
+      {Duration? timeout});
+}</code></pre>
+
+  <h3>AutoInteropEventChannel</h3>
+  <p>Provides Stream support via Flutter's EventChannel. Used for APIs that return streams (Kotlin Flow, Swift AsyncSequence, JS ReadableStream).</p>
+  <pre><code class="language-dart">class AutoInteropEventChannel {
+  AutoInteropEventChannel(String name);
+
+  /// Returns a broadcast stream of events from the native side.
+  Stream&lt;T&gt; receiveStream&lt;T&gt;({
+    String? method,
+    Map&lt;String, dynamic&gt;? arguments,
+  });
+}</code></pre>
+
+  <h3>AutoInteropLifecycle</h3>
+  <p>Singleton that manages initialization and disposal of the entire native bridge runtime.</p>
+  <pre><code class="language-dart">class AutoInteropLifecycle {
+  static AutoInteropLifecycle get instance;
+
+  bool get isInitialized;
+
+  /// Must be called before using any native bridge channels.
+  /// Safe to call multiple times (no-ops after first).
+  Future&lt;void&gt; initialize();
+
+  /// Disposes all native bridge resources.
+  Future&lt;void&gt; dispose();
+
+  /// Releases a native object handle.
+  Future&lt;void&gt; releaseObject(String channelName, String handle);
+}</code></pre>
+
+  <h3>AutoInteropException</h3>
+  <p>Exception thrown when a native method call fails. The <code>code</code> field contains a normalized error code.</p>
+  <pre><code class="language-dart">class AutoInteropException implements Exception {
+  final String code;       // e.g. "IO_ERROR", "TIMEOUT", "NETWORK_ERROR"
+  final String? message;
+  final dynamic details;
+
+  String get nativeExceptionType;  // Alias for code
+
+  // Convenience boolean getters:
+  bool get isMissingPlugin;
+  bool get isTimeout;
+  bool get isNetworkError;
+  bool get isIoError;
+  bool get isPermissionDenied;
+  bool get isCancelled;
+  bool get isInvalidArgument;
+  bool get isNotFound;
+}</code></pre>
+
+  <h3>CallbackManager</h3>
+  <p>Manages Dart-to-native callbacks. When a Dart function is passed as a callback parameter, it's assigned a unique ID and the native side invokes it via the callback channel.</p>
+  <pre><code class="language-dart">class CallbackManager {
+  static CallbackManager get instance;
+
+  /// Registers a callback and returns its unique ID.
+  String register(Function callback);
+
+  /// Unregisters a callback by its ID.
+  void unregister(String callbackId);
+
+  /// Unregisters all callbacks.
+  void clear();
+
+  int get count;
+  bool isRegistered(String callbackId);
+}</code></pre>
+
+  <h3>NativeObject&lt;T&gt;</h3>
+  <p>An opaque handle to a native object living on the platform side. Has a <code>Finalizer</code> safety net for GC-driven cleanup.</p>
+  <pre><code class="language-dart">class NativeObject&lt;T&gt; {
+  final String handle;       // Opaque handle ID
+  final String channelName;  // Channel this object belongs to
+  bool get isDisposed;
+
+  /// Disposes this native object, releasing the native-side resource.
+  Future&lt;void&gt; dispose();
+
+  /// Throws StateError if disposed.
+  void ensureNotDisposed();
+}</code></pre>
+
+  <h3>TypeConverter</h3>
+  <p>Converts Dart types to platform channel-compatible types and back.</p>
+  <pre><code class="language-dart">class TypeConverter {
+  /// Convert Dart value to platform channel format.
+  /// DateTime &#8594; ISO 8601 string, Duration &#8594; microseconds,
+  /// Uri &#8594; string, List/Map &#8594; recursive conversion.
+  static Object? toPlatform(Object? value);
+
+  /// Convert platform channel value back to Dart type.
+  static Object? fromPlatform(Object? value, {String? dartType});
+
+  static String dateTimeToString(DateTime dt);
+  static DateTime stringToDateTime(String s);
+}</code></pre>
+
+  <h3>BatchCall / BatchResult</h3>
+  <pre><code class="language-dart">class BatchCall {
+  final String method;
+  final Map&lt;String, dynamic&gt;? arguments;
+  const BatchCall(this.method, [this.arguments]);
+}
+
+class BatchResult {
+  final dynamic value;
+  final String? errorCode;
+  final String? errorMessage;
+  bool get isSuccess;
+  bool get isError;
+  const BatchResult.success(dynamic value);
+  const BatchResult.error(String code, [String? message]);
+}</code></pre>
+</section>
+
+<!-- Section 11: Generated Code Examples -->
+<section id="generated-code">
+  <h2>Generated Code Examples</h2>
+
+  <p>These are real golden file outputs from the test suite &mdash; exactly what the generator produces.</p>
+
+  <h3>Dart binding (date-fns)</h3>
+  <pre><code class="language-dart">// GENERATED CODE — DO NOT EDIT
+// Generated by auto_interop_generator
+//
+// Package: date-fns@3.6.0
+// Source: npm
+
+import 'package:auto_interop/auto_interop.dart';
+
+class FormatOptions {
+  final String? locale;
+  final double? weekStartsOn;
+
+  FormatOptions({this.locale, this.weekStartsOn});
+
+  factory FormatOptions.fromMap(Map&lt;String, dynamic&gt; map) {
+    return FormatOptions(
+      locale: map['locale'] as String?,
+      weekStartsOn: map['weekStartsOn'] as double?,
+    );
+  }
+
+  Map&lt;String, dynamic&gt; toMap() =&gt; {
+    if (locale != null) 'locale': locale,
+    if (weekStartsOn != null) 'weekStartsOn': weekStartsOn,
+  };
+}
+
+abstract interface class DateFnsInterface {
+  Future&lt;String&gt; format(DateTime date, String formatStr);
+  Future&lt;DateTime&gt; addDays(DateTime date, double amount);
+  Future&lt;double&gt; differenceInDays(DateTime dateLeft, DateTime dateRight);
+}
+
+class DateFns implements DateFnsInterface {
+  static final _channel = AutoInteropChannel('date_fns');
+  static final DateFns instance = DateFns._();
+  DateFns._();
+
+  @override
+  Future&lt;String&gt; format(DateTime date, String formatStr) async {
+    final result = await _channel.invoke&lt;String&gt;('format', {
+      'date': date.toIso8601String(),
+      'formatStr': formatStr,
+    });
+    return result;
+  }
+
+  @override
+  Future&lt;DateTime&gt; addDays(DateTime date, double amount) async {
+    final result = await _channel.invoke&lt;String&gt;('addDays', {
+      'date': date.toIso8601String(),
+      'amount': amount,
+    });
+    return DateTime.parse(result);
+  }
+
+  @override
+  Future&lt;double&gt; differenceInDays(
+      DateTime dateLeft, DateTime dateRight) async {
+    final result = await _channel.invoke&lt;double&gt;('differenceInDays', {
+      'dateLeft': dateLeft.toIso8601String(),
+      'dateRight': dateRight.toIso8601String(),
+    });
+    return result;
+  }
+}</code></pre>
+
+  <h3>Swift glue (Alamofire)</h3>
+  <pre><code class="language-swift">// GENERATED CODE — DO NOT EDIT
+// Generated by auto_interop_generator
+// Swift platform channel handler for Alamofire
+
+#if os(macOS)
+import FlutterMacOS
+#else
+import Flutter
+import UIKit
+#endif
+import Alamofire
+
+public class AlamofirePlugin: NSObject, FlutterPlugin {
+    private var channel: FlutterMethodChannel!
+    private var instances: [String: AnyObject] = [:]
+    private var nextHandle: Int = 0
+
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        #if os(macOS)
+        let messenger = registrar.messenger
+        #else
+        let messenger = registrar.messenger()
+        #endif
+        let channel = FlutterMethodChannel(
+            name: "auto_interop/alamofire",
+            binaryMessenger: messenger)
+        let instance = AlamofirePlugin()
+        instance.channel = channel
+        registrar.addMethodCallDelegate(instance, channel: channel)
+    }
+
+    public func handle(_ call: FlutterMethodCall,
+                       result: @escaping FlutterResult) {
+        let args = (call.arguments as? [String: Any]) ?? [:]
+        switch call.method {
+        case "Session._create":
+            let instance = Session()
+            result(createHandle(instance))
+        case "Session.request":
+            let url = args["url"] as! String
+            let method = args["method"] as! String
+            let headers = args["headers"] as? [String: String]
+            let handle = args["_handle"] as! String
+            let instance = instances[handle] as! Session
+            let nativeResult = instance.request(
+                url: url, method: method, headers: headers)
+            result(createHandle(nativeResult))
+        case "Session.download":
+            let handle = args["_handle"] as! String
+            let instance = instances[handle] as! Session
+            Task {
+                do {
+                    let nativeResult = try await instance.download(...)
+                    DispatchQueue.main.async { result(nativeResult) }
+                } catch {
+                    DispatchQueue.main.async {
+                        result(FlutterError(
+                            code: normalizeErrorCode(error),
+                            message: error.localizedDescription,
+                            details: String(describing: error)))
+                    }
+                }
+            }
+        case "_dispose":
+            releaseHandle(args["_handle"] as! String)
+            result(nil)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
+    }
+
+    private func normalizeErrorCode(_ error: Error) -&gt; String {
+        let nsError = error as NSError
+        switch nsError.domain {
+        case NSURLErrorDomain:
+            switch nsError.code {
+            case NSURLErrorTimedOut: return "TIMEOUT"
+            case NSURLErrorCancelled: return "CANCELLED"
+            default: return "NETWORK_ERROR"
+            }
+        case NSCocoaErrorDomain:
+            return "IO_ERROR"
+        default:
+            return String(describing: type(of: error))
+        }
+    }
+}</code></pre>
+
+  <h3>Kotlin glue (OkHttp)</h3>
+  <pre><code class="language-kotlin">// GENERATED CODE — DO NOT EDIT
+// Generated by auto_interop_generator
+// Kotlin platform channel handler for com.squareup.okhttp3:okhttp
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.*
+import com.squareup.okhttp3.*
+
+class ComSquareupOkhttp3OkhttpPlugin :
+    FlutterPlugin, MethodCallHandler {
+
+    private lateinit var channel: MethodChannel
+    private val instances = mutableMapOf&lt;String, Any&gt;()
+    private var nextHandle = 0
+    private val scope = CoroutineScope(
+        Dispatchers.Main + SupervisorJob())
+
+    override fun onAttachedToEngine(
+        binding: FlutterPlugin.FlutterPluginBinding) {
+        channel = MethodChannel(binding.binaryMessenger,
+            "auto_interop/com_squareup_okhttp3_okhttp")
+        channel.setMethodCallHandler(this)
+    }
+
+    override fun onMethodCall(call: MethodCall, result: Result) {
+        when (call.method) {
+            "OkHttpClient._create" -&gt; {
+                val instance = OkHttpClient()
+                result.success(createHandle(instance))
+            }
+            "OkHttpClient.newCall" -&gt; {
+                val request = call.argument&lt;Map&gt;("request")!!
+                val handle = call.argument&lt;String&gt;("_handle")!!
+                val instance = instances[handle] as OkHttpClient
+                val nativeResult = instance.newCall(
+                    request = decodeRequest(request))
+                result.success(createHandle(nativeResult))
+            }
+            "Call.execute" -&gt; {
+                val handle = call.argument&lt;String&gt;("_handle")!!
+                val instance = instances[handle] as Call
+                scope.launch {
+                    try {
+                        val nativeResult = instance.execute()
+                        withContext(Dispatchers.Main) {
+                            result.success(encode(nativeResult))
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            result.error(normalizeErrorCode(e),
+                                e.message, e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+            "_dispose" -&gt; {
+                releaseHandle(
+                    call.argument&lt;String&gt;("_handle")!!)
+                result.success(null)
+            }
+            else -&gt; result.notImplemented()
+        }
+    }
+
+    private fun normalizeErrorCode(e: Exception): String {
+        return when (e) {
+            is java.io.IOException -&gt; "IO_ERROR"
+            is java.net.SocketTimeoutException -&gt; "TIMEOUT"
+            is SecurityException -&gt; "PERMISSION_DENIED"
+            is CancellationException -&gt; "CANCELLED"
+            else -&gt; e::class.simpleName ?: "UNKNOWN"
+        }
+    }
+}</code></pre>
+</section>
+
+<!-- Section 12: Platform Guides -->
+<section id="platform-guides">
+  <h2>Platform Guides</h2>
+
+  <h3>iOS / macOS (Swift)</h3>
+  <p>For CocoaPods or SPM packages, auto_interop generates a <code>*Plugin.swift</code> file that implements <code>FlutterPlugin</code>.</p>
+
+  <h4>Glue routing</h4>
+  <p>Generated Swift files are automatically routed to <code>ios/Runner/</code> or <code>macos/Runner/</code> (whichever exists). The Xcode project file (<code>.pbxproj</code>) is patched to include the new file.</p>
+
+  <h4>Plugin registration</h4>
+  <p>A <code>RegisterAutoInteropPlugins.swift</code> file is generated to register all plugins:</p>
+  <pre><code class="language-swift">// RegisterAutoInteropPlugins.swift (auto-generated)
+import Flutter
+
+func registerAutoInteropPlugins(with registry: FlutterPluginRegistry) {
+    AlamofirePlugin.register(with: registry.registrar(forPlugin: "AlamofirePlugin"))
+    SDWebImagePlugin.register(with: registry.registrar(forPlugin: "SDWebImagePlugin"))
+}</code></pre>
+
+  <h4>CocoaPods setup</h4>
+  <p>Add the native dependency to your Podfile:</p>
+  <pre><code class="language-bash"># ios/Podfile
+pod 'Alamofire', '~> 5.9'</code></pre>
+
+  <h4>Swift async support</h4>
+  <p>Async methods use Swift <code>Task { }</code> blocks with <code>DispatchQueue.main.async</code> to dispatch results back to the Flutter engine's main thread.</p>
+
+  <h3>Android (Kotlin)</h3>
+  <p>For Gradle packages, auto_interop generates a <code>*Plugin.kt</code> file that implements <code>FlutterPlugin</code> and <code>MethodCallHandler</code>.</p>
+
+  <h4>Glue routing</h4>
+  <p>Generated Kotlin files are routed to <code>android/app/src/main/kotlin/</code>.</p>
+
+  <h4>Gradle setup</h4>
+  <p>Add the native dependency to your <code>build.gradle</code>:</p>
+  <pre><code class="language-bash"># android/app/build.gradle
+dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}</code></pre>
+
+  <h4>Coroutine support</h4>
+  <p>Async methods use a <code>CoroutineScope(Dispatchers.Main + SupervisorJob())</code> with <code>scope.launch { }</code>. The scope is cancelled in <code>onDetachedFromEngine</code>.</p>
+
+  <div class="callout note">
+    <div class="callout-title">Note</div>
+    <p>If your Gradle package requires additional Maven repositories (e.g., Google Maven, JitPack), add them via the <code>maven_repositories</code> config field.</p>
+  </div>
+
+  <h3>Web (JavaScript)</h3>
+  <p>For npm packages, auto_interop generates JS interop code using <code>dart:js_interop</code>. No platform channels are needed &mdash; the Dart code calls JavaScript directly.</p>
+
+  <h4>npm setup</h4>
+  <pre><code class="language-bash"># Install the npm package in your web directory
+cd web && npm install date-fns</code></pre>
+
+  <div class="callout warning">
+    <div class="callout-title">Warning</div>
+    <p>The JS generator currently does not support <code>nativeBody</code> overrides, callbacks, or streams. These features are planned for a future release.</p>
+  </div>
+</section>
+
+<!-- Section 13: Advanced Topics -->
+<section id="advanced">
+  <h2>Advanced Topics</h2>
+
+  <h3>Caching &amp; incremental builds</h3>
+  <p>auto_interop uses SHA-256 checksums to track changes and skip unnecessary regeneration:</p>
+  <ul>
+    <li><strong>Config checksum</strong> &mdash; if <code>auto_interop.yaml</code> changes, all packages rebuild</li>
+    <li><strong>Per-package checksum</strong> &mdash; computed from schema JSON + <code>customTypes</code> + <code>imports</code></li>
+    <li><strong>Dependency graph</strong> &mdash; cross-package type references trigger transitive invalidation</li>
+    <li><strong>Output checksums</strong> &mdash; stored in <code>.auto_interop_cache.json</code> for file-level diffing</li>
+  </ul>
+  <p>Use <code>--force</code> to bypass caching, or <code>--verbose</code> to inspect cache state.</p>
+
+  <h3>Cloud registry</h3>
+  <p>The cloud registry provides pre-built UTS definitions for popular packages, eliminating the need to download and parse source code.</p>
+  <ul>
+    <li><strong>GitHub-hosted</strong> &mdash; definitions stored in a public repository</li>
+    <li><strong>7-day TTL</strong> &mdash; cached definitions expire after 7 days</li>
+    <li><strong>SHA-256 verified</strong> &mdash; integrity checking on fetched definitions</li>
+    <li><strong>ETag conditional fetch</strong> &mdash; avoids re-downloading unchanged definitions</li>
+    <li><strong>Stale cache fallback</strong> &mdash; if the registry is unreachable, stale cached definitions are used</li>
+  </ul>
+  <pre><code class="language-bash"># List available pre-built definitions
+dart run auto_interop_generator:generate registry list
+
+# Force-fetch a specific definition
+dart run auto_interop_generator:generate registry fetch npm/date-fns 3.6.0</code></pre>
+
+  <h3>AST vs regex parsers</h3>
+  <p>auto_interop ships with two parsing backends. AST parsing is the <strong>default</strong> and provides near-100% reliability for well-formed source code:</p>
+  <table>
+    <thead>
+      <tr><th></th><th>Regex Parsers</th><th>AST Parsers (Default)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Speed</strong></td><td>Fast (no toolchain needed)</td><td>Slower first run (~30s), fast after cache</td></tr>
+      <tr><td><strong>Accuracy</strong></td><td>Good for common patterns</td><td>Near-100% for well-formed code</td></tr>
+      <tr><td><strong>Requirements</strong></td><td>None</td><td>Node.js / Xcode / kotlinc</td></tr>
+      <tr><td><strong>Fallback</strong></td><td>Automatic when AST unavailable</td><td>Used by default when toolchain detected</td></tr>
+      <tr><td><strong>Extensions</strong></td><td>Basic support</td><td>Full folding into classes</td></tr>
+      <tr><td><strong>Overloads</strong></td><td>All kept (may break Dart)</td><td>Deduplicated (first-wins)</td></tr>
+      <tr><td><strong>Throws</strong></td><td>Basic detection</td><td>Full support including typed throws</td></tr>
+      <tr><td><strong>Default exports</strong></td><td>Not supported</td><td>Fully supported</td></tr>
+    </tbody>
+  </table>
+  <p>The generator automatically detects available toolchains and uses AST parsers when possible, falling back to regex. Use <code>--no-ast</code> to force regex-only parsing. See the <a href="#ast-parsing">AST Parsing</a> section for full details.</p>
+
+  <h3>Multi-package schemas</h3>
+  <p>When multiple packages reference each other's types (cross-package type references), auto_interop:</p>
+  <ol>
+    <li>Detects references via the dependency graph</li>
+    <li>Performs topological sort to determine generation order</li>
+    <li>Propagates invalidation transitively (if A depends on B, changing B rebuilds A)</li>
+  </ol>
+
+  <h3>build_runner integration</h3>
+  <p>auto_interop integrates with Dart's <code>build_runner</code> for automated builds:</p>
+  <pre><code class="language-yaml"># build.yaml
+targets:
+  $default:
+    builders:
+      auto_interop_generator:
+        enabled: true</code></pre>
+  <p>When <code>auto_interop.yaml</code> changes, <code>build_runner</code> triggers regeneration automatically. Generated files go to <code>lib/generated/</code>.</p>
+</section>
+
+<!-- Section: AST-Based Parsing -->
+<section id="ast-parsing">
+  <h2>AST-Based Parsing</h2>
+
+  <p>Since v0.2.0, auto_interop uses <strong>real compiler APIs</strong> as the default parsing backend. This provides near-100% accuracy for well-formed source code, with automatic fallback to regex parsers when toolchains are unavailable.</p>
+
+  <h3>How it works</h3>
+  <p>Each AST parser invokes a native helper script/binary that uses the language's own compiler frontend to parse source code into a structured AST, then emits a UTS-compatible JSON schema.</p>
+
+  <table>
+    <thead>
+      <tr><th>Language</th><th>AST Parser</th><th>Compiler API</th><th>Toolchain Required</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Swift</td><td><code>AstSwiftParser</code></td><td>SwiftSyntax (compiled binary)</td><td>Swift compiler (Xcode)</td></tr>
+      <tr><td>Kotlin</td><td><code>AstGradleParser</code></td><td>Kotlin PSI via <code>kotlinc -script</code></td><td><code>kotlinc</code></td></tr>
+      <tr><td>TypeScript</td><td><code>AstNpmParser</code></td><td>TypeScript Compiler API</td><td>Node.js</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pre-warming caches</h3>
+  <p>On first use, AST helpers need to download dependencies or compile binaries (~30 seconds). Pre-warm to avoid this delay:</p>
+  <pre><code class="language-bash"># Pre-compile Swift binary + download Kotlin Maven deps
+dart run auto_interop_generator:generate setup</code></pre>
+
+  <p>Caches are stored at <code>~/.auto_interop/tools/</code> and automatically invalidated when source files change:</p>
+  <ul>
+    <li><strong>Swift</strong>: Mtime-based &mdash; recompiles when <code>Package.swift</code> or <code>Sources/main.swift</code> are newer than the cached binary</li>
+    <li><strong>Kotlin</strong>: Content-comparison &mdash; rewrites the cached script only when the patched content differs</li>
+    <li><strong>TypeScript</strong>: Always fresh (runs via Node.js, no compilation step)</li>
+  </ul>
+
+  <h3>Swift AST parser</h3>
+  <p>Uses <a href="https://github.com/swiftlang/swift-syntax">SwiftSyntax</a> to parse Swift source code with full fidelity. The helper is compiled on first use and cached as a binary.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Backward compatible</div>
+    <p>The Swift helper uses <code>#if compiler(&gt;=6.0)</code> conditional compilation to support Swift 5.9, 6.0, and 6.2+ with the correct SwiftSyntax version (510 or 600+).</p>
+  </div>
+
+  <p><strong>Features:</strong></p>
+  <ul>
+    <li>Classes, structs, protocols, enums (simple + associated values)</li>
+    <li>Extensions folded into base classes</li>
+    <li><code>async</code>/<code>await</code> methods &rarr; <code>Future&lt;T&gt;</code></li>
+    <li><code>throws</code> and typed <code>throws(ErrorType)</code> &rarr; <code>Future&lt;T&gt;</code> with <code>isAsync: true</code></li>
+    <li>Closures &rarr; <code>Function</code> types</li>
+    <li>Optionals, generics, static/class methods</li>
+    <li><code>///</code> doc comments and <code>/** ... */</code> blocks preserved</li>
+    <li>Access control filtering (<code>private</code>, <code>fileprivate</code>, <code>internal</code> excluded)</li>
+  </ul>
+
+  <p><strong>Example &mdash; Swift throwing function:</strong></p>
+  <pre><code class="language-swift">// Input: Swift source
+public func fetchData(from url: String) throws(NetworkError) -> String {
+    // ...
+}</code></pre>
+  <pre><code class="language-dart">// Output: Generated Dart binding
+static Future&lt;String&gt; fetchData(String url) async {
+  final result = await _channel.invoke&lt;String&gt;('fetchData', {
+    'url': url,
+  });
+  return result;
+}</code></pre>
+
+  <h3>Kotlin AST parser</h3>
+  <p>Uses <strong>Kotlin PSI</strong> (the Kotlin compiler's parser) via <code>kotlinc -script</code> with <code>kotlin-compiler-embeddable</code>. The <code>@file:DependsOn</code> version is automatically matched to the installed <code>kotlinc</code>.</p>
+
+  <p><strong>Features:</strong></p>
+  <ul>
+    <li>Classes, data classes, sealed classes, enum classes, interfaces, object declarations</li>
+    <li><strong>Extension functions</strong> &mdash; folded into matching classes or emitted as top-level with receiver as first parameter</li>
+    <li><strong>Overload deduplication</strong> &mdash; only the first overload per function name is kept (Dart doesn't support overloading)</li>
+    <li><code>suspend</code> functions &rarr; <code>Future&lt;T&gt;</code></li>
+    <li>Kotlin Flow &rarr; <code>Stream&lt;T&gt;</code></li>
+    <li>Companion object methods &rarr; static methods</li>
+    <li>Nullable types, default values, KDoc comments</li>
+    <li>Access control filtering (<code>private</code>/<code>internal</code> excluded)</li>
+  </ul>
+
+  <p><strong>Example &mdash; Kotlin extension functions:</strong></p>
+  <pre><code class="language-kotlin">// Input: Kotlin source
+class StringUtils {
+    fun isEmpty(str: String): Boolean = str.isEmpty()
+}
+
+fun StringUtils.reverse(str: String): String = str.reversed()</code></pre>
+  <pre><code class="language-dart">// Output: Generated Dart binding
+// The extension is folded into StringUtils
+class StringUtils {
+  static final _channel = AutoInteropChannel('string_utils');
+
+  Future&lt;bool&gt; isEmpty(String str) async { ... }
+  Future&lt;String&gt; reverse(String str) async { ... }  // extension folded in
+}</code></pre>
+
+  <p><strong>Example &mdash; Kotlin overload deduplication:</strong></p>
+  <pre><code class="language-kotlin">// Input: three overloads
+fun process(data: String): String { ... }
+fun process(data: Int): Int { ... }        // skipped (duplicate name)
+fun process(data: List&lt;String&gt;): String { ... }  // skipped</code></pre>
+  <pre><code class="language-dart">// Output: only the first overload
+static Future&lt;String&gt; process(String data) async { ... }</code></pre>
+
+  <h3>Mixed Kotlin/Java handling</h3>
+  <p>When a Gradle package contains both <code>.kt</code> and <code>.java</code> files, the AST parser splits them:</p>
+  <ul>
+    <li><code>.kt</code> files &rarr; Kotlin PSI (AST)</li>
+    <li><code>.java</code> files &rarr; Regex parser (Kotlin PSI cannot parse Java)</li>
+  </ul>
+  <p>Both results are merged into a single <code>UnifiedTypeSchema</code>. This ensures Kotlin gets full AST accuracy while Java declarations are still included.</p>
+
+  <h3>TypeScript AST parser</h3>
+  <p>Uses the <strong>TypeScript Compiler API</strong> via Node.js to parse <code>.d.ts</code> declaration files with full accuracy.</p>
+
+  <p><strong>Features:</strong></p>
+  <ul>
+    <li>All exported declarations: functions, classes, interfaces, type aliases, enums</li>
+    <li><strong><code>export default</code></strong> &mdash; correctly identifies default-exported classes, interfaces, types, and enums</li>
+    <li>Generics: <code>Array&lt;T&gt;</code>, <code>Promise&lt;T&gt;</code>, <code>Map&lt;K, V&gt;</code></li>
+    <li>Callback types: <code>(value: string) =&gt; void</code></li>
+    <li>Optional parameters, union types, JSDoc comments</li>
+  </ul>
+
+  <p><strong>Example &mdash; TypeScript default export:</strong></p>
+  <pre><code class="language-typescript">// Input: TypeScript .d.ts
+export default interface ApiClient {
+  fetch(url: string): Promise&lt;Response&gt;;
+  cancel(): void;
+}</code></pre>
+  <pre><code class="language-dart">// Output: Generated Dart binding
+abstract interface class ApiClientInterface {
+  Future&lt;Response&gt; fetch(String url);
+  Future&lt;void&gt; cancel();
+}
+
+class ApiClient implements ApiClientInterface {
+  static final _channel = AutoInteropChannel('api_client');
+
+  @override
+  Future&lt;Response&gt; fetch(String url) async { ... }
+
+  @override
+  Future&lt;void&gt; cancel() async { ... }
+}</code></pre>
+
+  <h3>Disabling AST parsing</h3>
+  <p>To force regex-only parsing (e.g., in CI without toolchains):</p>
+  <pre><code class="language-bash"># Via CLI flag
+dart run auto_interop_generator:generate generate --no-ast
+
+# Via parse command
+dart run auto_interop_generator:generate parse --no-ast --package MyLib lib/src/*.swift</code></pre>
+
+  <div class="callout note">
+    <div class="callout-title">Automatic fallback</div>
+    <p>You don't need to disable AST manually. If a toolchain is unavailable (e.g., no <code>kotlinc</code> installed), the generator silently falls back to the regex parser for that language. The fallback is per-language &mdash; Swift can use AST while Kotlin falls back to regex if <code>kotlinc</code> is missing.</p>
+  </div>
+</section>
+
+<!-- Section 14: Known Limitations -->
+<section id="limitations">
+  <h2>Known Limitations</h2>
+
+  <h3>Fundamental (cannot be solved)</h3>
+  <p>These are inherent to Flutter's platform channel architecture.</p>
+  <ol>
+    <li><strong>Async-only channels</strong> &mdash; every native call is a <code>Future</code>. No synchronous calls possible. Real-time APIs (audio DSP, GPU compute) will have unacceptable latency.</li>
+    <li><strong>No direct memory sharing</strong> &mdash; native objects are referenced by opaque string handles. No pointers, no zero-copy. A 10MB image must be fully copied through the codec.</li>
+    <li><strong>No bidirectional object graph</strong> &mdash; Dart can call native and native can invoke Dart callbacks, but you can't pass a Dart object into native as a first-class native object.</li>
+    <li><strong>Hot restart invalidates handles</strong> &mdash; when Flutter hot-restarts, Dart VM resets but native state persists. All <code>NativeObject</code> handles become stale.</li>
+    <li><strong>One-shot method calls</strong> &mdash; each <code>invoke()</code> is independent. No connection state, session affinity, or request pipelining.</li>
+  </ol>
+
+  <h3>Very hard (major engineering effort)</h3>
+  <ol>
+    <li><strong>No generics on generated classes</strong> &mdash; <code>fromJson&lt;T&gt;()</code> becomes <code>fromJson() &rarr; dynamic</code>.</li>
+    <li><strong>No inheritance / protocol conformance</strong> &mdash; generated classes are flat, no <code>extends</code> or <code>implements</code>.</li>
+    <li><strong>Single EventChannel per package</strong> &mdash; multiple simultaneous streams within one package are not supported.</li>
+    <li><strong>No constructor overloads</strong> &mdash; each class gets exactly one <code>_create</code> method.</li>
+    <li><strong>Kotlin Builder pattern assumption</strong> &mdash; assumes Java Builder pattern; modern Kotlin constructors may produce broken code.</li>
+    <li><strong>JS generator has no escape hatch</strong> &mdash; unlike Swift/Kotlin, the JS generator ignores <code>nativeBody['js']</code>.</li>
+    <li><strong>No cross-platform type unification</strong> &mdash; Alamofire and OkHttp generate completely separate Dart classes for similar concepts.</li>
+  </ol>
+
+  <h3>Hard but solvable (all fixed)</h3>
+  <p>These issues have been resolved:</p>
+  <ul>
+    <li><s>Parser fragility</s> &mdash; <strong>AST-based parsing is now the default</strong> (SwiftSyntax, Kotlin PSI, TypeScript Compiler API) with regex as automatic fallback. See <a href="#ast-parsing">AST Parsing</a>.</li>
+    <li><s>Shallow container serialization</s> &mdash; recursive codegen-aware serialization</li>
+    <li><s>No per-call timeout</s> &mdash; <code>timeout</code> parameter added to all invoke methods</li>
+    <li><s>Callbacks with non-void return ignored</s> &mdash; two-way callback protocol</li>
+    <li><s>No Map with non-String keys</s> &mdash; key-type-aware conversion</li>
+    <li><s>Duration/Uri not handled in containers</s> &mdash; extended TypeConverter</li>
+    <li><s>Maven Central only</s> &mdash; configurable <code>maven_repositories</code></li>
+    <li><s>No macOS in compatibility checker</s> &mdash; macOS added to platform mapping</li>
+  </ul>
+
+  <h3>Summary</h3>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>Count</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Never solvable (Flutter arch)</td><td>5</td><td>Inherent</td></tr>
+      <tr><td>Very hard (months)</td><td>7</td><td>Future work</td></tr>
+      <tr><td>Hard (weeks)</td><td>8</td><td>All fixed</td></tr>
+      <tr><td>Moderate (days)</td><td>6</td><td>All fixed</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout note">
+    <div class="callout-title">Note</div>
+    <p>The "never solvable" items are inherent to Flutter platform channels. The only way around them is <code>dart:ffi</code> (C interop) or Dart's <code>NativePort</code>, which would be a fundamentally different package.</p>
+  </div>
+</section>
+
+<!-- Section 15: FAQ -->
+<section id="faq">
+  <h2>FAQ</h2>
+
+  <details>
+    <summary>How do I update bindings when a native package updates?</summary>
+    <div class="details-content">
+      <p>Update the <code>version</code> field in <code>auto_interop.yaml</code> and re-run <code>dart run auto_interop_generator:generate</code>. The generator detects the version change via checksums and regenerates affected bindings. Use <code>--force</code> if the cache doesn't pick up the change.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Can I use auto_interop without build_runner?</summary>
+    <div class="details-content">
+      <p>Yes. The CLI is standalone: <code>dart run auto_interop_generator:generate</code>. You don't need <code>build_runner</code> at all. The <code>build_runner</code> integration is optional and simply triggers the same CLI when <code>auto_interop.yaml</code> changes.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I handle unrecognized types?</summary>
+    <div class="details-content">
+      <p>Two approaches:</p>
+      <ol>
+        <li><strong><code>custom_types</code></strong> in <code>auto_interop.yaml</code> &mdash; maps type names to Dart types (e.g., <code>FormatOptions: "Map&lt;String, dynamic&gt;"</code>)</li>
+        <li><strong><code>nativeBody</code></strong> overrides in a <code>.uts.json</code> file &mdash; provides verbatim platform code for methods that need special handling</li>
+      </ol>
+      <p>Unresolved types are listed in <code>lib/generated/_unresolved_types.yaml</code> after generation.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>What happens if the registry is offline?</summary>
+    <div class="details-content">
+      <p>The generator uses a stale cache fallback. If a cached definition exists (even past the 7-day TTL), it's used when the registry is unreachable. If no cache exists, the generator falls back to downloading and parsing the native source code directly.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Can I use local or private packages?</summary>
+    <div class="details-content">
+      <p>Yes. Use the <code>source_path</code> field to point to a local directory containing the native source files:</p>
+      <pre><code class="language-yaml">- source: cocoapods
+  package: "MyPrivateLib"
+  version: "1.0.0"
+  source_path: "../my_private_lib/Sources"</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I debug generated code?</summary>
+    <div class="details-content">
+      <p>Several tools available:</p>
+      <ul>
+        <li><code>--verbose</code> &mdash; shows checksums, cache state, and file lists during generation</li>
+        <li><code>--dry-run</code> &mdash; preview what would be generated without writing files</li>
+        <li><code>parse</code> command &mdash; inspect the raw UTS schema for a package</li>
+        <li>Parse cache &mdash; cached schemas stored in <code>.auto_interop_parse_cache/</code></li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>What's the performance overhead?</summary>
+    <div class="details-content">
+      <p>Each <code>invoke()</code> call is one platform channel round-trip (~0.1-0.5ms on modern devices). For bulk operations, use <code>batchInvoke()</code> to send N calls in 1 round-trip. Data classes are serialized as Maps, adding minimal overhead. Native objects use string handles with no serialization of the actual object.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Does auto_interop support hot reload?</summary>
+    <div class="details-content">
+      <p>Hot reload works fine &mdash; only the Dart code reloads and native state persists. However, <strong>hot restart</strong> invalidates all native object handles because the Dart VM resets. You'll need to re-initialize after a hot restart.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Why is the first generation slow?</summary>
+    <div class="details-content">
+      <p>On first use, the AST parsers need to set up their toolchains:</p>
+      <ul>
+        <li><strong>Swift</strong>: Compiles the SwiftSyntax helper binary (~10s)</li>
+        <li><strong>Kotlin</strong>: Downloads Maven dependencies for <code>kotlin-compiler-embeddable</code> (~30s)</li>
+        <li><strong>TypeScript</strong>: No setup needed (uses Node.js directly)</li>
+      </ul>
+      <p>Run <code>dart run auto_interop_generator:generate setup</code> to pre-warm all caches. Subsequent runs are fast (&lt;5s).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Do I need Xcode / kotlinc / Node.js installed?</summary>
+    <div class="details-content">
+      <p>No. AST parsing is <strong>optional</strong> and enabled automatically when toolchains are detected. If a toolchain is missing, the generator silently falls back to regex parsing for that language. You can also force regex-only with <code>--no-ast</code>.</p>
+      <p>For best results:</p>
+      <ul>
+        <li><strong>Swift packages</strong>: Install Xcode (provides the Swift compiler and SwiftSyntax)</li>
+        <li><strong>Kotlin packages</strong>: Install <code>kotlinc</code> (via <a href="https://sdkman.io/">SDKMAN!</a> or Homebrew)</li>
+        <li><strong>npm packages</strong>: Install Node.js (v16+)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>How does the generator handle Kotlin extension functions?</summary>
+    <div class="details-content">
+      <p>Extension functions are <strong>folded into matching classes</strong> when possible. If a class <code>StringUtils</code> exists in the same package and an extension <code>fun StringUtils.reverse()</code> is found, the method is added to the <code>StringUtils</code> class in the generated Dart code.</p>
+      <p>If no matching class exists, the extension is emitted as a top-level function with the receiver type as the first parameter (e.g., <code>fun String.isEmail()</code> becomes <code>Future&lt;bool&gt; isEmail(String self)</code>).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>What happens with Swift typed throws?</summary>
+    <div class="details-content">
+      <p>Swift 6.0 introduced typed throws: <code>func fetch() throws(NetworkError) -&gt; String</code>. The AST parser correctly identifies the return type as <code>String</code> (not <code>Void</code>) and generates <code>Future&lt;String&gt;</code> in Dart. The error type itself is not exposed in the Dart API &mdash; errors are caught and wrapped in <code>AutoInteropException</code>.</p>
+      <p>Requires SwiftSyntax 600+ (automatically selected on Swift 6.x compilers).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I clear the AST helper cache?</summary>
+    <div class="details-content">
+      <p>AST helper caches are stored at <code>~/.auto_interop/tools/</code>. To clear them:</p>
+      <pre><code class="language-bash"># Remove all cached AST helpers
+rm -rf ~/.auto_interop/tools/
+
+# Or just clear a specific one
+rm ~/.auto_interop/tools/swift_ast_helper        # Swift binary
+rm ~/.auto_interop/tools/kt_ast_helper_*.main.kts  # Kotlin scripts
+rm ~/.auto_interop/tools/kt_ast_helper_*.warm      # Kotlin warm stamps</code></pre>
+      <p>The caches are rebuilt automatically on the next run.</p>
+    </div>
+  </details>
+</section>
+
+</main>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

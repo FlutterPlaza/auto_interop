@@ -3,6 +3,10 @@ import 'dart:convert';
 import '../cache/checksum.dart';
 import '../cache/parse_cache.dart';
 import '../config/package_spec.dart';
+import '../parsers/ast/ast_gradle_parser.dart';
+import '../parsers/ast/ast_npm_parser.dart';
+import '../parsers/ast/ast_parser_base.dart';
+import '../parsers/ast/ast_swift_parser.dart';
 import '../parsers/gradle_parser.dart';
 import '../parsers/npm_parser.dart';
 import '../parsers/parser_base.dart';
@@ -58,6 +62,7 @@ class SchemaResolver {
   final OverrideLoader? _overrideLoader;
   final RegistryClient? _registryClient;
   final bool _useRegistry;
+  final bool _useAst;
 
   SchemaResolver({
     NativeSourceLocator? locator,
@@ -65,11 +70,13 @@ class SchemaResolver {
     OverrideLoader? overrideLoader,
     RegistryClient? registryClient,
     bool useRegistry = true,
+    bool useAst = true,
   })  : _locator = locator ?? NativeSourceLocator(),
         _parseCache = parseCache ?? ParseCache(),
         _overrideLoader = overrideLoader,
         _registryClient = registryClient,
-        _useRegistry = useRegistry;
+        _useRegistry = useRegistry,
+        _useAst = useAst;
 
   /// Resolves a schema for the given [spec].
   ///
@@ -140,8 +147,8 @@ class SchemaResolver {
     return '${spec.source.name}/${spec.package}';
   }
 
-  /// Legacy synchronous resolve — locates source, checks parse cache, parses.
-  SchemaResolution _resolveFromSource(PackageSpec spec) {
+  /// Locates source, checks parse cache, parses (tries AST first, then regex).
+  Future<SchemaResolution> _resolveFromSource(PackageSpec spec) async {
     final locationResult = _locator.locate(spec);
     if (!locationResult.found) {
       return SchemaResolution(
@@ -160,13 +167,32 @@ class SchemaResolver {
       );
     }
 
-    // Parse from source
-    final parser = _parserForSource(spec.source);
-    final result = parser.parseFilesWithValidation(
-      files: locationResult.files,
-      packageName: spec.package,
-      version: spec.version,
-    );
+    // Try AST parser first if enabled
+    ParseResult result;
+    if (_useAst) {
+      final astParser = _astParserForSource(spec.source);
+      if (astParser != null) {
+        result = await astParser.parseFilesAsync(
+          files: locationResult.files,
+          packageName: spec.package,
+          version: spec.version,
+        );
+      } else {
+        final parser = _parserForSource(spec.source);
+        result = parser.parseFilesWithValidation(
+          files: locationResult.files,
+          packageName: spec.package,
+          version: spec.version,
+        );
+      }
+    } else {
+      final parser = _parserForSource(spec.source);
+      result = parser.parseFilesWithValidation(
+        files: locationResult.files,
+        packageName: spec.package,
+        version: spec.version,
+      );
+    }
 
     // Resolve unknown types to nativeObject
     final resolved = resolveUnknownTypes(result);
@@ -191,6 +217,19 @@ class SchemaResolver {
         return GradleParser();
       case PackageSource.npm:
         return NpmParser();
+    }
+  }
+
+  /// Returns the appropriate AST-based parser for the given source type.
+  static AstParserBase? _astParserForSource(PackageSource source) {
+    switch (source) {
+      case PackageSource.cocoapods:
+      case PackageSource.spm:
+        return AstSwiftParser();
+      case PackageSource.gradle:
+        return AstGradleParser();
+      case PackageSource.npm:
+        return AstNpmParser();
     }
   }
 

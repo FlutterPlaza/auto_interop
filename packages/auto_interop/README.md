@@ -20,10 +20,10 @@ print('Status: ${response.statusCode}');
 ```yaml
 # pubspec.yaml
 dependencies:
-  auto_interop: ^0.1.0
+  auto_interop: ^0.2.0
 
 dev_dependencies:
-  auto_interop_generator: ^0.1.0
+  auto_interop_generator: ^0.2.0
   build_runner: ^2.4.0
 ```
 
@@ -195,6 +195,7 @@ AutoInteropLifecycle.instance = AutoInteropLifecycle.withChannel(mockChannel);
 
 ## Related
 
+- [Documentation](https://flutterplaza.github.io/auto_interop/) — full documentation with examples, architecture, and API reference
 - [`auto_interop_generator`](https://pub.dev/packages/auto_interop_generator) — the code generation engine (config, parsers, generators, CLI)
 - [Example app](https://github.com/FlutterPlaza/auto_interop/tree/main/packages/auto_interop/example) — full working demo with Alamofire, streams, callbacks, and error handling
 

@@ -15,6 +15,11 @@ import '../generators/kotlin_glue_generator.dart';
 import '../generators/swift_glue_generator.dart';
 import '../generators/js_glue_generator.dart';
 import '../schema/unified_type_schema.dart';
+import '../parsers/ast/ast_gradle_parser.dart';
+import '../parsers/ast/ast_npm_parser.dart';
+import '../parsers/ast/ast_parser_base.dart';
+import '../parsers/ast/ast_swift_parser.dart';
+import '../parsers/ast/toolchain_detector.dart';
 import '../parsers/swift_parser.dart';
 import '../parsers/gradle_parser.dart';
 import '../parsers/npm_parser.dart';
@@ -64,6 +69,8 @@ class CliRunner {
         return _runAdd(args.sublist(1));
       case 'registry':
         return _runRegistry(args.sublist(1));
+      case 'setup':
+        return _runSetup();
       case 'clean':
         return _runCleanup('clean', args.sublist(1));
       case 'delete':
@@ -91,6 +98,7 @@ class CliRunner {
     final noAnalyze = args.contains('--no-analyze');
     final noDownload = args.contains('--no-download');
     final noRegistry = args.contains('--no-registry');
+    final noAst = args.contains('--no-ast');
     final dryRun = args.contains('--dry-run');
     final verbose = args.contains('--verbose');
     final configPath = _findConfigPath(args);
@@ -205,6 +213,7 @@ class CliRunner {
       overrideLoader: overrideLoader,
       registryClient: registryClient,
       useRegistry: !noRegistry,
+      useAst: !noAst,
     );
 
     for (final spec in packages) {
@@ -726,6 +735,8 @@ class CliRunner {
         '  parse      Parse native source files into a .uts.json type definition');
     stdout.writeln('  list       List cached parsed type definitions');
     stdout.writeln('  add        Add a native package to auto_interop.yaml');
+    stdout.writeln(
+        '  setup      Check toolchains and pre-compile AST helpers');
     stdout.writeln('  registry   Manage the cloud definition registry');
     stdout
         .writeln('  clean      Clear cache (forces rebuild on next generate)');
@@ -751,6 +762,8 @@ class CliRunner {
     stdout.writeln(
         '  --no-download        Skip auto-downloading native packages');
     stdout.writeln('  --no-registry        Skip cloud registry lookup');
+    stdout.writeln(
+        '  --no-ast             Skip AST-based parsing (use regex parsers only)');
     stdout.writeln(
         '  --override <files>   Load user-provided .uts.json files (comma-separated)');
     stdout.writeln();
@@ -1095,6 +1108,7 @@ class CliRunner {
     String? outputPath;
     bool save = false;
     bool noAnalyze = false;
+    bool noAst = false;
     final filePaths = <String>[];
 
     // Parse flags
@@ -1129,6 +1143,8 @@ class CliRunner {
           save = true;
         case '--no-analyze':
           noAnalyze = true;
+        case '--no-ast':
+          noAst = true;
         default:
           if (args[i].startsWith('-')) {
             stderr.writeln('Unknown flag: ${args[i]}');
@@ -1178,12 +1194,30 @@ class CliRunner {
       files[path] = File(path).readAsStringSync();
     }
 
-    // Parse
-    final result = parser.parseFilesWithValidation(
-      files: files,
-      packageName: packageName,
-      version: version!,
-    );
+    // Parse (try AST parser first unless --no-ast)
+    ParseResult result;
+    if (!noAst) {
+      final astParser = _astParserForSource(parser);
+      if (astParser != null) {
+        result = await astParser.parseFilesAsync(
+          files: files,
+          packageName: packageName,
+          version: version!,
+        );
+      } else {
+        result = parser.parseFilesWithValidation(
+          files: files,
+          packageName: packageName,
+          version: version!,
+        );
+      }
+    } else {
+      result = parser.parseFilesWithValidation(
+        files: files,
+        packageName: packageName,
+        version: version!,
+      );
+    }
 
     // Print warnings
     for (final w in result.warnings) {
@@ -1228,6 +1262,104 @@ class CliRunner {
     return 0;
   }
 
+  // ---------------------------------------------------------------------------
+  // setup command
+  // ---------------------------------------------------------------------------
+
+  Future<int> _runSetup() async {
+    stdout.writeln('Checking AST parser toolchains...');
+    stdout.writeln('');
+
+    final detector = ToolchainDetector();
+    var allReady = true;
+
+    // --- Node.js + TypeScript ---
+    stdout.write('  Node.js (for TypeScript/npm parsing): ');
+    if (await detector.hasNode()) {
+      stdout.writeln('\u2713 available');
+      // Check typescript module
+      stdout.write('  typescript npm package:               ');
+      final tsCheck = await Process.run(
+          'node', ['--input-type=module', '-e', 'import("typescript")']);
+      if (tsCheck.exitCode == 0) {
+        stdout.writeln('\u2713 available');
+      } else {
+        stdout.writeln('\u2717 missing');
+        stdout.writeln(
+            '    Install with: npm install -g typescript');
+        allReady = false;
+      }
+    } else {
+      stdout.writeln('\u2717 not found (need Node.js >= 18)');
+      allReady = false;
+    }
+
+    // --- Swift ---
+    stdout.write('  Swift (for Swift/CocoaPods parsing):   ');
+    if (await detector.hasSwift()) {
+      stdout.writeln('\u2713 available');
+      // Check if binary is already cached
+      final cached = detector.cachedSwiftBinary();
+      if (cached != null) {
+        stdout.writeln('  Swift AST helper binary:              \u2713 cached');
+        stdout.writeln('    $cached');
+      } else {
+        stdout.writeln('  Swift AST helper binary:              building...');
+        try {
+          final parser = AstSwiftParser(toolchainDetector: detector);
+          await parser.prepare();
+          stdout.writeln('  Swift AST helper binary:              \u2713 ready');
+        } catch (e) {
+          stdout.writeln('  Swift AST helper binary:              \u2717 failed');
+          stdout.writeln('    $e');
+          allReady = false;
+        }
+      }
+    } else {
+      stdout.writeln('\u2717 not found');
+      if (Platform.isMacOS) {
+        stdout.writeln(
+            '    Install with: xcode-select --install');
+      }
+      allReady = false;
+    }
+
+    // --- kotlinc ---
+    stdout.write('  kotlinc (for Kotlin/Gradle parsing):  ');
+    if (await detector.hasKotlinc()) {
+      final ktVersion = await detector.kotlincVersion();
+      stdout.writeln('\u2713 available${ktVersion != null ? " ($ktVersion)" : ""}');
+      // Pre-warm Maven dependencies
+      stdout.writeln('  Kotlin dependencies:                  warming...');
+      try {
+        final parser = AstGradleParser(toolchainDetector: detector);
+        await parser.warmMavenCache();
+        stdout.writeln('  Kotlin dependencies:                  \u2713 ready');
+      } catch (e) {
+        stdout.writeln('  Kotlin dependencies:                  \u2717 failed');
+        stdout.writeln('    $e');
+        allReady = false;
+      }
+    } else {
+      stdout.writeln('\u2717 not found');
+      stdout.writeln(
+          '    Install with: brew install kotlin (macOS) or sdkman');
+      allReady = false;
+    }
+
+    stdout.writeln('');
+    if (allReady) {
+      stdout.writeln('All AST toolchains ready. Parsing will use AST mode.');
+    } else {
+      stdout.writeln(
+          'Some toolchains missing. Parsing will fall back to regex for those.');
+      stdout.writeln(
+          'Regex parsing works but AST mode produces more accurate results.');
+    }
+
+    return 0;
+  }
+
   ParserBase _parserForSource(String source) {
     switch (source) {
       case 'cocoapods':
@@ -1262,6 +1394,19 @@ class CliRunner {
       detected = current;
     }
     return detected;
+  }
+
+  /// Returns an AST-based parser wrapping the given regex parser, or null.
+  AstParserBase? _astParserForSource(ParserBase regexParser) {
+    switch (regexParser.source) {
+      case PackageSource.cocoapods:
+      case PackageSource.spm:
+        return AstSwiftParser();
+      case PackageSource.gradle:
+        return AstGradleParser();
+      case PackageSource.npm:
+        return AstNpmParser();
+    }
   }
 
   // ---------------------------------------------------------------------------

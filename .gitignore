@@ -22,3 +22,12 @@ coverage/
 # Build cache
 .auto_interop_cache.json
 .auto_interop_cache/
+
+# AST helper build artifacts
+.build/
+node_modules/
+Package.resolved
+
+# Internal docs (not open-sourced)
+docs/feasibility_research.md
+plan/

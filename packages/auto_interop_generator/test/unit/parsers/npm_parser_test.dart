@@ -493,5 +493,52 @@ void main() {
         expect(schema.functions, hasLength(3));
       });
     });
+
+    // ========== Phase 6B: Default/declare exports ==========
+
+    group('default and declare exports', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('default_exports.d.ts'),
+          packageName: 'test-defaults',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses export default interface', () {
+        final config = schema.types.firstWhere((t) => t.name == 'Config');
+        expect(config.fields, hasLength(3));
+        final names = config.fields.map((f) => f.name).toList();
+        expect(names, contains('host'));
+        expect(names, contains('port'));
+        expect(names, contains('debug'));
+      });
+
+      test('parses export declare interface', () {
+        final logger = schema.types.firstWhere((t) => t.name == 'Logger');
+        expect(logger.methods, hasLength(2));
+        final names = logger.methods.map((m) => m.name).toList();
+        expect(names, contains('log'));
+        expect(names, contains('error'));
+      });
+
+      test('parses export default type', () {
+        final options = schema.types.firstWhere((t) => t.name == 'Options');
+        expect(options.fields, hasLength(2));
+        final names = options.fields.map((f) => f.name).toList();
+        expect(names, contains('timeout'));
+        expect(names, contains('retries'));
+      });
+
+      test('parses export default enum', () {
+        final status = schema.enums.firstWhere((e) => e.name == 'Status');
+        expect(status.values, hasLength(3));
+        expect(status.values[0].rawValue, 'active');
+        expect(status.values[1].rawValue, 'inactive');
+        expect(status.values[2].rawValue, 'pending');
+      });
+    });
   });
 }

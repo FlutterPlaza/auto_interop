@@ -153,14 +153,18 @@ class NpmParser extends ParserBase {
       line.startsWith('export default class ');
 
   bool _isExportedInterface(String line) =>
-      line.startsWith('export interface ');
+      line.startsWith('export interface ') ||
+      line.startsWith('export default interface ') ||
+      line.startsWith('export declare interface ');
 
   bool _isExportedTypeAlias(String line) =>
-      line.startsWith('export type ');
+      line.startsWith('export type ') ||
+      line.startsWith('export default type ');
 
   bool _isExportedEnum(String line) =>
       line.startsWith('export declare enum ') ||
-      line.startsWith('export enum ');
+      line.startsWith('export enum ') ||
+      line.startsWith('export default enum ');
 
   bool _isPrivate(String name) =>
       name.startsWith('_');
@@ -367,7 +371,7 @@ class NpmParser extends ParserBase {
     final headerLine = lines[startIndex].trim();
 
     final nameMatch = RegExp(
-      r'export\s+interface\s+(\w+)(?:<[^>]*>)?',
+      r'export\s+(?:default\s+|declare\s+)?interface\s+(\w+)(?:<[^>]*>)?',
     ).firstMatch(headerLine);
     if (nameMatch == null) return null;
 
@@ -434,7 +438,7 @@ class NpmParser extends ParserBase {
 
     // Check if it's a type alias with object body: export type Foo = { ... };
     final nameMatch = RegExp(
-      r'export\s+type\s+(\w+)(?:<[^>]*>)?\s*=\s*\{',
+      r'export\s+(?:default\s+)?type\s+(\w+)(?:<[^>]*>)?\s*=\s*\{',
     ).firstMatch(headerLine);
 
     if (nameMatch == null) {
@@ -530,7 +534,7 @@ class NpmParser extends ParserBase {
     final headerLine = lines[startIndex].trim();
 
     final nameMatch = RegExp(
-      r'export\s+(?:declare\s+)?enum\s+(\w+)',
+      r'export\s+(?:declare\s+|default\s+)?enum\s+(\w+)',
     ).firstMatch(headerLine);
     if (nameMatch == null) return null;
 

@@ -1,3 +1,7 @@
+## 0.2.0
+
+- No runtime changes. This release accompanies `auto_interop_generator` 0.2.0 which adds AST-based parsing for near-100% reliability.
+
 ## 0.1.0
 
 - Initial release.

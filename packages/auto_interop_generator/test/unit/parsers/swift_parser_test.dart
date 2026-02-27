@@ -648,5 +648,54 @@ public class Finder {
         expect(method.returnType.toDartType(), 'String?');
       });
     });
+
+    // ========== Phase 6A: Swift attribute stripping ==========
+
+    group('attribute stripping', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _fixture('attributes.swift'),
+          packageName: 'TestPackage',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses class with attributed methods', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'AttributedService');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('process'));
+        expect(names, contains('modernMethod'));
+        expect(names, contains('bridgedMethod'));
+        expect(names, contains('normalMethod'));
+        expect(cls.methods, hasLength(4));
+      });
+
+      test('parses struct with attributed method', () {
+        final s =
+            schema.types.firstWhere((t) => t.name == 'AttributedStruct');
+        final names = s.methods.map((m) => m.name).toList();
+        expect(names, contains('compute'));
+        expect(s.fields, hasLength(1));
+        expect(s.fields[0].name, 'name');
+      });
+
+      test('parses protocol with attributed method', () {
+        final p =
+            schema.classes.firstWhere((c) => c.name == 'AttributedProtocol');
+        expect(p.methods, hasLength(1));
+        expect(p.methods[0].name, 'validate');
+      });
+
+      test('parses attributed top-level function', () {
+        final fn =
+            schema.functions.firstWhere((f) => f.name == 'attributedTopLevel');
+        expect(fn.parameters, hasLength(1));
+        expect(fn.parameters[0].name, 'data');
+        expect(fn.returnType.toDartType(), 'String');
+      });
+    });
   });
 }

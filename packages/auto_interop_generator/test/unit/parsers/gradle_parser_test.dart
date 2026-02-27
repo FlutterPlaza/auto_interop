@@ -770,5 +770,275 @@ void main() {
         expect(schema.source, PackageSource.gradle);
       });
     });
+
+    // ========== Phase 1: Multi-line function signatures ==========
+
+    group('Kotlin: multi-line function signatures', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('multiline_function.kt'),
+          packageName: 'com.example.multiline',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses top-level function with multi-line params', () {
+        final fn =
+            schema.functions.firstWhere((f) => f.name == 'createRequest');
+        expect(fn.parameters, hasLength(3));
+        expect(fn.parameters[0].name, 'url');
+        expect(fn.parameters[1].name, 'method');
+        expect(fn.parameters[2].name, 'headers');
+        expect(fn.parameters[2].type.toDartType(), 'Map<String, String>');
+      });
+
+      test('parses suspend function with multi-line params', () {
+        final fn =
+            schema.functions.firstWhere((f) => f.name == 'fetchData');
+        expect(fn.isAsync, true);
+        expect(fn.parameters, hasLength(2));
+        expect(fn.parameters[0].name, 'url');
+        expect(fn.parameters[1].name, 'timeout');
+      });
+
+      test('parses class method with multi-line params', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'ApiClient');
+        final method =
+            cls.methods.firstWhere((m) => m.name == 'sendRequest');
+        expect(method.parameters, hasLength(3));
+        expect(method.parameters[0].name, 'url');
+        expect(method.parameters[1].name, 'body');
+        expect(method.parameters[2].name, 'headers');
+      });
+
+      test('parses companion method with multi-line params', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'ApiClient');
+        final method = cls.methods.firstWhere((m) => m.name == 'create');
+        expect(method.isStatic, true);
+        expect(method.parameters, hasLength(2));
+        expect(method.parameters[0].name, 'baseUrl');
+        expect(method.parameters[1].name, 'timeout');
+      });
+
+      test('parses interface method with multi-line params', () {
+        final iface =
+            schema.classes.firstWhere((c) => c.name == 'RequestHandler');
+        final method =
+            iface.methods.firstWhere((m) => m.name == 'handle');
+        expect(method.parameters, hasLength(2));
+        expect(method.parameters[0].name, 'request');
+        expect(method.parameters[1].name, 'callback');
+      });
+    });
+
+    // ========== Phase 2: Annotation stripping + access filtering ==========
+
+    group('Kotlin: annotation stripping and access filtering', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('annotations.kt'),
+          packageName: 'com.example.annotations',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses annotated methods in class', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'AnnotatedService');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('staticMethod'));
+        expect(names, contains('riskyOperation'));
+        expect(names, contains('oldMethod'));
+        expect(names, contains('normalMethod'));
+      });
+
+      test('excludes private methods', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'AnnotatedService');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, isNot(contains('secretMethod')));
+      });
+
+      test('excludes internal methods', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'AnnotatedService');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, isNot(contains('internalMethod')));
+      });
+
+      test('excludes protected methods', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'AnnotatedService');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, isNot(contains('protectedMethod')));
+      });
+
+      test('parses annotated top-level function', () {
+        final names = schema.functions.map((f) => f.name).toList();
+        expect(names, contains('annotatedTopLevel'));
+        expect(names, contains('suppressedFunction'));
+      });
+
+      test('excludes internal top-level functions', () {
+        final names = schema.functions.map((f) => f.name).toList();
+        expect(names, isNot(contains('internalTopLevel')));
+      });
+
+      test('excludes protected top-level functions', () {
+        final names = schema.functions.map((f) => f.name).toList();
+        expect(names, isNot(contains('protectedTopLevel')));
+      });
+    });
+
+    // ========== Phase 3: Top-level function deduplication ==========
+
+    group('Kotlin: top-level function deduplication', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('overloaded_top_level.kt'),
+          packageName: 'com.example.overloads',
+          version: '1.0.0',
+        );
+      });
+
+      test('deduplicates overloaded top-level functions', () {
+        final processFns =
+            schema.functions.where((f) => f.name == 'process').toList();
+        expect(processFns, hasLength(1));
+      });
+
+      test('first overload wins', () {
+        final process =
+            schema.functions.firstWhere((f) => f.name == 'process');
+        expect(process.parameters[0].type.toDartType(), 'String');
+      });
+
+      test('keeps unique functions', () {
+        final names = schema.functions.map((f) => f.name).toList();
+        expect(names, contains('uniqueFunction'));
+      });
+
+      test('deduplicates convert overloads', () {
+        final convertFns =
+            schema.functions.where((f) => f.name == 'convert').toList();
+        expect(convertFns, hasLength(1));
+      });
+    });
+
+    // ========== Phase 4: Extension functions ==========
+
+    group('Kotlin: extension functions', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('extension_functions.kt'),
+          packageName: 'com.example.extensions',
+          version: '1.0.0',
+        );
+      });
+
+      test('folds extension methods into existing class', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'StringUtils');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('isEmpty'));
+        expect(names, contains('reverse'));
+      });
+
+      test('creates class for String extensions', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'String');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('trimWhitespace'));
+        expect(names, contains('repeat'));
+        expect(names, contains('fetchRemote'));
+      });
+
+      test('creates class for Int extensions', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'Int');
+        final names = cls.methods.map((m) => m.name).toList();
+        expect(names, contains('isEven'));
+      });
+
+      test('marks async extension as async', () {
+        final cls =
+            schema.classes.firstWhere((c) => c.name == 'String');
+        final fetchRemote =
+            cls.methods.firstWhere((m) => m.name == 'fetchRemote');
+        expect(fetchRemote.isAsync, true);
+      });
+    });
+
+    // ========== Phase 5: Object declarations ==========
+
+    group('Kotlin: object declarations', () {
+      late UnifiedTypeSchema schema;
+
+      setUp(() {
+        schema = parser.parse(
+          content: _kotlinFixture('object_declaration.kt'),
+          packageName: 'com.example.singleton',
+          version: '1.0.0',
+        );
+      });
+
+      test('parses object declarations', () {
+        expect(schema.classes, hasLength(2));
+        final names = schema.classes.map((c) => c.name).toList();
+        expect(names, contains('Logger'));
+        expect(names, contains('Constants'));
+      });
+
+      test('parses Logger methods as static', () {
+        final logger =
+            schema.classes.firstWhere((c) => c.name == 'Logger');
+        expect(logger.methods, hasLength(2));
+        for (final method in logger.methods) {
+          expect(method.isStatic, true,
+              reason: '${method.name} should be static');
+        }
+      });
+
+      test('excludes private methods from object', () {
+        final logger =
+            schema.classes.firstWhere((c) => c.name == 'Logger');
+        final names = logger.methods.map((m) => m.name).toList();
+        expect(names, isNot(contains('formatMessage')));
+      });
+
+      test('parses Logger fields', () {
+        final logger =
+            schema.classes.firstWhere((c) => c.name == 'Logger');
+        expect(logger.fields, hasLength(1));
+        expect(logger.fields[0].name, 'tag');
+      });
+
+      test('parses Constants fields', () {
+        final constants =
+            schema.classes.firstWhere((c) => c.name == 'Constants');
+        expect(constants.fields, hasLength(3));
+        final names = constants.fields.map((f) => f.name).toList();
+        expect(names, contains('baseUrl'));
+        expect(names, contains('timeout'));
+        expect(names, contains('debug'));
+      });
+
+      test('parses documentation on object', () {
+        final logger =
+            schema.classes.firstWhere((c) => c.name == 'Logger');
+        expect(logger.documentation,
+            'A singleton logger utility.');
+      });
+    });
   });
 }

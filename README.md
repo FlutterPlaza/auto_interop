@@ -25,10 +25,10 @@ auto_interop.yaml     Parsers (TS/Swift/Kotlin)     Unified Type Schema
 ```yaml
 # pubspec.yaml
 dependencies:
-  auto_interop: ^0.1.0
+  auto_interop: ^0.2.0
 
 dev_dependencies:
-  auto_interop_generator: ^0.1.0
+  auto_interop_generator: ^0.2.0
   build_runner: ^2.4.0
 ```
 
@@ -119,6 +119,9 @@ void main() async {
 # Generate bindings from auto_interop.yaml
 dart run auto_interop_generator:generate
 
+# Pre-warm AST helper caches (avoids delay on first run)
+dart run auto_interop_generator:generate setup
+
 # List available pre-built type definitions
 dart run auto_interop_generator:generate list
 
@@ -133,6 +136,16 @@ dart run auto_interop_generator:generate add npm date-fns ^3.0.0
 | [auto_interop](packages/auto_interop/) | Runtime library (platform channels, type conversion, error handling) |
 | [auto_interop_generator](packages/auto_interop_generator/) | Code generator (parsers, generators, CLI, build_runner integration) |
 
+## AST-Based Parsing (v0.2.0)
+
+Parsers use **real compiler APIs** by default for near-100% accuracy:
+
+- **Swift**: SwiftSyntax (backward-compatible: Swift 5.9 to 6.2+)
+- **Kotlin**: Kotlin PSI via `kotlinc -script`
+- **TypeScript**: TypeScript Compiler API via Node.js
+
+Features: extension function folding, overload deduplication, `throws`/typed `throws` propagation, mixed Kotlin/Java handling, `export default` support. Automatic regex fallback when toolchains are unavailable.
+
 ## Pre-built Type Definitions
 
 The generator ships with pre-built type definitions for popular packages, enabling instant code generation without parsing:
@@ -140,6 +153,10 @@ The generator ships with pre-built type definitions for popular packages, enabli
 - **npm**: date-fns, lodash, uuid
 - **CocoaPods**: Alamofire, SDWebImage
 - **Gradle**: OkHttp
+
+## Documentation
+
+Full documentation with examples, architecture details, and API reference: **[flutterplaza.github.io/auto_interop](https://flutterplaza.github.io/auto_interop/)**
 
 ## License
 

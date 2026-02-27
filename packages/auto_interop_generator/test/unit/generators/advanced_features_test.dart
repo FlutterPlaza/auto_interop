@@ -478,6 +478,129 @@ void main() {
       expect(code, contains('eventSink = null'));
     });
   });
+
+  group('Auto-generated stream bodies (no nativeBody)', () {
+    group('SwiftGlueGenerator', () {
+      test('single stream auto-generates for-try-await loop', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('for try await nativeResult in'));
+        expect(code, contains('streamTask = Task {'));
+        expect(code, contains('self.eventSink?(nativeResult)'));
+      });
+
+      test('single stream extracts arguments from args', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('let samplingRate = args["samplingRate"] as! Int'));
+      });
+
+      test('single stream declares streamTask field', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('private var streamTask: Task<Void, Never>?'));
+      });
+
+      test('auto-cancel emits streamTask?.cancel()', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('streamTask?.cancel()'));
+        expect(code, contains('streamTask = nil'));
+      });
+
+      test('multi-stream with missing nativeBody emits auto-call in switch (no TODO)', () {
+        final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('switch method'));
+        expect(code, contains('case "accel"'));
+        expect(code, contains('startAccel()'));
+        expect(code, contains('case "gyro"'));
+        expect(code, contains('for try await nativeResult in gyro'));
+        expect(code, isNot(contains('TODO')));
+      });
+
+      test('multi-stream partial auto extracts args for auto-generated case', () {
+        final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('let sensitivity = args["sensitivity"] as! Double'));
+      });
+
+      test('instance method stream auto-generates handle lookup', () {
+        final schema = _createSchemaWithInstanceStreamNoNativeBody();
+        final code = swiftGen.generateSwiftCode(schema);
+        expect(code, contains('let handle = args["_handle"] as! String'));
+        expect(code, contains('let instance = instances[handle] as! Connection'));
+        expect(code, contains('for try await nativeResult in instance.listen()'));
+      });
+    });
+
+    group('KotlinGlueGenerator', () {
+      test('single stream auto-generates collect loop', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('.collect { nativeResult ->'));
+        expect(code, contains('streamJob = scope.launch {'));
+        expect(code, contains('eventSink?.success(nativeResult)'));
+      });
+
+      test('single stream extracts arguments from args', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('val samplingRate = args["samplingRate"] as Int'));
+      });
+
+      test('single stream declares streamJob field', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('private var streamJob: Job? = null'));
+      });
+
+      test('single stream imports coroutines and flow', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('import kotlinx.coroutines.*'));
+        expect(code, contains('import kotlinx.coroutines.flow.*'));
+      });
+
+      test('single stream creates coroutine scope', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('private val scope = CoroutineScope'));
+      });
+
+      test('auto-cancel emits streamJob?.cancel()', () {
+        final schema = _createSchemaWithSingleStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('streamJob?.cancel()'));
+        expect(code, contains('streamJob = null'));
+      });
+
+      test('multi-stream with missing nativeBody emits auto-call in when (no TODO)', () {
+        final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('when (method)'));
+        expect(code, contains('"accel"'));
+        expect(code, contains('startAccel()'));
+        expect(code, contains('"gyro"'));
+        expect(code, contains('.collect { nativeResult ->'));
+        expect(code, isNot(contains('TODO')));
+      });
+
+      test('multi-stream partial auto extracts args for auto-generated case', () {
+        final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('val sensitivity = args["sensitivity"] as Double'));
+      });
+
+      test('instance method stream auto-generates handle lookup', () {
+        final schema = _createSchemaWithInstanceStreamNoNativeBody();
+        final code = kotlinGen.generateKotlinCode(schema);
+        expect(code, contains('val handle = args["_handle"] as String'));
+        expect(code, contains('val instance = instances[handle] as Connection'));
+        expect(code, contains('instance.listen().collect'));
+      });
+    });
+  });
 }
 
 // --- Helper Schemas ---
@@ -957,6 +1080,82 @@ UnifiedTypeSchema _createSchemaWithMultipleKotlinStreams() {
         nativeBody: {
           'kotlin_onListen': 'startGyro()',
         },
+      ),
+    ],
+  );
+}
+
+// --- Auto-generated stream test schemas ---
+
+UnifiedTypeSchema _createSchemaWithSingleStreamNoNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'audio-stream',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'recordAudio',
+        isStatic: true,
+        parameters: [
+          UtsParameter(
+            name: 'samplingRate',
+            type: UtsType.primitive('int'),
+          ),
+        ],
+        returnType: UtsType.stream(UtsType.primitive('double')),
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithMultipleStreamsPartialNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'multi-stream',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    functions: [
+      UtsMethod(
+        name: 'accel',
+        isStatic: true,
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        nativeBody: {
+          'swift_onListen': 'startAccel()',
+          'swift_onCancel': 'stopAccel()',
+          'kotlin_onListen': 'startAccel()',
+          'kotlin_onCancel': 'stopAccel()',
+        },
+      ),
+      UtsMethod(
+        name: 'gyro',
+        isStatic: true,
+        parameters: [
+          UtsParameter(
+            name: 'sensitivity',
+            type: UtsType.primitive('double'),
+          ),
+        ],
+        returnType: UtsType.stream(UtsType.primitive('double')),
+        // No nativeBody — should be auto-generated
+      ),
+    ],
+  );
+}
+
+UnifiedTypeSchema _createSchemaWithInstanceStreamNoNativeBody() {
+  return UnifiedTypeSchema(
+    package: 'connection',
+    source: PackageSource.cocoapods,
+    version: '1.0.0',
+    classes: [
+      UtsClass(
+        name: 'Connection',
+        methods: [
+          UtsMethod(
+            name: 'listen',
+            isStatic: false,
+            returnType: UtsType.stream(UtsType.primitive('String')),
+          ),
+        ],
       ),
     ],
   );

@@ -71,15 +71,17 @@ class GradleParser extends ParserBase {
     final functions = <UtsMethod>[];
     final types = <UtsClass>[];
     final enums = <UtsEnum>[];
+    final seenFunctionNames = <String>{};
+    final extensions = <String, List<UtsMethod>>{};
 
     var i = 0;
     while (i < lines.length) {
-      final line = lines[i].trim();
+      final rawLine = lines[i].trim();
 
       // Skip empty lines, imports, package
-      if (line.isEmpty ||
-          line.startsWith('import ') ||
-          line.startsWith('package ')) {
+      if (rawLine.isEmpty ||
+          rawLine.startsWith('import ') ||
+          rawLine.startsWith('package ')) {
         i++;
         continue;
       }
@@ -93,9 +95,20 @@ class GradleParser extends ParserBase {
 
       final doc = _lookbackForKDoc(lines, i);
 
-      // Skip private declarations
-      if (line.startsWith('private ')) {
+      // Strip annotations before matcher checks
+      final line = _stripAnnotations(rawLine);
+
+      // Skip private/internal/protected declarations
+      if (line.startsWith('private ') ||
+          line.startsWith('internal ') ||
+          line.startsWith('protected ')) {
         i = _skipBlock(lines, i);
+        continue;
+      }
+
+      // Skip typealias declarations
+      if (line.startsWith('typealias ')) {
+        i++;
         continue;
       }
 
@@ -143,6 +156,16 @@ class GradleParser extends ParserBase {
         }
       }
 
+      // Object declaration (singleton)
+      if (_matchesObject(line)) {
+        final result = _parseKotlinObject(lines, i, doc);
+        if (result != null) {
+          classes.add(result.cls);
+          i = result.endIndex;
+          continue;
+        }
+      }
+
       // Class (regular/open/abstract)
       if (_matchesClass(line)) {
         final result = _parseKotlinClass(lines, i, doc);
@@ -153,15 +176,63 @@ class GradleParser extends ParserBase {
         }
       }
 
+      // Extension function
+      if (_matchesExtensionFunction(line)) {
+        final sig = _collectKotlinSignature(lines, i);
+        final receiver = _getExtensionReceiver(sig.text);
+        final method = _parseKotlinExtensionFunction(sig.text, doc);
+        if (method != null && receiver != null && !_isPrivate(method.name)) {
+          extensions.putIfAbsent(receiver, () => []).add(method);
+        }
+        i = sig.endIndex + 1;
+        continue;
+      }
+
       // Top-level function
       if (_matchesFunction(line)) {
-        final method = _parseKotlinFunction(line, doc);
-        if (method != null && !_isPrivate(method.name)) {
+        final sig = _collectKotlinSignature(lines, i);
+        final method = _parseKotlinFunction(sig.text, doc);
+        if (method != null &&
+            !_isPrivate(method.name) &&
+            seenFunctionNames.add(method.name)) {
           functions.add(method);
         }
+        i = sig.endIndex + 1;
+        continue;
       }
 
       i++;
+    }
+
+    // Fold extension methods into their base classes
+    for (final entry in extensions.entries) {
+      final targetName = entry.key;
+      final extMethods = entry.value;
+
+      var found = false;
+      for (var ci = 0; ci < classes.length; ci++) {
+        if (classes[ci].name == targetName) {
+          classes[ci] = UtsClass(
+            name: classes[ci].name,
+            kind: classes[ci].kind,
+            fields: classes[ci].fields,
+            methods: [...classes[ci].methods, ...extMethods],
+            superclass: classes[ci].superclass,
+            interfaces: classes[ci].interfaces,
+            sealedSubclasses: classes[ci].sealedSubclasses,
+            documentation: classes[ci].documentation,
+          );
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        classes.add(UtsClass(
+          name: targetName,
+          kind: UtsClassKind.concreteClass,
+          methods: extMethods,
+        ));
+      }
     }
 
     return UnifiedTypeSchema(
@@ -202,7 +273,16 @@ class GradleParser extends ParserBase {
   }
 
   bool _matchesFunction(String line) =>
-      RegExp(r'(?:suspend\s+)?fun\s+').hasMatch(line);
+      RegExp(r'(?:suspend\s+)?fun\s+').hasMatch(line) &&
+      !_matchesExtensionFunction(line);
+
+  bool _matchesExtensionFunction(String line) =>
+      RegExp(r'(?:suspend\s+)?fun\s+\w+\.\w+\s*[<(]').hasMatch(line);
+
+  bool _matchesObject(String line) {
+    if (line.contains('companion object')) return false;
+    return RegExp(r'(?:^|\s)object\s+\w+').hasMatch(line);
+  }
 
   bool _isKotlinDecl(String line) =>
       !line.startsWith('public ') || line.contains(' fun ');
@@ -211,7 +291,7 @@ class GradleParser extends ParserBase {
 
   _ParsedClass? _parseKotlinClass(
       List<String> lines, int startIndex, String? doc) {
-    final line = lines[startIndex].trim();
+    final line = _stripAnnotations(lines[startIndex].trim());
     final nameMatch = RegExp(
             r'(?:public\s+|open\s+|abstract\s+|internal\s+)*class\s+(\w+)')
         .firstMatch(line);
@@ -228,19 +308,28 @@ class GradleParser extends ParserBase {
     final seenMethodNames = <String>{};
     var isAbstract = line.contains('abstract ');
 
-    // Check for companion object
     var j = 0;
     while (j < bodyLines.length) {
-      final bodyLine = bodyLines[j].trim();
+      var bodyLine = _stripAnnotations(bodyLines[j].trim());
 
       if (bodyLine.startsWith('companion object')) {
-        // Parse companion methods as static
+        // Parse companion methods as static + companion fields
         final compEnd = _findBlockEndInBody(bodyLines, j);
-        for (var k = j + 1; k < compEnd; k++) {
-          final compLine = bodyLines[k].trim();
+        var k = j + 1;
+        while (k < compEnd) {
+          var compLine = _stripAnnotations(bodyLines[k].trim());
           final compDoc = _lookbackForKDoc(bodyLines, k);
+
+          if (compLine.startsWith('private ') ||
+              compLine.startsWith('internal ') ||
+              compLine.startsWith('protected ')) {
+            k++;
+            continue;
+          }
+
           if (_matchesFunction(compLine)) {
-            final method = _parseKotlinFunction(compLine, compDoc);
+            final sig = _collectKotlinSignature(bodyLines, k);
+            final method = _parseKotlinFunction(sig.text, compDoc);
             if (method != null &&
                 !_isPrivate(method.name) &&
                 seenMethodNames.add(method.name)) {
@@ -253,14 +342,24 @@ class GradleParser extends ParserBase {
                 documentation: method.documentation,
               ));
             }
+            k = sig.endIndex + 1;
+            continue;
+          } else if (compLine.startsWith('val ') ||
+              compLine.startsWith('var ')) {
+            final field = _parseKotlinField(compLine, compDoc);
+            if (field != null) {
+              fields.add(field);
+            }
           }
+          k++;
         }
         j = compEnd;
         continue;
       }
 
       if (bodyLine.startsWith('private ') ||
-          bodyLine.startsWith('internal ')) {
+          bodyLine.startsWith('internal ') ||
+          bodyLine.startsWith('protected ')) {
         j++;
         continue;
       }
@@ -268,12 +367,15 @@ class GradleParser extends ParserBase {
       final bodyDoc = _lookbackForKDoc(bodyLines, j);
 
       if (_matchesFunction(bodyLine)) {
-        final method = _parseKotlinFunction(bodyLine, bodyDoc);
+        final sig = _collectKotlinSignature(bodyLines, j);
+        final method = _parseKotlinFunction(sig.text, bodyDoc);
         if (method != null &&
             !_isPrivate(method.name) &&
             seenMethodNames.add(method.name)) {
           methods.add(method);
         }
+        j = sig.endIndex + 1;
+        continue;
       } else if (bodyLine.startsWith('val ') || bodyLine.startsWith('var ')) {
         final field = _parseKotlinField(bodyLine, bodyDoc);
         if (field != null) {
@@ -474,7 +576,7 @@ class GradleParser extends ParserBase {
 
   _ParsedClass? _parseKotlinInterface(
       List<String> lines, int startIndex, String? doc) {
-    final line = lines[startIndex].trim();
+    final line = _stripAnnotations(lines[startIndex].trim());
     final nameMatch =
         RegExp(r'interface\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
@@ -484,18 +586,27 @@ class GradleParser extends ParserBase {
     final bodyLines = lines.sublist(startIndex + 1, endIndex);
 
     final methods = <UtsMethod>[];
-    for (var j = 0; j < bodyLines.length; j++) {
-      final bodyLine = bodyLines[j].trim();
-      if (bodyLine.isEmpty) continue;
+    var j = 0;
+    while (j < bodyLines.length) {
+      var bodyLine = _stripAnnotations(bodyLines[j].trim());
+      if (bodyLine.isEmpty) {
+        j++;
+        continue;
+      }
 
       final methodDoc = _lookbackForKDoc(bodyLines, j);
 
       if (_matchesFunction(bodyLine)) {
-        final method = _parseKotlinFunction(bodyLine, methodDoc);
+        final sig = _collectKotlinSignature(bodyLines, j);
+        final method = _parseKotlinFunction(sig.text, methodDoc);
         if (method != null) {
           methods.add(method);
         }
+        j = sig.endIndex + 1;
+        continue;
       }
+
+      j++;
     }
 
     return _ParsedClass(
@@ -620,6 +731,129 @@ class GradleParser extends ParserBase {
     );
   }
 
+  _ParsedClass? _parseKotlinObject(
+      List<String> lines, int startIndex, String? doc) {
+    final line = _stripAnnotations(lines[startIndex].trim());
+    final nameMatch = RegExp(r'object\s+(\w+)').firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+    if (_isPrivate(name)) return null;
+
+    final endIndex = _findBlockEnd(lines, startIndex);
+    final bodyLines = lines.sublist(startIndex + 1, endIndex);
+
+    final methods = <UtsMethod>[];
+    final fields = <UtsField>[];
+    final seenMethodNames = <String>{};
+
+    var j = 0;
+    while (j < bodyLines.length) {
+      var bodyLine = _stripAnnotations(bodyLines[j].trim());
+      if (bodyLine.isEmpty) {
+        j++;
+        continue;
+      }
+
+      if (bodyLine.startsWith('private ') ||
+          bodyLine.startsWith('internal ') ||
+          bodyLine.startsWith('protected ')) {
+        j++;
+        continue;
+      }
+
+      final bodyDoc = _lookbackForKDoc(bodyLines, j);
+
+      if (_matchesFunction(bodyLine)) {
+        final sig = _collectKotlinSignature(bodyLines, j);
+        final method = _parseKotlinFunction(sig.text, bodyDoc);
+        if (method != null &&
+            !_isPrivate(method.name) &&
+            seenMethodNames.add(method.name)) {
+          methods.add(UtsMethod(
+            name: method.name,
+            isStatic: true,
+            isAsync: method.isAsync,
+            parameters: method.parameters,
+            returnType: method.returnType,
+            documentation: method.documentation,
+          ));
+        }
+        j = sig.endIndex + 1;
+        continue;
+      } else if (bodyLine.startsWith('val ') || bodyLine.startsWith('var ')) {
+        final field = _parseKotlinField(bodyLine, bodyDoc);
+        if (field != null) {
+          fields.add(field);
+        }
+      }
+
+      j++;
+    }
+
+    return _ParsedClass(
+      cls: UtsClass(
+        name: name,
+        kind: UtsClassKind.concreteClass,
+        methods: methods,
+        fields: fields,
+        documentation: doc,
+      ),
+      endIndex: endIndex + 1,
+    );
+  }
+
+  String? _getExtensionReceiver(String line) {
+    final match =
+        RegExp(r'(?:suspend\s+)?fun\s+(\w+)\.\w+\s*[<(]').firstMatch(line);
+    return match?.group(1);
+  }
+
+  UtsMethod? _parseKotlinExtensionFunction(String line, String? doc) {
+    final isSuspend = line.contains('suspend ');
+    final nameMatch =
+        RegExp(r'(?:suspend\s+)?fun\s+\w+\.(\w+)\s*(?:<[^>]*>)?\s*\(')
+            .firstMatch(line);
+    if (nameMatch == null) return null;
+
+    final name = nameMatch.group(1)!;
+
+    final openParen = line.indexOf('(', nameMatch.start);
+    if (openParen == -1) return null;
+    final closeParen = _findMatchingParen(line, openParen);
+    if (closeParen == -1) return null;
+
+    final paramStr = line.substring(openParen + 1, closeParen);
+    final afterParen = line.substring(closeParen + 1).trim();
+
+    String? returnTypeStr;
+    if (afterParen.startsWith(':')) {
+      returnTypeStr = _extractReturnType(afterParen.substring(1).trim());
+    }
+
+    UtsType returnType;
+    if (returnTypeStr == null || returnTypeStr.isEmpty) {
+      returnType = UtsType.voidType();
+    } else {
+      returnType = _kotlinMapper.mapType(returnTypeStr);
+    }
+
+    if (isSuspend && returnType.kind != UtsTypeKind.future) {
+      returnType = UtsType.future(returnType);
+    }
+
+    final parameters = _parseKotlinParams(paramStr);
+
+    return UtsMethod(
+      name: name,
+      isStatic: false,
+      isAsync: isSuspend || returnType.kind == UtsTypeKind.future,
+      parameters: parameters,
+      returnType: returnType,
+      documentation: doc,
+    );
+  }
+
   // ========== Java Parsing ==========
 
   UnifiedTypeSchema _parseJava(
@@ -708,8 +942,11 @@ class GradleParser extends ParserBase {
   bool _matchesJavaEnum(String line) =>
       RegExp(r'public\s+enum\s+').hasMatch(line);
 
-  bool _matchesJavaMethod(String line) {
+  bool _matchesJavaMethod(String line, {bool publicOnly = false}) {
     if (line.startsWith('private ') || line.startsWith('protected ')) {
+      return false;
+    }
+    if (publicOnly && !line.contains('public ')) {
       return false;
     }
     // Check for a method pattern using depth-tracking:
@@ -741,7 +978,7 @@ class GradleParser extends ParserBase {
 
       final methodDoc = _lookbackForJavaDoc(bodyLines, j);
 
-      if (_matchesJavaMethod(bodyLine)) {
+      if (_matchesJavaMethod(bodyLine, publicOnly: true)) {
         final method = _parseJavaMethod(bodyLine, methodDoc);
         if (method != null && seenMethodNames.add(method.name)) {
           methods.add(method);
@@ -909,6 +1146,79 @@ class GradleParser extends ParserBase {
   }
 
   // ========== Common Helpers ==========
+
+  /// Strips leading annotations like @JvmStatic, @Throws(IOException::class).
+  String _stripAnnotations(String line) {
+    var result = line;
+    while (result.startsWith('@')) {
+      final parenIdx = result.indexOf('(');
+      final spaceIdx = result.indexOf(' ');
+
+      if (parenIdx >= 0 && (spaceIdx < 0 || parenIdx < spaceIdx)) {
+        // Has parenthesized args: @Foo(bar) rest
+        final closeIdx = _findMatchingParen(result, parenIdx);
+        if (closeIdx >= 0) {
+          result = result.substring(closeIdx + 1).trim();
+        } else {
+          break;
+        }
+      } else if (spaceIdx >= 0) {
+        // Simple annotation: @Foo rest
+        result = result.substring(spaceIdx + 1).trim();
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  /// Collects a Kotlin function signature that may span multiple lines.
+  _CollectedSignature _collectKotlinSignature(
+      List<String> lines, int startIndex) {
+    final buffer = StringBuffer();
+    var parenDepth = 0;
+    var foundOpenParen = false;
+    var lastIndex = startIndex;
+
+    for (var i = startIndex; i < lines.length; i++) {
+      final line = lines[i].trim();
+      if (i > startIndex) buffer.write(' ');
+      buffer.write(line);
+      lastIndex = i;
+
+      for (var j = 0; j < line.length; j++) {
+        if (line[j] == '(') {
+          parenDepth++;
+          foundOpenParen = true;
+        } else if (line[j] == ')') {
+          parenDepth--;
+        }
+      }
+
+      // Keep collecting until parens are balanced
+      if (!foundOpenParen || parenDepth > 0) continue;
+
+      // Parens balanced — check if signature is complete
+      if (line.contains('{')) break;
+
+      final currentText = buffer.toString();
+      // If we already have a return type, we're done
+      if (RegExp(r'\)\s*:').hasMatch(currentText)) break;
+
+      // Peek at next line for return type or body
+      if (i + 1 < lines.length) {
+        final nextLine = lines[i + 1].trim();
+        if (nextLine.isEmpty ||
+            (!nextLine.startsWith(':') && !nextLine.startsWith('{'))) {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return _CollectedSignature(text: buffer.toString(), endIndex: lastIndex);
+  }
 
   /// Splits a type+default string like "`Map<String, String>` = emptyMap()"
   /// into the type part and optional default value, respecting angle brackets.
@@ -1251,4 +1561,10 @@ class _TypeAndDefault {
   final String type;
   final String? defaultValue;
   _TypeAndDefault({required this.type, this.defaultValue});
+}
+
+class _CollectedSignature {
+  final String text;
+  final int endIndex;
+  _CollectedSignature({required this.text, required this.endIndex});
 }

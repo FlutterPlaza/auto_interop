@@ -325,6 +325,7 @@ public class Hello {
           parseCache:
               ParseCache(cacheDir: '${tempDir.path}/.auto_interop_cache'),
           registryClient: registryClient,
+          useAst: false,
         );
 
         final spec = PackageSpec(
@@ -406,6 +407,7 @@ public class Hello {
 
         final resolver = SchemaResolver(
           parseCache: parseCache,
+          useAst: false,
         );
 
         final spec = PackageSpec(
@@ -434,6 +436,7 @@ public class Lib {
 
         final resolver = SchemaResolver(
           parseCache: parseCache,
+          useAst: false,
         );
 
         final spec = PackageSpec(

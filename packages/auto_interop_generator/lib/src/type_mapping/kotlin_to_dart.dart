@@ -99,6 +99,31 @@ class KotlinToDartMapper {
       return UtsType.list(mapType(inner), nullable: nullable);
     }
 
+    // Handle HashMap<K,V>, LinkedHashMap<K,V>, MutableMap<K,V> → Map
+    for (final prefix in ['HashMap', 'LinkedHashMap', 'MutableMap']) {
+      if (kotlinType.startsWith('$prefix<') && kotlinType.endsWith('>')) {
+        final inner =
+            kotlinType.substring(prefix.length + 1, kotlinType.length - 1);
+        final parts = _splitGenericArgs(inner);
+        if (parts.length == 2) {
+          return UtsType.map(
+            mapType(parts[0].trim()),
+            mapType(parts[1].trim()),
+            nullable: nullable,
+          );
+        }
+      }
+    }
+
+    // Handle ArrayList<T>, LinkedList<T>, ArrayDeque<T> → List
+    for (final prefix in ['ArrayList', 'LinkedList', 'ArrayDeque']) {
+      if (kotlinType.startsWith('$prefix<') && kotlinType.endsWith('>')) {
+        final inner =
+            kotlinType.substring(prefix.length + 1, kotlinType.length - 1);
+        return UtsType.list(mapType(inner), nullable: nullable);
+      }
+    }
+
     // Handle Map<K, V>
     if (kotlinType.startsWith('Map<') && kotlinType.endsWith('>')) {
       final inner = kotlinType.substring(4, kotlinType.length - 1);

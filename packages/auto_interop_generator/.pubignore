@@ -1,0 +1,23 @@
+# Test files (not needed by consumers)
+test/
+example/
+
+# AST helper build artifacts (525MB+)
+.build/
+node_modules/
+Package.resolved
+
+# Development files
+.dart_tool/
+.packages
+build/
+coverage/
+.auto_interop_cache.json
+.auto_interop_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

@@ -58,7 +58,7 @@ This package is the **code generation engine**. It reads a `auto_interop.yaml` c
 
 ```yaml
 dev_dependencies:
-  auto_interop_generator: ^0.1.0
+  auto_interop_generator: ^0.2.0
   build_runner: ^2.4.0
 ```
 
@@ -66,7 +66,7 @@ You also need the runtime as a regular dependency:
 
 ```yaml
 dependencies:
-  auto_interop: ^0.1.0
+  auto_interop: ^0.2.0
 ```
 
 ## Getting Started
@@ -190,6 +190,16 @@ dart run auto_interop_generator:generate add cocoapods Alamofire "~> 5.9"
 dart run auto_interop_generator:generate add gradle com.squareup.okhttp3:okhttp 4.12.0
 dart run auto_interop_generator:generate add spm Alamofire "~> 5.9"
 ```
+
+### setup
+
+Pre-warms AST helper caches for faster first-time parsing. Downloads Maven dependencies for Kotlin and compiles the Swift AST helper binary.
+
+```bash
+dart run auto_interop_generator:generate setup
+```
+
+This is optional — caches are automatically built on first use. Running `setup` avoids the ~30s delay during the first `generate` command.
 
 ### help / version
 
@@ -361,6 +371,31 @@ abstract class ParserBase {
 | `GradleParser` | `.kt` Kotlin and `.java` Java files | Classes, data classes, sealed classes, enum classes, interfaces, suspend/Flow, KDoc/JavaDoc |
 | `SwiftParser` | `.swift` / `.swiftinterface` files | Classes, structs, protocols, enums (simple + associated values), extensions, async/throws, closures, `///` docs |
 
+#### AST-Based Parsing (Default)
+
+Each regex parser has an AST counterpart that uses real compiler APIs for accurate parsing. AST parsing is enabled by default and falls back to regex automatically when the required toolchain is unavailable.
+
+| AST Parser | Toolchain | Helper |
+|-----------|-----------|--------|
+| `AstNpmParser` | Node.js + TypeScript | `ts_ast_helper.mjs` (TypeScript Compiler API) |
+| `AstGradleParser` | `kotlinc` | `kt_ast_helper.main.kts` (Kotlin PSI, version-matched) |
+| `AstSwiftParser` | Swift compiler | `swift_ast_helper` binary (SwiftSyntax, compiled on first use) |
+
+**Key AST features:**
+- **Extension function folding** (Kotlin): `fun String.isValidEmail()` is folded into the `String` class if it exists, otherwise emitted as a top-level function
+- **Overload deduplication** (Kotlin): Only the first overload is kept per function name
+- **Throws propagation** (Swift): `throws` and typed `throws(ErrorType)` mark methods as async with `Future` return
+- **Mixed file handling** (Kotlin/Java): `.kt` files parsed via AST, `.java` via regex, results merged
+- **Default exports** (TypeScript): `export default class/interface/type/enum` correctly parsed
+
+**Pre-warming caches:**
+
+```bash
+dart run auto_interop_generator:generate setup
+```
+
+This downloads Maven dependencies for Kotlin and compiles the Swift helper binary, avoiding a ~30s delay on first use.
+
 ### Generators
 
 All generators extend `GeneratorBase`:
@@ -451,9 +486,12 @@ loader.save('my_package', mySchema);
 - **Generics:** `Array<T>`, `Promise<T>`, `Map<K, V>`
 - **Optional parameters:** `name?: type` (mapped to named Dart parameters)
 - **Callback types:** `(value: string) => void` (mapped to `UtsType.callback`)
+- **Default exports:** `export default class Foo { ... }` correctly identified and parsed
 - **Async types:** `Promise<T>` -> `Future<T>`, `ReadableStream` -> `Stream<T>`
 - **JSDoc:** `/** ... */` comments preserved as documentation
 - **Privacy:** Underscore-prefixed names are filtered out
+
+> **AST mode** (default): Uses the TypeScript Compiler API via Node.js for accurate parsing. Falls back to regex if Node.js is unavailable.
 
 ### Gradle Parser (Kotlin/Java)
 
@@ -470,7 +508,11 @@ loader.save('my_package', mySchema);
 - **Nullable types:** `String?` (mapped to nullable `UtsType`)
 - **Default values:** `port: Int = 8080` (mapped to optional named parameters)
 - **KDoc:** `/** ... */` comments preserved
+- **Extension functions:** `fun String.isValidEmail(): Boolean` (folded into matching class or emitted as top-level)
+- **Overload deduplication:** Only the first overload per function name is kept
 - **Access control:** `private`/`internal` members are filtered out
+
+> **AST mode** (default): Uses Kotlin PSI via `kotlinc -script` with `kotlin-compiler-embeddable`, version-matched to the installed `kotlinc`. Falls back to regex if `kotlinc` is unavailable.
 
 **Java features:**
 - **Classes:** `public class`, `public abstract class` with methods
@@ -491,13 +533,17 @@ loader.save('my_package', mySchema);
 - **Enums (associated values):** `enum Result { case success(data: Data); case failure(error: Error) }` (mapped to `UtsClassKind.sealedClass` with data class subclasses)
 - **Extensions:** `extension MyClass { func added() {} }` (methods folded into the base class)
 - **Async/await:** `func fetch() async -> Data` (mapped to `Future<Data>`)
-- **Throws:** Recognized but not represented in UTS (async + throws both produce `Future`)
+- **Throws:** `func fetch() throws -> Data` and typed throws `throws(NetworkError) -> String` — both produce `Future<T>` with `isAsync: true`
 - **Closures:** `completion: (String) -> Void` (mapped to `UtsType.callback`)
 - **Optionals:** `String?` (mapped to nullable `UtsType`)
 - **Default values:** `port: Int = 8080`
 - **Static/class methods:** `static func`, `class func` (mapped to `isStatic: true`)
 - **Documentation:** Both `///` doc comments and `/** ... */` blocks preserved
 - **Access control:** `private`, `fileprivate`, and `internal` declarations are filtered out
+
+> **AST mode** (default): Uses SwiftSyntax via a compiled helper binary. Backward-compatible across Swift 5.9, 6.0, and 6.2+ via `#if compiler` conditional compilation. The binary is compiled on first use (~10s) and cached at `~/.auto_interop/tools/`. Falls back to regex if the Swift compiler is unavailable.
+
+> **Mixed Kotlin/Java** (AST mode): When a Gradle package contains both `.kt` and `.java` files, the AST parser handles Kotlin files while Java files are parsed via regex. Results are automatically merged into a single schema.
 
 ## Generator Details
 
@@ -803,9 +849,13 @@ class MyGenerator extends GeneratorBase {
 | Class | Purpose |
 |-------|---------|
 | `ParserBase` | Abstract base with `parse()`, `parseFiles()`, `mergeSchemas()` |
-| `NpmParser` | Parses TypeScript `.d.ts` files |
-| `GradleParser` | Parses Kotlin `.kt` and Java `.java` files |
-| `SwiftParser` | Parses Swift `.swift` / `.swiftinterface` files |
+| `NpmParser` | Parses TypeScript `.d.ts` files (regex) |
+| `GradleParser` | Parses Kotlin `.kt` and Java `.java` files (regex) |
+| `SwiftParser` | Parses Swift `.swift` / `.swiftinterface` files (regex) |
+| `AstNpmParser` | AST-based TypeScript parser via TypeScript Compiler API |
+| `AstGradleParser` | AST-based Kotlin parser via Kotlin PSI (handles mixed Kotlin/Java) |
+| `AstSwiftParser` | AST-based Swift parser via SwiftSyntax |
+| `SchemaResolver` | Selects AST vs regex parser, manages toolchain detection |
 
 ### Generators
 
@@ -844,6 +894,11 @@ class MyGenerator extends GeneratorBase {
 | `NpmInstaller` | Manages `package.json` dependencies |
 | `PodInstaller` | Manages `Podfile` pod declarations |
 | `GradleInstaller` | Manages `build.gradle` / `build.gradle.kts` dependencies |
+
+## Related
+
+- [Documentation](https://flutterplaza.github.io/auto_interop/) — full documentation with examples, architecture, and API reference
+- [`auto_interop`](https://pub.dev/packages/auto_interop) — the runtime library
 
 ## License
 

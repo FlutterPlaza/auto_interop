@@ -190,6 +190,14 @@ class SwiftToDartMapper {
       case 'NSUUID':
       case 'NSString':
         return UtsType.primitive('String', nullable: nullable);
+      case 'NSArray':
+        return UtsType.list(UtsType.dynamicType(), nullable: nullable);
+      case 'NSDictionary':
+        return UtsType.map(
+          UtsType.primitive('String'),
+          UtsType.dynamicType(),
+          nullable: nullable,
+        );
       case 'Void':
         return UtsType.voidType();
       case 'Any':
