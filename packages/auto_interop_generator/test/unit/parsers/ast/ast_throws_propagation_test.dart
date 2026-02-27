@@ -165,7 +165,7 @@ void main() {
           .firstWhere((f) => f.name == 'asyncAndThrowing');
       expect(asyncThrows.isAsync, isTrue);
       expect(asyncThrows.returnType.kind, UtsTypeKind.future);
-    });
+    }, tags: ['integration']);
   });
 }
 

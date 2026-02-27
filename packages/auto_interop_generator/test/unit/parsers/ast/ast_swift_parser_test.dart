@@ -54,15 +54,12 @@ public class Hello {
       expect(parser.timeout, const Duration(seconds: 60));
     });
 
-    test('helperCommand uses cached binary path', () async {
+    test('helperCommand uses cached binary path', () {
       final parser = AstSwiftParser(
         toolchainDetector: _mockDetector(hasSwift: true, hasCachedBinary: true),
       );
 
-      // Simulate prepare
-      await parser.prepare().catchError((_) {});
-
-      // The command should use the binary
+      // The command should use the binary (no prepare() needed for unit test)
       final command = parser.helperCommand(
         filePaths: ['/src/Hello.swift'],
         packageName: 'Hello',

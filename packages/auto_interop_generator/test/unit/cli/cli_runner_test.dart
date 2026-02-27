@@ -125,7 +125,7 @@ void main() {
           '--no-analyze',
         ]);
         expect(code, 0);
-      });
+      }, tags: ['integration']);
 
       test('--output writes to specified path', () async {
         final tempDir = Directory.systemTemp.createTempSync('nb_parse_test_');
@@ -150,7 +150,7 @@ void main() {
         } finally {
           tempDir.deleteSync(recursive: true);
         }
-      });
+      }, tags: ['integration']);
     });
 
     group('clean/delete/purge', () {
