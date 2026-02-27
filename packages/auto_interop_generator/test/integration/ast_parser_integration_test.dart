@@ -9,7 +9,6 @@ import 'package:auto_interop_generator/src/parsers/ast/ast_gradle_parser.dart';
 import 'package:auto_interop_generator/src/parsers/ast/toolchain_detector.dart';
 import 'package:auto_interop_generator/src/parsers/npm_parser.dart';
 import 'package:auto_interop_generator/src/parsers/swift_parser.dart';
-import 'package:auto_interop_generator/src/parsers/gradle_parser.dart';
 import 'package:auto_interop_generator/src/schema/unified_type_schema.dart';
 import 'package:test/test.dart';
 

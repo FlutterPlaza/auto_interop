@@ -29,14 +29,9 @@ void main() {
     });
 
     test('helperCommand includes node, package, version, and files', () async {
-      String? capturedExec;
-      List<String>? capturedArgs;
-
       final parser = AstNpmParser(
         toolchainDetector: _mockDetector(hasNode: true),
         processRunner: (exec, args, {workingDirectory}) async {
-          capturedExec = exec;
-          capturedArgs = args;
           return _mockResult(0, stdout: '{}');
         },
       );

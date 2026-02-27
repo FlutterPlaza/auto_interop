@@ -171,7 +171,6 @@ void main() {
 
 ToolchainDetector _mockDetector({
   required bool hasSwift,
-  bool hasCachedBinary = false,
 }) {
   return ToolchainDetector(
     processRunner: (exec, args, {workingDirectory}) async {

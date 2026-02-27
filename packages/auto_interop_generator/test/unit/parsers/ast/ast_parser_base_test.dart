@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:auto_interop_generator/src/parsers/ast/ast_parser_base.dart';
 import 'package:auto_interop_generator/src/parsers/ast/toolchain_detector.dart';
 import 'package:auto_interop_generator/src/parsers/npm_parser.dart';
-import 'package:auto_interop_generator/src/parsers/parser_base.dart';
 import 'package:auto_interop_generator/src/schema/unified_type_schema.dart';
 import 'package:test/test.dart';
 
@@ -146,7 +145,6 @@ void main() {
 
 class _TestAstParser extends AstParserBase {
   final bool toolchainAvailable;
-  final ProcessResult? _processResult;
   final Duration? processDelay;
   final Object? prepareError;
 
@@ -156,8 +154,7 @@ class _TestAstParser extends AstParserBase {
     this.processDelay,
     this.prepareError,
     Duration timeout = const Duration(seconds: 30),
-  })  : _processResult = processResult,
-        super(
+  })  : super(
           fallbackParser: NpmParser(),
           toolchainDetector: ToolchainDetector(
             processRunner: (exec, args, {workingDirectory}) async {

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import '../../schema/unified_type_schema.dart';
 import '../gradle_parser.dart';
 import '../parser_base.dart';
 import 'ast_parser_base.dart';
