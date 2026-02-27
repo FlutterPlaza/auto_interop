@@ -55,7 +55,11 @@ class PackageSpec {
   bool get isSelectiveImport => imports.isNotEmpty;
 
   /// Returns a copy with the given fields replaced.
-  PackageSpec copyWith({String? sourcePath, String? sourceUrl, Map<String, String>? customTypes, List<String>? mavenRepositories}) {
+  PackageSpec copyWith(
+      {String? sourcePath,
+      String? sourceUrl,
+      Map<String, String>? customTypes,
+      List<String>? mavenRepositories}) {
     return PackageSpec(
       source: source,
       package: package,

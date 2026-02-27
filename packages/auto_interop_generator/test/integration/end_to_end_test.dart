@@ -17,8 +17,7 @@ import 'package:auto_interop_generator/src/schema/unified_type_schema.dart';
 import 'package:auto_interop_generator/src/type_definitions/type_definition_loader.dart';
 import 'package:test/test.dart';
 
-String _fixture(String path) =>
-    File('test/fixtures/$path').readAsStringSync();
+String _fixture(String path) => File('test/fixtures/$path').readAsStringSync();
 
 void main() {
   late NpmParser npmParser;
@@ -92,15 +91,14 @@ void main() {
     test('Dart output contains all parsed functions', () {
       final code = dartGen.generate(schema).values.first;
       for (final fn in schema.functions) {
-        expect(code, contains(fn.name),
-            reason: 'Missing function: ${fn.name}');
+        expect(code, contains(fn.name), reason: 'Missing function: ${fn.name}');
       }
     });
 
     test('full roundtrip: parse → serialize → deserialize → generate', () {
       final json = jsonEncode(schema.toJson());
-      final restored = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final restored =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       final original = dartGen.generate(schema).values.first;
       final fromRestored = dartGen.generate(restored).values.first;
       expect(fromRestored, original);
@@ -133,8 +131,8 @@ void main() {
 
     test('roundtrip produces identical output', () {
       final json = jsonEncode(schema.toJson());
-      final restored = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final restored =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(
         dartGen.generate(restored).values.first,
         dartGen.generate(schema).values.first,
@@ -221,8 +219,8 @@ void main() {
 
     test('full roundtrip produces identical output', () {
       final json = jsonEncode(schema.toJson());
-      final restored = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final restored =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(
         dartGen.generate(restored).values.first,
         dartGen.generate(schema).values.first,
@@ -287,8 +285,8 @@ void main() {
 
     test('full roundtrip produces identical output', () {
       final json = jsonEncode(schema.toJson());
-      final restored = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final restored =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(
         dartGen.generate(restored).values.first,
         dartGen.generate(schema).values.first,
@@ -324,8 +322,8 @@ void main() {
 
     test('roundtrip produces identical output', () {
       final json = jsonEncode(schema.toJson());
-      final restored = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final restored =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(
         dartGen.generate(restored).values.first,
         dartGen.generate(schema).values.first,
@@ -387,7 +385,8 @@ void main() {
       // All should have the GENERATED header
       for (final code in [npmDart, gradleDart, swiftDart]) {
         expect(code, contains('// GENERATED CODE'));
-        expect(code, contains("import 'package:auto_interop/auto_interop.dart'"));
+        expect(
+            code, contains("import 'package:auto_interop/auto_interop.dart'"));
         expect(code, contains('AutoInteropChannel'));
       }
     });
@@ -470,20 +469,18 @@ native_packages:
       expect(prebuiltDart, contains('enum HTTPMethod'));
 
       // The method parameter should use HTTPMethod enum type
-      final session = prebuiltSchema.classes
-          .firstWhere((c) => c.name == 'Session');
-      final request = session.methods
-          .firstWhere((m) => m.name == 'request');
-      final methodParam = request.parameters
-          .firstWhere((p) => p.name == 'method');
+      final session =
+          prebuiltSchema.classes.firstWhere((c) => c.name == 'Session');
+      final request = session.methods.firstWhere((m) => m.name == 'request');
+      final methodParam =
+          request.parameters.firstWhere((p) => p.name == 'method');
       expect(methodParam.type.kind, UtsTypeKind.enumType);
 
       // Verify nativeLabel and nativeType are preserved
-      final urlParam = request.parameters
-          .firstWhere((p) => p.name == 'url');
+      final urlParam = request.parameters.firstWhere((p) => p.name == 'url');
       expect(urlParam.nativeLabel, '_');
-      final headersParam = request.parameters
-          .firstWhere((p) => p.name == 'headers');
+      final headersParam =
+          request.parameters.firstWhere((p) => p.name == 'headers');
       expect(headersParam.nativeType, 'HTTPHeaders');
 
       // Swift glue should compile without errors
@@ -499,7 +496,8 @@ native_packages:
         version: '4.12.0',
       );
 
-      final prebuiltSchema = loader.loadForPackage('com.squareup.okhttp3:okhttp');
+      final prebuiltSchema =
+          loader.loadForPackage('com.squareup.okhttp3:okhttp');
       // OkHttp is stored as okhttp3
       final prebuiltSchema2 = loader.load('okhttp3');
       final schema = prebuiltSchema ?? prebuiltSchema2;
@@ -535,10 +533,8 @@ native_packages:
         version: '3.6.0',
       );
       final code = dartGen.generate(schema).values.first;
-      final imports = code
-          .split('\n')
-          .where((l) => l.startsWith('import '))
-          .toList();
+      final imports =
+          code.split('\n').where((l) => l.startsWith('import ')).toList();
       expect(imports.toSet().length, imports.length,
           reason: 'Duplicate imports found');
     });

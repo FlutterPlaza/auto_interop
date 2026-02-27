@@ -67,9 +67,8 @@ void main() {
           ],
         );
         final report = checker.check(schema);
-        final support = report.classSupport
-            .where((s) => s.name == 'ResponseBody')
-            .first;
+        final support =
+            report.classSupport.where((s) => s.name == 'ResponseBody').first;
         expect(support.isAndroidOnly, isTrue);
         expect(support.note, contains('Sealed class'));
       });
@@ -146,9 +145,8 @@ void main() {
           types: [UtsClass(name: 'FormatOptions')],
         );
         final report = checker.check(schema);
-        final support = report.classSupport
-            .where((s) => s.name == 'FormatOptions')
-            .first;
+        final support =
+            report.classSupport.where((s) => s.name == 'FormatOptions').first;
         expect(support.platforms, {Platform.web});
       });
     });

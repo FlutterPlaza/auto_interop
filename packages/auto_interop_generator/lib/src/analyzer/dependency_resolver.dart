@@ -67,9 +67,7 @@ class DependencyResolver {
     // Detect version conflicts
     final versionMap = <String, Set<String>>{}; // package → versions seen
     for (final schema in schemas) {
-      versionMap
-          .putIfAbsent(schema.package, () => {})
-          .add(schema.version);
+      versionMap.putIfAbsent(schema.package, () => {}).add(schema.version);
     }
     for (final entry in versionMap.entries) {
       if (entry.value.length > 1) {
@@ -161,8 +159,20 @@ class DependencyResolver {
 
   bool _isBuiltinType(String name) {
     const builtins = {
-      'String', 'int', 'double', 'bool', 'DateTime', 'void', 'dynamic',
-      'Object', 'Uint8List', 'List', 'Map', 'Set', 'Future', 'Stream',
+      'String',
+      'int',
+      'double',
+      'bool',
+      'DateTime',
+      'void',
+      'dynamic',
+      'Object',
+      'Uint8List',
+      'List',
+      'Map',
+      'Set',
+      'Future',
+      'Stream',
     };
     return builtins.contains(name);
   }

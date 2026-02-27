@@ -101,8 +101,7 @@ class PackageDownloader {
     final downloadedPath = '$npmDir/node_modules/${spec.package}';
     if (!Directory(downloadedPath).existsSync()) {
       return DownloadResult(
-        error:
-            'npm install succeeded but package not found at $downloadedPath',
+        error: 'npm install succeeded but package not found at $downloadedPath',
       );
     }
 
@@ -407,8 +406,7 @@ class PackageDownloader {
     final parts = spec.package.split(':');
     if (parts.length != 2) {
       return DownloadResult(
-        error:
-            'Invalid Maven coordinates "${spec.package}". '
+        error: 'Invalid Maven coordinates "${spec.package}". '
             'Expected format: group:artifact (e.g., com.squareup.okhttp3:okhttp)',
       );
     }
@@ -430,7 +428,9 @@ class PackageDownloader {
     ProcessResult? lastCurlResult;
 
     for (final repoUrl in spec.mavenRepositories) {
-      final baseUrl = repoUrl.endsWith('/') ? repoUrl.substring(0, repoUrl.length - 1) : repoUrl;
+      final baseUrl = repoUrl.endsWith('/')
+          ? repoUrl.substring(0, repoUrl.length - 1)
+          : repoUrl;
       final jarUrl =
           '$baseUrl/$group/$artifact/$cleanVersion/$artifact-$cleanVersion-sources.jar';
 

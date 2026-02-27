@@ -66,8 +66,8 @@ void main() {
       });
 
       test('includes package name in header comment', () {
-        final code = generator.generateJsInteropCode(
-            _createSchemaWithPackage('date-fns'));
+        final code = generator
+            .generateJsInteropCode(_createSchemaWithPackage('date-fns'));
         expect(code, contains('Web JS interop bindings for date-fns'));
       });
     });
@@ -83,8 +83,7 @@ void main() {
               name: 'format',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('String')),
+                UtsParameter(name: 'date', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -104,8 +103,7 @@ void main() {
               name: 'greet',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'name', type: UtsType.primitive('String')),
+                UtsParameter(name: 'name', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -125,8 +123,7 @@ void main() {
               isStatic: true,
               parameters: [
                 UtsParameter(name: 'a', type: UtsType.primitive('int')),
-                UtsParameter(
-                    name: 'b', type: UtsType.primitive('double')),
+                UtsParameter(name: 'b', type: UtsType.primitive('double')),
               ],
               returnType: UtsType.primitive('double'),
             ),
@@ -146,8 +143,7 @@ void main() {
               name: 'toggle',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'value', type: UtsType.primitive('bool')),
+                UtsParameter(name: 'value', type: UtsType.primitive('bool')),
               ],
               returnType: UtsType.primitive('bool'),
             ),
@@ -166,8 +162,7 @@ void main() {
               name: 'setDate',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('DateTime')),
+                UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
               ],
               returnType: UtsType.voidType(),
             ),
@@ -253,8 +248,8 @@ void main() {
 
     group('Dart wrapper class', () {
       test('generates class with PascalCase name', () {
-        final code = generator.generateJsInteropCode(
-            _createSchemaWithPackage('date-fns'));
+        final code = generator
+            .generateJsInteropCode(_createSchemaWithPackage('date-fns'));
         expect(code, contains('class DateFns'));
       });
 
@@ -268,8 +263,7 @@ void main() {
               name: 'greet',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'name', type: UtsType.primitive('String')),
+                UtsParameter(name: 'name', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -288,8 +282,7 @@ void main() {
               name: 'echo',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'msg', type: UtsType.primitive('String')),
+                UtsParameter(name: 'msg', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -309,8 +302,7 @@ void main() {
               name: 'formatDate',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('DateTime')),
+                UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -670,8 +662,7 @@ void main() {
               name: 'Priority',
               documentation: 'Priority levels.',
               values: [
-                UtsEnumValue(
-                    name: 'high', documentation: 'High priority.'),
+                UtsEnumValue(name: 'high', documentation: 'High priority.'),
                 UtsEnumValue(name: 'low'),
               ],
             ),
@@ -718,8 +709,7 @@ void main() {
 
     group('full date-fns example', () {
       test('generates complete web bindings', () {
-        final code =
-            generator.generateJsInteropCode(_createDateFnsSchema());
+        final code = generator.generateJsInteropCode(_createDateFnsSchema());
 
         // Imports
         expect(code, contains("import 'dart:js_interop';"));

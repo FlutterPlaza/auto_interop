@@ -33,8 +33,7 @@ void main() {
 
     group('header and imports', () {
       test('includes GENERATED header', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
+        final code = generator.generateSwiftCode(_createMinimalSchema('test'));
         expect(code, contains('GENERATED'));
         expect(code, contains('DO NOT EDIT'));
       });
@@ -46,8 +45,7 @@ void main() {
       });
 
       test('uses conditional imports for macOS/iOS', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
+        final code = generator.generateSwiftCode(_createMinimalSchema('test'));
         expect(code, contains('#if os(macOS)'));
         expect(code, contains('import FlutterMacOS'));
         expect(code, contains('#else'));
@@ -59,30 +57,31 @@ void main() {
 
     group('plugin class structure', () {
       test('declares public class extending NSObject, FlutterPlugin', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
-        expect(code,
-            contains('public class TestPlugin: NSObject, FlutterPlugin'));
+        final code = generator.generateSwiftCode(_createMinimalSchema('test'));
+        expect(
+            code, contains('public class TestPlugin: NSObject, FlutterPlugin'));
       });
 
       test('has register(with:) static method', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
-        expect(code,
-            contains('public static func register(with registrar: FlutterPluginRegistrar)'));
+        final code = generator.generateSwiftCode(_createMinimalSchema('test'));
+        expect(
+            code,
+            contains(
+                'public static func register(with registrar: FlutterPluginRegistrar)'));
       });
 
       test('creates method channel with snake_case name', () {
-        final code = generator
-            .generateSwiftCode(_createMinimalSchema('my-package'));
+        final code =
+            generator.generateSwiftCode(_createMinimalSchema('my-package'));
         expect(code, contains('"auto_interop/my_package"'));
       });
 
       test('has handle method', () {
-        final code =
-            generator.generateSwiftCode(_createMinimalSchema('test'));
-        expect(code,
-            contains('public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult)'));
+        final code = generator.generateSwiftCode(_createMinimalSchema('test'));
+        expect(
+            code,
+            contains(
+                'public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult)'));
       });
 
       test('has default case returning FlutterMethodNotImplemented', () {
@@ -257,7 +256,10 @@ void main() {
           ],
         );
         final code = generator.generateSwiftCode(schema);
-        expect(code, contains('private func normalizeErrorCode(_ error: Error) -> String'));
+        expect(
+            code,
+            contains(
+                'private func normalizeErrorCode(_ error: Error) -> String'));
         expect(code, contains('NSURLErrorDomain'));
         expect(code, contains('"TIMEOUT"'));
         expect(code, contains('"NETWORK_ERROR"'));
@@ -493,10 +495,8 @@ UnifiedTypeSchema _createAlamofireSchema() {
           UtsMethod(
             name: 'request',
             parameters: [
-              UtsParameter(
-                  name: 'url', type: UtsType.primitive('String')),
-              UtsParameter(
-                  name: 'method', type: UtsType.primitive('String')),
+              UtsParameter(name: 'url', type: UtsType.primitive('String')),
+              UtsParameter(name: 'method', type: UtsType.primitive('String')),
             ],
             returnType: UtsType.primitive('String'),
             documentation: 'Makes an HTTP request.',
@@ -504,8 +504,7 @@ UnifiedTypeSchema _createAlamofireSchema() {
           UtsMethod(
             name: 'download',
             parameters: [
-              UtsParameter(
-                  name: 'url', type: UtsType.primitive('String')),
+              UtsParameter(name: 'url', type: UtsType.primitive('String')),
             ],
             returnType: UtsType.primitive('String'),
             isAsync: true,

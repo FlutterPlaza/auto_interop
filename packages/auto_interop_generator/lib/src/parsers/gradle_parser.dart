@@ -114,8 +114,7 @@ class GradleParser extends ParserBase {
 
       // Sealed class
       if (_matchesSealedClass(line)) {
-        final result =
-            _parseKotlinSealedClass(lines, i, doc);
+        final result = _parseKotlinSealedClass(lines, i, doc);
         if (result != null) {
           classes.add(result.cls);
           for (final sub in result.subclasses) {
@@ -292,9 +291,9 @@ class GradleParser extends ParserBase {
   _ParsedClass? _parseKotlinClass(
       List<String> lines, int startIndex, String? doc) {
     final line = _stripAnnotations(lines[startIndex].trim());
-    final nameMatch = RegExp(
-            r'(?:public\s+|open\s+|abstract\s+|internal\s+)*class\s+(\w+)')
-        .firstMatch(line);
+    final nameMatch =
+        RegExp(r'(?:public\s+|open\s+|abstract\s+|internal\s+)*class\s+(\w+)')
+            .firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -403,8 +402,7 @@ class GradleParser extends ParserBase {
   _ParsedClass? _parseKotlinDataClass(
       List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'data\s+class\s+(\w+)\s*\(').firstMatch(line);
+    final nameMatch = RegExp(r'data\s+class\s+(\w+)\s*\(').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -476,8 +474,7 @@ class GradleParser extends ParserBase {
   _ParsedSealedClass? _parseKotlinSealedClass(
       List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'sealed\s+class\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'sealed\s+class\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -508,8 +505,7 @@ class GradleParser extends ParserBase {
           ));
         }
       } else if (bodyLine.startsWith('object ')) {
-        final subMatch =
-            RegExp(r'object\s+(\w+)').firstMatch(bodyLine);
+        final subMatch = RegExp(r'object\s+(\w+)').firstMatch(bodyLine);
         if (subMatch != null) {
           final subName = subMatch.group(1)!;
           sealedSubclassNames.add(subName);
@@ -537,8 +533,7 @@ class GradleParser extends ParserBase {
   _ParsedEnum? _parseKotlinEnum(
       List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'enum\s+class\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'enum\s+class\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -577,8 +572,7 @@ class GradleParser extends ParserBase {
   _ParsedClass? _parseKotlinInterface(
       List<String> lines, int startIndex, String? doc) {
     final line = _stripAnnotations(lines[startIndex].trim());
-    final nameMatch =
-        RegExp(r'interface\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'interface\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -704,8 +698,7 @@ class GradleParser extends ParserBase {
 
   UtsField? _parseKotlinField(String line, String? doc) {
     final isReadOnly = line.startsWith('val ');
-    final nameMatch =
-        RegExp(r'(?:val|var)\s+(\w+)\s*:\s*').firstMatch(line);
+    final nameMatch = RegExp(r'(?:val|var)\s+(\w+)\s*:\s*').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -960,9 +953,9 @@ class GradleParser extends ParserBase {
   _ParsedClass? _parseJavaClass(
       List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch = RegExp(
-            r'public\s+(?:abstract\s+|static\s+|final\s+)*class\s+(\w+)')
-        .firstMatch(line);
+    final nameMatch =
+        RegExp(r'public\s+(?:abstract\s+|static\s+|final\s+)*class\s+(\w+)')
+            .firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -1002,8 +995,7 @@ class GradleParser extends ParserBase {
   _ParsedClass? _parseJavaInterface(
       List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'public\s+interface\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'public\s+interface\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -1035,11 +1027,9 @@ class GradleParser extends ParserBase {
     );
   }
 
-  _ParsedEnum? _parseJavaEnum(
-      List<String> lines, int startIndex, String? doc) {
+  _ParsedEnum? _parseJavaEnum(List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'public\s+enum\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'public\s+enum\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -1054,8 +1044,7 @@ class GradleParser extends ParserBase {
       final valueDoc = _lookbackForJavaDoc(bodyLines, j);
 
       // Match enum constants: NAME, or NAME; or NAME
-      final valueMatch =
-          RegExp(r'^(\w+)\s*[,;]?\s*$').firstMatch(bodyLine);
+      final valueMatch = RegExp(r'^(\w+)\s*[,;]?\s*$').firstMatch(bodyLine);
       if (valueMatch != null) {
         final valueName = valueMatch.group(1)!;
         values.add(UtsEnumValue(
@@ -1457,10 +1446,7 @@ class GradleParser extends ParserBase {
 
     // Single-line /** doc */
     if (lastLine.startsWith('/**') && lastLine.endsWith('*/')) {
-      return lastLine
-          .replaceFirst('/**', '')
-          .replaceFirst('*/', '')
-          .trim();
+      return lastLine.replaceFirst('/**', '').replaceFirst('*/', '').trim();
     }
 
     // Multi-line doc

@@ -735,8 +735,7 @@ class CliRunner {
         '  parse      Parse native source files into a .uts.json type definition');
     stdout.writeln('  list       List cached parsed type definitions');
     stdout.writeln('  add        Add a native package to auto_interop.yaml');
-    stdout.writeln(
-        '  setup      Check toolchains and pre-compile AST helpers');
+    stdout.writeln('  setup      Check toolchains and pre-compile AST helpers');
     stdout.writeln('  registry   Manage the cloud definition registry');
     stdout
         .writeln('  clean      Clear cache (forces rebuild on next generate)');
@@ -1285,8 +1284,7 @@ class CliRunner {
         stdout.writeln('\u2713 available');
       } else {
         stdout.writeln('\u2717 missing');
-        stdout.writeln(
-            '    Install with: npm install -g typescript');
+        stdout.writeln('    Install with: npm install -g typescript');
         allReady = false;
       }
     } else {
@@ -1308,9 +1306,11 @@ class CliRunner {
         try {
           final parser = AstSwiftParser(toolchainDetector: detector);
           await parser.prepare();
-          stdout.writeln('  Swift AST helper binary:              \u2713 ready');
+          stdout
+              .writeln('  Swift AST helper binary:              \u2713 ready');
         } catch (e) {
-          stdout.writeln('  Swift AST helper binary:              \u2717 failed');
+          stdout
+              .writeln('  Swift AST helper binary:              \u2717 failed');
           stdout.writeln('    $e');
           allReady = false;
         }
@@ -1318,8 +1318,7 @@ class CliRunner {
     } else {
       stdout.writeln('\u2717 not found');
       if (Platform.isMacOS) {
-        stdout.writeln(
-            '    Install with: xcode-select --install');
+        stdout.writeln('    Install with: xcode-select --install');
       }
       allReady = false;
     }
@@ -1328,7 +1327,8 @@ class CliRunner {
     stdout.write('  kotlinc (for Kotlin/Gradle parsing):  ');
     if (await detector.hasKotlinc()) {
       final ktVersion = await detector.kotlincVersion();
-      stdout.writeln('\u2713 available${ktVersion != null ? " ($ktVersion)" : ""}');
+      stdout.writeln(
+          '\u2713 available${ktVersion != null ? " ($ktVersion)" : ""}');
       // Pre-warm Maven dependencies
       stdout.writeln('  Kotlin dependencies:                  warming...');
       try {
@@ -1342,8 +1342,7 @@ class CliRunner {
       }
     } else {
       stdout.writeln('\u2717 not found');
-      stdout.writeln(
-          '    Install with: brew install kotlin (macOS) or sdkman');
+      stdout.writeln('    Install with: brew install kotlin (macOS) or sdkman');
       allReady = false;
     }
 

@@ -70,10 +70,12 @@ void main() {
           artifact: 'okhttp',
           version: '4.12.0',
         );
-        expect(result,
-            contains("implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'"));
-        expect(result,
-            contains("implementation 'androidx.core:core-ktx:1.12.0'"));
+        expect(
+            result,
+            contains(
+                "implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'"));
+        expect(
+            result, contains("implementation 'androidx.core:core-ktx:1.12.0'"));
       });
 
       test('updates existing dependency version', () {
@@ -83,8 +85,8 @@ void main() {
           artifact: 'core-ktx',
           version: '1.13.0',
         );
-        expect(result,
-            contains("implementation 'androidx.core:core-ktx:1.13.0'"));
+        expect(
+            result, contains("implementation 'androidx.core:core-ktx:1.13.0'"));
         expect(result,
             isNot(contains("implementation 'androidx.core:core-ktx:1.12.0'")));
       });
@@ -109,8 +111,7 @@ void main() {
           version: '4.13.2',
           configuration: 'testImplementation',
         );
-        expect(result,
-            contains("testImplementation 'junit:junit:4.13.2'"));
+        expect(result, contains("testImplementation 'junit:junit:4.13.2'"));
       });
 
       test('does not duplicate existing dependency', () {
@@ -120,9 +121,8 @@ void main() {
           artifact: 'core-ktx',
           version: '1.12.0',
         );
-        final matches = RegExp('androidx.core:core-ktx')
-            .allMatches(result)
-            .length;
+        final matches =
+            RegExp('androidx.core:core-ktx').allMatches(result).length;
         expect(matches, 1);
       });
     });
@@ -298,8 +298,7 @@ void main() {
         );
         expect(result,
             contains("implementation 'com.squareup.okhttp3:okhttp:4.12.0'"));
-        expect(result,
-            contains("testImplementation 'junit:junit:4.13.2'"));
+        expect(result, contains("testImplementation 'junit:junit:4.13.2'"));
       });
     });
 

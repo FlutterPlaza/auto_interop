@@ -24,8 +24,7 @@ class AstSwiftParser extends AstParserBase {
   }) : super(fallbackParser: SwiftParser());
 
   @override
-  Future<bool> isToolchainAvailable() =>
-      toolchainDetector.hasSwift();
+  Future<bool> isToolchainAvailable() => toolchainDetector.hasSwift();
 
   @override
   Future<void> prepare() async {
@@ -73,8 +72,7 @@ class AstSwiftParser extends AstParserBase {
     final targetBinary = '$toolsDir/swift_ast_helper';
 
     stderr.writeln('');
-    stderr.writeln(
-        '  Swift AST helper \u2014 one-time setup (~30-60s)');
+    stderr.writeln('  Swift AST helper \u2014 one-time setup (~30-60s)');
 
     final stopwatch = Stopwatch()..start();
     final process = await Process.start(
@@ -125,10 +123,8 @@ class AstSwiftParser extends AstParserBase {
     _binaryPath = targetBinary;
 
     final elapsed = (stopwatch.elapsedMilliseconds / 1000).toStringAsFixed(1);
-    stderr.writeln(
-        '  \u2713 Compiled and cached (${elapsed}s)');
-    stderr.writeln(
-        '    $targetBinary');
+    stderr.writeln('  \u2713 Compiled and cached (${elapsed}s)');
+    stderr.writeln('    $targetBinary');
     stderr.writeln('');
   }
 
@@ -157,8 +153,7 @@ class AstSwiftParser extends AstParserBase {
     }
 
     // Show compilation progress at intervals (every ~10% of total steps)
-    final progressMatch =
-        RegExp(r'\[(\d+)/(\d+)\]').firstMatch(trimmed);
+    final progressMatch = RegExp(r'\[(\d+)/(\d+)\]').firstMatch(trimmed);
     if (progressMatch != null) {
       final current = int.parse(progressMatch.group(1)!);
       final total = int.parse(progressMatch.group(2)!);

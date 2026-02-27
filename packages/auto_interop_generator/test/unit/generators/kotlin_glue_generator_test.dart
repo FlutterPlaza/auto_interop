@@ -33,8 +33,7 @@ void main() {
 
     group('header and imports', () {
       test('includes GENERATED header', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('GENERATED'));
         expect(code, contains('DO NOT EDIT'));
       });
@@ -46,14 +45,15 @@ void main() {
       });
 
       test('imports FlutterPlugin', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
-        expect(code, contains('import io.flutter.embedding.engine.plugins.FlutterPlugin'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
+        expect(
+            code,
+            contains(
+                'import io.flutter.embedding.engine.plugins.FlutterPlugin'));
       });
 
       test('imports MethodChannel classes', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('import io.flutter.plugin.common.MethodCall'));
         expect(code, contains('import io.flutter.plugin.common.MethodChannel'));
         expect(code, contains('MethodChannel.MethodCallHandler'));
@@ -62,51 +62,50 @@ void main() {
     });
 
     group('plugin class structure', () {
-      test('generates class implementing FlutterPlugin and MethodCallHandler', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+      test('generates class implementing FlutterPlugin and MethodCallHandler',
+          () {
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code,
             contains('class TestPlugin : FlutterPlugin, MethodCallHandler'));
       });
 
       test('declares lateinit channel', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
-        expect(code,
-            contains('private lateinit var channel: MethodChannel'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
+        expect(code, contains('private lateinit var channel: MethodChannel'));
       });
 
       test('registers channel in onAttachedToEngine', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('onAttachedToEngine'));
-        expect(code, contains('MethodChannel(binding.binaryMessenger, "auto_interop/test")'));
+        expect(
+            code,
+            contains(
+                'MethodChannel(binding.binaryMessenger, "auto_interop/test")'));
         expect(code, contains('channel.setMethodCallHandler(this)'));
       });
 
       test('uses snake_case channel name', () {
         final code =
             generator.generateKotlinCode(_createMinimalSchema('date-fns'));
-        expect(code,
-            contains('MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
+        expect(
+            code,
+            contains(
+                'MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
       });
 
       test('unregisters in onDetachedFromEngine', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('onDetachedFromEngine'));
         expect(code, contains('channel.setMethodCallHandler(null)'));
       });
 
       test('has when dispatch in onMethodCall', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('when (call.method)'));
       });
 
       test('has notImplemented fallback', () {
-        final code =
-            generator.generateKotlinCode(_createMinimalSchema('test'));
+        final code = generator.generateKotlinCode(_createMinimalSchema('test'));
         expect(code, contains('result.notImplemented()'));
       });
     });
@@ -144,15 +143,13 @@ void main() {
               name: 'greet',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'name', type: UtsType.primitive('String')),
+                UtsParameter(name: 'name', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
           ],
         ));
-        expect(code,
-            contains('val name = call.argument<String>("name")!!'));
+        expect(code, contains('val name = call.argument<String>("name")!!'));
       });
 
       test('extracts Int arguments', () {
@@ -184,15 +181,13 @@ void main() {
               name: 'toggle',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'value', type: UtsType.primitive('bool')),
+                UtsParameter(name: 'value', type: UtsType.primitive('bool')),
               ],
               returnType: UtsType.voidType(),
             ),
           ],
         ));
-        expect(code,
-            contains('val value = call.argument<Boolean>("value")!!'));
+        expect(code, contains('val value = call.argument<Boolean>("value")!!'));
       });
 
       test('extracts DateTime as String (ISO 8601)', () {
@@ -205,15 +200,13 @@ void main() {
               name: 'setDate',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('DateTime')),
+                UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
               ],
               returnType: UtsType.voidType(),
             ),
           ],
         ));
-        expect(code,
-            contains('val date = call.argument<String>("date")!!'));
+        expect(code, contains('val date = call.argument<String>("date")!!'));
       });
 
       test('optional arguments use nullable extraction', () {
@@ -241,10 +234,9 @@ void main() {
             ),
           ],
         ));
-        expect(code,
-            contains('val name = call.argument<String>("name")!!'));
-        expect(code,
-            contains('val greeting = call.argument<String>("greeting")'));
+        expect(code, contains('val name = call.argument<String>("name")!!'));
+        expect(
+            code, contains('val greeting = call.argument<String>("greeting")'));
         // Should NOT have !! for optional
         expect(
             code,
@@ -299,10 +291,12 @@ void main() {
             ),
           ],
         ));
-        expect(code, contains('private fun normalizeErrorCode(e: Exception): String'));
+        expect(code,
+            contains('private fun normalizeErrorCode(e: Exception): String'));
         expect(code, contains('is java.io.IOException -> "IO_ERROR"'));
         expect(code, contains('is SecurityException -> "PERMISSION_DENIED"'));
-        expect(code, contains('is IllegalArgumentException -> "INVALID_ARGUMENT"'));
+        expect(code,
+            contains('is IllegalArgumentException -> "INVALID_ARGUMENT"'));
       });
 
       test('extracts Map arguments for object types', () {
@@ -315,16 +309,13 @@ void main() {
               name: 'configure',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'options',
-                    type: UtsType.object('Options')),
+                UtsParameter(name: 'options', type: UtsType.object('Options')),
               ],
               returnType: UtsType.voidType(),
             ),
           ],
         ));
-        expect(code,
-            contains('call.argument<Map<String, Any?>>("options")'));
+        expect(code, contains('call.argument<Map<String, Any?>>("options")'));
       });
 
       test('extracts List arguments', () {
@@ -346,8 +337,7 @@ void main() {
             ),
           ],
         ));
-        expect(code,
-            contains('call.argument<List<Any?>>("items")'));
+        expect(code, contains('call.argument<List<Any?>>("items")'));
       });
     });
 
@@ -384,16 +374,17 @@ void main() {
 
     group('full date-fns example', () {
       test('generates complete plugin', () {
-        final code =
-            generator.generateKotlinCode(_createDateFnsSchema());
+        final code = generator.generateKotlinCode(_createDateFnsSchema());
 
         // Class structure
         expect(code, contains('class DateFnsPlugin'));
         expect(code, contains('FlutterPlugin, MethodCallHandler'));
 
         // Channel registration
-        expect(code,
-            contains('MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
+        expect(
+            code,
+            contains(
+                'MethodChannel(binding.binaryMessenger, "auto_interop/date_fns")'));
 
         // Method dispatch
         expect(code, contains('"format" ->'));
@@ -435,10 +426,8 @@ UnifiedTypeSchema _createDateFnsSchema() {
         name: 'format',
         isStatic: true,
         parameters: [
-          UtsParameter(
-              name: 'date', type: UtsType.primitive('DateTime')),
-          UtsParameter(
-              name: 'formatStr', type: UtsType.primitive('String')),
+          UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
+          UtsParameter(name: 'formatStr', type: UtsType.primitive('String')),
         ],
         returnType: UtsType.primitive('String'),
       ),
@@ -446,10 +435,8 @@ UnifiedTypeSchema _createDateFnsSchema() {
         name: 'addDays',
         isStatic: true,
         parameters: [
-          UtsParameter(
-              name: 'date', type: UtsType.primitive('DateTime')),
-          UtsParameter(
-              name: 'amount', type: UtsType.primitive('int')),
+          UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
+          UtsParameter(name: 'amount', type: UtsType.primitive('int')),
         ],
         returnType: UtsType.primitive('DateTime'),
       ),

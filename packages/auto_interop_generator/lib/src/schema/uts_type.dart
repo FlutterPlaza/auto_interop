@@ -104,8 +104,7 @@ class UtsType {
       );
 
   /// Creates a `Future<T>` type.
-  factory UtsType.future(UtsType valueType, {bool nullable = false}) =>
-      UtsType(
+  factory UtsType.future(UtsType valueType, {bool nullable = false}) => UtsType(
         kind: UtsTypeKind.future,
         name: 'Future',
         nullable: nullable,
@@ -113,8 +112,7 @@ class UtsType {
       );
 
   /// Creates a `Stream<T>` type.
-  factory UtsType.stream(UtsType valueType, {bool nullable = false}) =>
-      UtsType(
+  factory UtsType.stream(UtsType valueType, {bool nullable = false}) => UtsType(
         kind: UtsTypeKind.stream,
         name: 'Stream',
         nullable: nullable,
@@ -136,8 +134,7 @@ class UtsType {
       );
 
   /// Creates an opaque native object handle type.
-  factory UtsType.nativeObject(String name, {bool nullable = false}) =>
-      UtsType(
+  factory UtsType.nativeObject(String name, {bool nullable = false}) => UtsType(
         kind: UtsTypeKind.nativeObject,
         name: name,
         nullable: nullable,
@@ -176,10 +173,9 @@ class UtsType {
         return 'List<$elementType>$suffix';
       case UtsTypeKind.map:
         final keyType = typeArguments?.first.toDartType() ?? 'dynamic';
-        final valueType =
-            typeArguments != null && typeArguments!.length > 1
-                ? typeArguments![1].toDartType()
-                : 'dynamic';
+        final valueType = typeArguments != null && typeArguments!.length > 1
+            ? typeArguments![1].toDartType()
+            : 'dynamic';
         return 'Map<$keyType, $valueType>$suffix';
       case UtsTypeKind.future:
         final valueType = typeArguments?.first.toDartType() ?? 'void';

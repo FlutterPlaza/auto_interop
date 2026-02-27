@@ -28,16 +28,17 @@ class SpmInstaller {
     final depsArrayMatch =
         RegExp(r'dependencies\s*:\s*\[').firstMatch(packageSwiftContent);
     if (depsArrayMatch != null) {
-      final closingBracket = _findMatchingBracket(
-          packageSwiftContent, depsArrayMatch.end - 1);
+      final closingBracket =
+          _findMatchingBracket(packageSwiftContent, depsArrayMatch.end - 1);
       if (closingBracket != -1) {
         final newDep = _formatDependency(packageUrl, version);
         final before = packageSwiftContent.substring(0, closingBracket);
         final after = packageSwiftContent.substring(closingBracket);
 
         // Check if array is empty or has existing entries
-        final arrayContent =
-            packageSwiftContent.substring(depsArrayMatch.end, closingBracket).trim();
+        final arrayContent = packageSwiftContent
+            .substring(depsArrayMatch.end, closingBracket)
+            .trim();
         if (arrayContent.isEmpty) {
           return '$before\n        $newDep,\n    $after';
         }
@@ -80,15 +81,15 @@ class SpmInstaller {
     required String packageSwiftContent,
     required String packageUrl,
   }) {
-    final match = RegExp(
-            'url:\\s*"${RegExp.escape(packageUrl)}".*?from:\\s*"([^"]+)"')
-        .firstMatch(packageSwiftContent);
+    final match =
+        RegExp('url:\\s*"${RegExp.escape(packageUrl)}".*?from:\\s*"([^"]+)"')
+            .firstMatch(packageSwiftContent);
     if (match != null) return match.group(1);
 
     // Try exact version pattern
-    final exactMatch = RegExp(
-            'url:\\s*"${RegExp.escape(packageUrl)}".*?exact:\\s*"([^"]+)"')
-        .firstMatch(packageSwiftContent);
+    final exactMatch =
+        RegExp('url:\\s*"${RegExp.escape(packageUrl)}".*?exact:\\s*"([^"]+)"')
+            .firstMatch(packageSwiftContent);
     return exactMatch?.group(1);
   }
 
@@ -112,8 +113,8 @@ class SpmInstaller {
   // --- Private helpers ---
 
   String? _findDependency(String content, String packageUrl) {
-    final pattern = RegExp(
-        '\\.package\\(url:\\s*"${RegExp.escape(packageUrl)}"[^)]*\\)');
+    final pattern =
+        RegExp('\\.package\\(url:\\s*"${RegExp.escape(packageUrl)}"[^)]*\\)');
     final match = pattern.firstMatch(content);
     return match?.group(0);
   }

@@ -78,14 +78,12 @@ void main() {
       });
 
       test('creates nullable List<int>', () {
-        final type =
-            UtsType.list(UtsType.primitive('int'), nullable: true);
+        final type = UtsType.list(UtsType.primitive('int'), nullable: true);
         expect(type.toDartType(), 'List<int>?');
       });
 
       test('creates nested List<List<String>>', () {
-        final type =
-            UtsType.list(UtsType.list(UtsType.primitive('String')));
+        final type = UtsType.list(UtsType.list(UtsType.primitive('String')));
         expect(type.toDartType(), 'List<List<String>>');
       });
 
@@ -237,8 +235,8 @@ void main() {
       });
 
       test('Map<String, int> != Map<String, double>', () {
-        final a = UtsType.map(
-            UtsType.primitive('String'), UtsType.primitive('int'));
+        final a =
+            UtsType.map(UtsType.primitive('String'), UtsType.primitive('int'));
         final b = UtsType.map(
             UtsType.primitive('String'), UtsType.primitive('double'));
         expect(a, isNot(equals(b)));

@@ -133,8 +133,8 @@ export declare enum Weekday {
 
       // Round-trip: serialize → deserialize → compare
       final json = jsonEncode(result.schema.toJson());
-      final roundTripped = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final roundTripped =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(roundTripped.functions.length, result.schema.functions.length);
       expect(roundTripped.types.length, result.schema.types.length);
       expect(roundTripped.enums.length, result.schema.enums.length);
@@ -224,14 +224,13 @@ public struct RequestOptions {
       expect(opts.fields.length, 2);
 
       // Type mapping: [String: String] → Map<String, String>
-      final headersField =
-          opts.fields.firstWhere((f) => f.name == 'headers');
+      final headersField = opts.fields.firstWhere((f) => f.name == 'headers');
       expect(headersField.type.kind, UtsTypeKind.map);
 
       // Round-trip
       final json = jsonEncode(result.schema.toJson());
-      final roundTripped = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final roundTripped =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(roundTripped.classes.length, result.schema.classes.length);
     }, timeout: const Timeout(Duration(minutes: 3)));
   });
@@ -292,20 +291,17 @@ sealed class Result {
       expect(getMethod.returnType.name, 'String');
 
       // getAsync is async → Future
-      final getAsync =
-          client.methods.firstWhere((m) => m.name == 'getAsync');
+      final getAsync = client.methods.firstWhere((m) => m.name == 'getAsync');
       expect(getAsync.isAsync, isTrue);
       expect(getAsync.returnType.kind, UtsTypeKind.future);
 
       // Config data class → type
-      final config =
-          result.schema.types.firstWhere((t) => t.name == 'Config');
+      final config = result.schema.types.firstWhere((t) => t.name == 'Config');
       expect(config.kind, UtsClassKind.dataClass);
       expect(config.fields.length, 3);
 
       // Map<String, String> type mapping
-      final headersField =
-          config.fields.firstWhere((f) => f.name == 'headers');
+      final headersField = config.fields.firstWhere((f) => f.name == 'headers');
       expect(headersField.type.kind, UtsTypeKind.map);
 
       // Enum
@@ -320,8 +316,8 @@ sealed class Result {
 
       // Round-trip
       final json = jsonEncode(result.schema.toJson());
-      final roundTripped = UnifiedTypeSchema.fromJson(
-          jsonDecode(json) as Map<String, dynamic>);
+      final roundTripped =
+          UnifiedTypeSchema.fromJson(jsonDecode(json) as Map<String, dynamic>);
       expect(roundTripped.classes.length, result.schema.classes.length);
       expect(roundTripped.types.length, result.schema.types.length);
       expect(roundTripped.enums.length, result.schema.enums.length);
@@ -329,7 +325,8 @@ sealed class Result {
   });
 
   group('AST vs regex comparison', () {
-    test('AST finds at least as many declarations as regex for Swift', () async {
+    test('AST finds at least as many declarations as regex for Swift',
+        () async {
       if (!await detector.hasSwift()) {
         markTestSkipped('Swift not available');
         return;
@@ -413,10 +410,10 @@ sealed class Result {
         version: '3.6.0',
       );
 
-      final regexTotal = regexResult.schema.functions.length +
-          regexResult.schema.types.length;
-      final astTotal = astResult.schema.functions.length +
-          astResult.schema.types.length;
+      final regexTotal =
+          regexResult.schema.functions.length + regexResult.schema.types.length;
+      final astTotal =
+          astResult.schema.functions.length + astResult.schema.types.length;
 
       expect(astTotal, greaterThanOrEqualTo(regexTotal),
           reason: 'AST found $astTotal, regex found $regexTotal');
@@ -424,7 +421,9 @@ sealed class Result {
   });
 
   group('AST Kotlin extension functions', () {
-    test('folds extensions into matching class and emits unmatched as top-level', () async {
+    test(
+        'folds extensions into matching class and emits unmatched as top-level',
+        () async {
       if (!await detector.hasKotlinc()) {
         markTestSkipped('kotlinc not available');
         return;
@@ -483,9 +482,8 @@ fun Int.isEven(): Boolean {
       expect(trimFn.first.parameters.first.name, 'self',
           reason: 'Extension receiver becomes self param');
 
-      final isEvenFn = result.schema.functions
-          .where((f) => f.name == 'isEven')
-          .toList();
+      final isEvenFn =
+          result.schema.functions.where((f) => f.name == 'isEven').toList();
       expect(isEvenFn, hasLength(1));
       expect(isEvenFn.first.parameters.first.name, 'self');
     }, timeout: const Timeout(Duration(minutes: 5)));
@@ -603,14 +601,13 @@ public func safeOperation(input: String) -> String {
 
       expect(result.schema.package, 'ThrowsLib');
 
-      final service = result.schema.classes
-          .firstWhere((c) => c.name == 'NetworkService');
+      final service =
+          result.schema.classes.firstWhere((c) => c.name == 'NetworkService');
 
       // throws → isAsync: true, Future return
       final fetchData =
           service.methods.firstWhere((m) => m.name == 'fetchData');
-      expect(fetchData.isAsync, isTrue,
-          reason: 'throws should set isAsync');
+      expect(fetchData.isAsync, isTrue, reason: 'throws should set isAsync');
       expect(fetchData.returnType.kind, UtsTypeKind.future,
           reason: 'throws should wrap return in Future');
 
@@ -683,17 +680,15 @@ public class JavaHelper {
       expect(result.schema.package, 'com.example:mixed');
 
       // KotlinClient from AST
-      final ktClasses = result.schema.classes
-          .where((c) => c.name == 'KotlinClient')
-          .toList();
+      final ktClasses =
+          result.schema.classes.where((c) => c.name == 'KotlinClient').toList();
       expect(ktClasses, hasLength(1),
           reason: 'KotlinClient should come from AST subprocess');
       expect(ktClasses.first.methods.length, greaterThanOrEqualTo(1));
 
       // JavaHelper from regex fallback
-      final javaClasses = result.schema.classes
-          .where((c) => c.name == 'JavaHelper')
-          .toList();
+      final javaClasses =
+          result.schema.classes.where((c) => c.name == 'JavaHelper').toList();
       expect(javaClasses, hasLength(1),
           reason: 'JavaHelper should come from regex fallback');
       expect(javaClasses.first.methods.length, greaterThanOrEqualTo(1));
@@ -756,9 +751,8 @@ export enum Status {
       expect(config.first.fields.length, 3);
 
       // Logger: export declare interface with methods → abstractClass
-      final logger = result.schema.classes
-          .where((c) => c.name == 'Logger')
-          .toList();
+      final logger =
+          result.schema.classes.where((c) => c.name == 'Logger').toList();
       expect(logger, hasLength(1),
           reason: 'export declare interface Logger should be parsed');
 
@@ -768,9 +762,8 @@ export enum Status {
           reason: 'export type Options should be parsed');
 
       // Status: export enum
-      final statusEnum = result.schema.enums
-          .where((e) => e.name == 'Status')
-          .toList();
+      final statusEnum =
+          result.schema.enums.where((e) => e.name == 'Status').toList();
       expect(statusEnum, hasLength(1),
           reason: 'export enum Status should be parsed');
       expect(statusEnum.first.values.length, 3);
@@ -816,12 +809,12 @@ fun MyService.reset(): Unit {}
       );
 
       // MyService should have ping + folded reset
-      final service = result.schema.classes
-          .firstWhere((c) => c.name == 'MyService');
+      final service =
+          result.schema.classes.firstWhere((c) => c.name == 'MyService');
       expect(service.methods.length, 2,
           reason: 'MyService should have ping + reset');
-      expect(service.methods.map((m) => m.name),
-          containsAll(['ping', 'reset']));
+      expect(
+          service.methods.map((m) => m.name), containsAll(['ping', 'reset']));
 
       // Generic extensions become top-level functions with self param
       expect(result.schema.functions.length, greaterThanOrEqualTo(2),
@@ -843,7 +836,8 @@ fun MyService.reset(): Unit {}
   });
 
   group('AST Swift typed throws edge cases', () {
-    test('typed throws(ErrorType) correctly propagates isAsync and return type', () async {
+    test('typed throws(ErrorType) correctly propagates isAsync and return type',
+        () async {
       if (!await detector.hasSwift()) {
         markTestSkipped('Swift not available');
         return;
@@ -886,8 +880,8 @@ public func topLevelTypedThrows() throws(NetworkError) -> Bool {
         version: '1.0.0',
       );
 
-      final client = result.schema.classes
-          .firstWhere((c) => c.name == 'ApiClient');
+      final client =
+          result.schema.classes.firstWhere((c) => c.name == 'ApiClient');
 
       // typed throws(NetworkError) → isAsync: true, Future<String>
       final fetchTyped =
@@ -907,8 +901,7 @@ public func topLevelTypedThrows() throws(NetworkError) -> Bool {
       expect(fetchRegular.returnType.typeArguments?.first.name, 'String');
 
       // no throws → isAsync: false, plain String
-      final fetchSafe =
-          client.methods.firstWhere((m) => m.name == 'fetchSafe');
+      final fetchSafe = client.methods.firstWhere((m) => m.name == 'fetchSafe');
       expect(fetchSafe.isAsync, isFalse);
       expect(fetchSafe.returnType.kind, isNot(UtsTypeKind.future));
 
@@ -921,9 +914,8 @@ public func topLevelTypedThrows() throws(NetworkError) -> Bool {
           reason: 'typed throws should preserve Bool → bool return type');
 
       // NetworkError enum should be parsed
-      final errorEnum = result.schema.enums
-          .where((e) => e.name == 'NetworkError')
-          .toList();
+      final errorEnum =
+          result.schema.enums.where((e) => e.name == 'NetworkError').toList();
       expect(errorEnum, hasLength(1));
       expect(errorEnum.first.values.length, 2);
     }, timeout: const Timeout(Duration(minutes: 3)));

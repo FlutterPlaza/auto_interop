@@ -107,8 +107,7 @@ class UnifiedTypeSchema {
   Map<String, dynamic> toJson() => _$UnifiedTypeSchemaToJson(this);
 
   @override
-  String toString() =>
-      'UnifiedTypeSchema($package@$version from $source, '
+  String toString() => 'UnifiedTypeSchema($package@$version from $source, '
       '${classes.length} classes, ${functions.length} functions, '
       '${types.length} types, ${enums.length} enums)';
 }

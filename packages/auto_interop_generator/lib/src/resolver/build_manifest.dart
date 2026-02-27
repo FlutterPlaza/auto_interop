@@ -57,8 +57,7 @@ class BuildManifest {
       return BuildManifest();
     }
     try {
-      final json =
-          jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       return BuildManifest.fromJson(json);
     } on Object {
       return BuildManifest();
@@ -66,8 +65,7 @@ class BuildManifest {
   }
 
   factory BuildManifest.fromJson(Map<String, dynamic> json) {
-    final entriesJson =
-        (json['entries'] as Map<String, dynamic>?) ?? {};
+    final entriesJson = (json['entries'] as Map<String, dynamic>?) ?? {};
     final entries = entriesJson.map(
       (key, value) => MapEntry(
         key,

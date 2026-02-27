@@ -54,8 +54,7 @@ void main() {
       });
 
       test('returns true when file is already referenced', () {
-        expect(
-            patcher.hasFileReference(_minimalPbxproj, 'AppDelegate.swift'),
+        expect(patcher.hasFileReference(_minimalPbxproj, 'AppDelegate.swift'),
             isTrue);
       });
     });
@@ -74,19 +73,21 @@ void main() {
         expect(result, contains('/* AlamofirePlugin.swift in Sources */'));
 
         // Verify the entries are in the right sections
-        final fileRefSection = result.indexOf('/* End PBXFileReference section */');
-        final buildFileSection = result.indexOf('/* End PBXBuildFile section */');
+        final fileRefSection =
+            result.indexOf('/* End PBXFileReference section */');
+        final buildFileSection =
+            result.indexOf('/* End PBXBuildFile section */');
         expect(fileRefSection, greaterThan(-1));
         expect(buildFileSection, greaterThan(-1));
 
         // File reference entry should be before the end marker
-        final fileRefEntry = result.indexOf(
-            'path = AlamofirePlugin.swift; sourceTree = "<group>"');
+        final fileRefEntry = result
+            .indexOf('path = AlamofirePlugin.swift; sourceTree = "<group>"');
         expect(fileRefEntry, lessThan(fileRefSection));
 
         // Build file entry should be before its end marker
-        final buildFileEntry = result
-            .indexOf('/* AlamofirePlugin.swift in Sources */ = {isa = PBXBuildFile');
+        final buildFileEntry = result.indexOf(
+            '/* AlamofirePlugin.swift in Sources */ = {isa = PBXBuildFile');
         expect(buildFileEntry, lessThan(buildFileSection));
       });
 
@@ -107,24 +108,20 @@ void main() {
       });
 
       test('different filenames produce different IDs', () {
-        final result1 =
-            patcher.addSwiftFile(_minimalPbxproj, 'PluginA.swift');
-        final result2 =
-            patcher.addSwiftFile(_minimalPbxproj, 'PluginB.swift');
+        final result1 = patcher.addSwiftFile(_minimalPbxproj, 'PluginA.swift');
+        final result2 = patcher.addSwiftFile(_minimalPbxproj, 'PluginB.swift');
         expect(result1, isNot(equals(result2)));
       });
     });
 
     group('idempotency', () {
       test('hasFileReference returns true after addSwiftFile', () {
-        final result =
-            patcher.addSwiftFile(_minimalPbxproj, 'NewPlugin.swift');
+        final result = patcher.addSwiftFile(_minimalPbxproj, 'NewPlugin.swift');
         expect(patcher.hasFileReference(result, 'NewPlugin.swift'), isTrue);
       });
 
       test('double addSwiftFile produces same result', () {
-        final first =
-            patcher.addSwiftFile(_minimalPbxproj, 'NewPlugin.swift');
+        final first = patcher.addSwiftFile(_minimalPbxproj, 'NewPlugin.swift');
         final second = patcher.addSwiftFile(first, 'NewPlugin.swift');
         expect(second, equals(first));
       });
@@ -139,8 +136,7 @@ void main() {
         expect(patcher.hasFileReference(content, 'PluginA.swift'), isTrue);
         expect(patcher.hasFileReference(content, 'PluginB.swift'), isTrue);
         // Original file still there
-        expect(
-            patcher.hasFileReference(content, 'AppDelegate.swift'), isTrue);
+        expect(patcher.hasFileReference(content, 'AppDelegate.swift'), isTrue);
       });
     });
   });

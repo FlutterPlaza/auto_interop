@@ -37,7 +37,8 @@ class DartGenerator extends GeneratorBase {
     buffer.writeln('//');
     buffer.writeln('// Package: ${schema.package}@${schema.version}');
     buffer.writeln('// Source: ${schema.source.name}');
-    buffer.writeln('// Platform availability: ${_platformAvailability(schema.source)}');
+    buffer.writeln(
+        '// Platform availability: ${_platformAvailability(schema.source)}');
     buffer.writeln();
     if (_needsTypedDataImport(schema)) {
       buffer.writeln("import 'dart:typed_data';");
@@ -111,19 +112,18 @@ class DartGenerator extends GeneratorBase {
     buffer.writeln('abstract interface class ${className}Interface {');
     for (var i = 0; i < schema.functions.length; i++) {
       if (i > 0) buffer.writeln();
-      _generateInterfaceMethodSignature(
-          buffer, schema, schema.functions[i], indent: '  ');
+      _generateInterfaceMethodSignature(buffer, schema, schema.functions[i],
+          indent: '  ');
     }
     buffer.writeln('}');
   }
 
-  void _generateBindingClass(
-      StringBuffer buffer, UnifiedTypeSchema schema) {
+  void _generateBindingClass(StringBuffer buffer, UnifiedTypeSchema schema) {
     final className = _packageToClassName(schema.package);
     final channelName = _packageToChannelName(schema.package);
 
-    final hasStreamFunction = schema.functions.any(
-        (m) => m.returnType.kind == UtsTypeKind.stream);
+    final hasStreamFunction =
+        schema.functions.any((m) => m.returnType.kind == UtsTypeKind.stream);
 
     buffer.writeln('class $className implements ${className}Interface {');
     buffer.writeln(
@@ -158,8 +158,8 @@ class DartGenerator extends GeneratorBase {
         .toList();
     for (var i = 0; i < instanceMethods.length; i++) {
       if (i > 0) buffer.writeln();
-      _generateInterfaceMethodSignature(
-          buffer, schema, instanceMethods[i], indent: '  ');
+      _generateInterfaceMethodSignature(buffer, schema, instanceMethods[i],
+          indent: '  ');
     }
     buffer.writeln('}');
   }
@@ -178,8 +178,8 @@ class DartGenerator extends GeneratorBase {
     // Both concrete and abstract classes with instance methods are reference types
     // (abstract classes like Call/JsonElement are handle proxies on the Dart side)
     final isReferenceType = hasInstanceMethods;
-    final isConcreteReferenceType = isReferenceType &&
-        classDef.kind != UtsClassKind.abstractClass;
+    final isConcreteReferenceType =
+        isReferenceType && classDef.kind != UtsClassKind.abstractClass;
 
     // Class declaration
     if (classDef.kind == UtsClassKind.abstractClass) {
@@ -214,8 +214,8 @@ class DartGenerator extends GeneratorBase {
     }
 
     // Channel for method invocations
-    final hasStreamMethod = classDef.methods.any(
-        (m) => m.returnType.kind == UtsTypeKind.stream);
+    final hasStreamMethod =
+        classDef.methods.any((m) => m.returnType.kind == UtsTypeKind.stream);
     if (classDef.methods.isNotEmpty) {
       buffer.writeln(
           "  static final _channel = AutoInteropChannel('$channelName');");
@@ -264,13 +264,11 @@ class DartGenerator extends GeneratorBase {
         }
         buffer.writeln('    });');
       } else {
-        buffer.writeln(
-            '  static Future<${classDef.name}> create() async {');
+        buffer.writeln('  static Future<${classDef.name}> create() async {');
         buffer.writeln(
             "    final handle = await _channel.invoke<String>('${classDef.name}._create');");
       }
-      buffer.writeln(
-          '    return ${classDef.name}._(handle);');
+      buffer.writeln('    return ${classDef.name}._(handle);');
       buffer.writeln('  }');
     }
 
@@ -305,8 +303,7 @@ class DartGenerator extends GeneratorBase {
       buffer.writeln();
       _generateMethod(buffer, schema, method,
           indent: '  ',
-          addOverride:
-              addOverrideToInstanceMethods && !method.isStatic,
+          addOverride: addOverrideToInstanceMethods && !method.isStatic,
           classPrefix: '${classDef.name}.',
           isInstanceMethod: !method.isStatic && isReferenceType);
     }
@@ -336,19 +333,17 @@ class DartGenerator extends GeneratorBase {
     if (method.returnType.kind == UtsTypeKind.stream) {
       final elementType =
           method.returnType.typeArguments?.first.toDartType() ?? 'dynamic';
-      buffer.writeln(
-          '${indent}Stream<$elementType> ${method.name}($params);');
+      buffer.writeln('${indent}Stream<$elementType> ${method.name}($params);');
     } else {
       final dartType = _userFacingDartType(schema, effectiveReturnType);
       final asyncReturnType =
           dartType == 'void' ? 'Future<void>' : 'Future<$dartType>';
-      buffer.writeln(
-          '$indent$asyncReturnType ${method.name}($params);');
+      buffer.writeln('$indent$asyncReturnType ${method.name}($params);');
     }
   }
 
-  void _generateMethod(StringBuffer buffer, UnifiedTypeSchema schema,
-      UtsMethod method,
+  void _generateMethod(
+      StringBuffer buffer, UnifiedTypeSchema schema, UtsMethod method,
       {String indent = '',
       bool forceInstance = false,
       bool addOverride = false,
@@ -379,8 +374,7 @@ class DartGenerator extends GeneratorBase {
       buffer.writeln('$indent@override');
     }
 
-    final staticMod =
-        (method.isStatic && !forceInstance) ? 'static ' : '';
+    final staticMod = (method.isStatic && !forceInstance) ? 'static ' : '';
     final params = _buildParameterList(method.parameters);
 
     // Stream return type: use EventChannel instead of MethodChannel
@@ -406,8 +400,7 @@ class DartGenerator extends GeneratorBase {
         }
         final positionalParams =
             method.parameters.where((p) => !p.isNamed).toList();
-        final namedParams =
-            method.parameters.where((p) => p.isNamed).toList();
+        final namedParams = method.parameters.where((p) => p.isNamed).toList();
         for (final param in positionalParams) {
           buffer.writeln(
               '$indent      \'${param.name}\': ${_serializeParam(schema, param)},');
@@ -447,7 +440,8 @@ class DartGenerator extends GeneratorBase {
     final wrappedCallbacks = <String>{};
     for (final param in method.parameters) {
       if (_callbackNeedsWrapping(schema, param.type)) {
-        _generateCallbackWrapper(buffer, schema, param.name, param.type, indent);
+        _generateCallbackWrapper(
+            buffer, schema, param.name, param.type, indent);
         wrappedCallbacks.add(param.name);
       }
     }
@@ -473,8 +467,7 @@ class DartGenerator extends GeneratorBase {
         final serExpr = wrappedCallbacks.contains(param.name)
             ? '_${param.name}Id'
             : _serializeParam(schema, param);
-        buffer.writeln(
-            '$indent    \'${param.name}\': $serExpr,');
+        buffer.writeln('$indent    \'${param.name}\': $serExpr,');
       }
       for (final param in namedParams) {
         final serExpr = wrappedCallbacks.contains(param.name)
@@ -484,8 +477,7 @@ class DartGenerator extends GeneratorBase {
           buffer.writeln(
               '$indent    if (${param.name} != null) \'${param.name}\': $serExpr,');
         } else {
-          buffer.writeln(
-              '$indent    \'${param.name}\': $serExpr,');
+          buffer.writeln('$indent    \'${param.name}\': $serExpr,');
         }
       }
       buffer.writeln('$indent  });');
@@ -567,10 +559,10 @@ class DartGenerator extends GeneratorBase {
         return type.toDartType();
       case UtsTypeKind.map:
         final keyType = type.typeArguments?.first;
-        final valueType = type.typeArguments != null &&
-                type.typeArguments!.length > 1
-            ? type.typeArguments![1]
-            : null;
+        final valueType =
+            type.typeArguments != null && type.typeArguments!.length > 1
+                ? type.typeArguments![1]
+                : null;
         if ((keyType != null && _needsDeserialization(schema, keyType)) ||
             (valueType != null && _needsDeserialization(schema, valueType))) {
           return 'Map<dynamic, dynamic>$suffix';
@@ -591,17 +583,19 @@ class DartGenerator extends GeneratorBase {
       case UtsTypeKind.enumType:
         return true; // values.byName
       case UtsTypeKind.primitive:
-        return type.name == 'DateTime' || type.name == 'Duration' || type.name == 'Uri';
+        return type.name == 'DateTime' ||
+            type.name == 'Duration' ||
+            type.name == 'Uri';
       case UtsTypeKind.list:
         final elementType = type.typeArguments?.first;
         return elementType != null &&
             _needsDeserialization(schema, elementType);
       case UtsTypeKind.map:
         final keyType = type.typeArguments?.first;
-        final valueType = type.typeArguments != null &&
-                type.typeArguments!.length > 1
-            ? type.typeArguments![1]
-            : null;
+        final valueType =
+            type.typeArguments != null && type.typeArguments!.length > 1
+                ? type.typeArguments![1]
+                : null;
         return (keyType != null && _needsDeserialization(schema, keyType)) ||
             (valueType != null && _needsDeserialization(schema, valueType));
       default:
@@ -627,7 +621,8 @@ class DartGenerator extends GeneratorBase {
         parameterTypes: type.parameterTypes,
         returnType: type.returnType,
       );
-      final inner = _deserializeResult(schema, nonNullType, varName, depth: depth);
+      final inner =
+          _deserializeResult(schema, nonNullType, varName, depth: depth);
       return '$varName != null ? $inner : null';
     }
 
@@ -654,31 +649,35 @@ class DartGenerator extends GeneratorBase {
         return varName;
       case UtsTypeKind.list:
         final elementType = type.typeArguments?.first;
-        if (elementType != null &&
-            _needsDeserialization(schema, elementType)) {
+        if (elementType != null && _needsDeserialization(schema, elementType)) {
           final eVar = 'e$depth';
-          final elementDeser =
-              _deserializeListElement(schema, elementType, eVar, depth: depth + 1);
+          final elementDeser = _deserializeListElement(
+              schema, elementType, eVar,
+              depth: depth + 1);
           return '$varName.map(($eVar) => $elementDeser).toList()';
         }
         return varName;
       case UtsTypeKind.map:
         final keyType = type.typeArguments?.first;
-        final valueType = type.typeArguments != null &&
-                type.typeArguments!.length > 1
-            ? type.typeArguments![1]
-            : null;
-        final keyNeedsDeser = keyType != null && _needsDeserialization(schema, keyType);
-        final valueNeedsDeser = valueType != null && _needsDeserialization(schema, valueType);
+        final valueType =
+            type.typeArguments != null && type.typeArguments!.length > 1
+                ? type.typeArguments![1]
+                : null;
+        final keyNeedsDeser =
+            keyType != null && _needsDeserialization(schema, keyType);
+        final valueNeedsDeser =
+            valueType != null && _needsDeserialization(schema, valueType);
         if (keyNeedsDeser || valueNeedsDeser) {
           final kVar = 'k$depth';
           final vVar = 'v$depth';
           final keyDartType = keyType?.toDartType() ?? 'String';
           final keyDeser = keyNeedsDeser
-              ? _deserializeListElement(schema, keyType!, kVar, depth: depth + 1)
+              ? _deserializeListElement(schema, keyType!, kVar,
+                  depth: depth + 1)
               : '$kVar as $keyDartType';
           final valueDeser = valueNeedsDeser
-              ? _deserializeListElement(schema, valueType!, vVar, depth: depth + 1)
+              ? _deserializeListElement(schema, valueType!, vVar,
+                  depth: depth + 1)
               : vVar;
           return '$varName.map(($kVar, $vVar) => MapEntry($keyDeser, $valueDeser))';
         }
@@ -717,30 +716,34 @@ class DartGenerator extends GeneratorBase {
         return varName;
       case UtsTypeKind.list:
         final elementType = type.typeArguments?.first;
-        if (elementType != null &&
-            _needsDeserialization(schema, elementType)) {
+        if (elementType != null && _needsDeserialization(schema, elementType)) {
           final eVar = 'e$depth';
-          final inner = _deserializeListElement(schema, elementType, eVar, depth: depth + 1);
+          final inner = _deserializeListElement(schema, elementType, eVar,
+              depth: depth + 1);
           return '($varName as List).map(($eVar) => $inner).toList()';
         }
         return varName;
       case UtsTypeKind.map:
         final keyType = type.typeArguments?.first;
-        final valueType = type.typeArguments != null &&
-                type.typeArguments!.length > 1
-            ? type.typeArguments![1]
-            : null;
-        final keyNeedsDeser = keyType != null && _needsDeserialization(schema, keyType);
-        final valueNeedsDeser = valueType != null && _needsDeserialization(schema, valueType);
+        final valueType =
+            type.typeArguments != null && type.typeArguments!.length > 1
+                ? type.typeArguments![1]
+                : null;
+        final keyNeedsDeser =
+            keyType != null && _needsDeserialization(schema, keyType);
+        final valueNeedsDeser =
+            valueType != null && _needsDeserialization(schema, valueType);
         if (keyNeedsDeser || valueNeedsDeser) {
           final kVar = 'k$depth';
           final vVar = 'v$depth';
           final keyDartType = keyType?.toDartType() ?? 'String';
           final keyDeser = keyNeedsDeser
-              ? _deserializeListElement(schema, keyType!, kVar, depth: depth + 1)
+              ? _deserializeListElement(schema, keyType!, kVar,
+                  depth: depth + 1)
               : '$kVar as $keyDartType';
           final valueDeser = valueNeedsDeser
-              ? _deserializeListElement(schema, valueType!, vVar, depth: depth + 1)
+              ? _deserializeListElement(schema, valueType!, vVar,
+                  depth: depth + 1)
               : vVar;
           return '($varName as Map).map(($kVar, $vVar) => MapEntry($keyDeser, $valueDeser))';
         }
@@ -765,22 +768,28 @@ class DartGenerator extends GeneratorBase {
     final paramTypes = callbackType.parameterTypes ?? [];
     if (paramTypes.length == 1) {
       // Single parameter callback: receives a single dynamic value
-      buffer.writeln('$indent  final _${paramName}Id = CallbackManager.instance.register((dynamic raw) {');
-      buffer.writeln('$indent    ${_callbackDeserializeAndCall(schema, paramName, paramTypes, singleArg: true)}');
+      buffer.writeln(
+          '$indent  final _${paramName}Id = CallbackManager.instance.register((dynamic raw) {');
+      buffer.writeln(
+          '$indent    ${_callbackDeserializeAndCall(schema, paramName, paramTypes, singleArg: true)}');
       buffer.writeln('$indent  });');
     } else {
       // Multi-parameter callback: receives individual dynamic args
       // (CallbackManager uses Function.apply which passes positional args)
-      final paramSigs = List.generate(paramTypes.length, (i) => 'dynamic arg$i');
-      buffer.writeln('$indent  final _${paramName}Id = CallbackManager.instance.register((${paramSigs.join(', ')}) {');
-      buffer.writeln('$indent    ${_callbackDeserializeAndCall(schema, paramName, paramTypes, singleArg: false)}');
+      final paramSigs =
+          List.generate(paramTypes.length, (i) => 'dynamic arg$i');
+      buffer.writeln(
+          '$indent  final _${paramName}Id = CallbackManager.instance.register((${paramSigs.join(', ')}) {');
+      buffer.writeln(
+          '$indent    ${_callbackDeserializeAndCall(schema, paramName, paramTypes, singleArg: false)}');
       buffer.writeln('$indent  });');
     }
   }
 
   /// Generates the deserialization + call expression inside a callback wrapper.
-  String _callbackDeserializeAndCall(UnifiedTypeSchema schema,
-      String callbackName, List<UtsType> paramTypes, {required bool singleArg}) {
+  String _callbackDeserializeAndCall(
+      UnifiedTypeSchema schema, String callbackName, List<UtsType> paramTypes,
+      {required bool singleArg}) {
     final lines = <String>[];
     final argNames = <String>[];
 
@@ -795,23 +804,29 @@ class DartGenerator extends GeneratorBase {
         switch (pt.kind) {
           case UtsTypeKind.object:
             if (_isReferenceTypeClass(schema, pt.name)) {
-              lines.add('final $deserName = ${pt.name}.fromHandle($rawExpr as String);');
+              lines.add(
+                  'final $deserName = ${pt.name}.fromHandle($rawExpr as String);');
             } else {
-              lines.add('final map$i = ($rawExpr as Map).map((k, v) => MapEntry(k.toString(), v));');
+              lines.add(
+                  'final map$i = ($rawExpr as Map).map((k, v) => MapEntry(k.toString(), v));');
               lines.add('final $deserName = ${pt.name}.fromMap(map$i);');
             }
             break;
           case UtsTypeKind.nativeObject:
-            lines.add('final $deserName = ${pt.name}.fromHandle($rawExpr as String);');
+            lines.add(
+                'final $deserName = ${pt.name}.fromHandle($rawExpr as String);');
             break;
           case UtsTypeKind.enumType:
-            lines.add('final $deserName = ${pt.name}.values.byName($rawExpr as String);');
+            lines.add(
+                'final $deserName = ${pt.name}.values.byName($rawExpr as String);');
             break;
           case UtsTypeKind.primitive:
             if (pt.name == 'DateTime') {
-              lines.add('final $deserName = DateTime.parse($rawExpr as String);');
+              lines.add(
+                  'final $deserName = DateTime.parse($rawExpr as String);');
             } else if (pt.name == 'Duration') {
-              lines.add('final $deserName = Duration(microseconds: $rawExpr as int);');
+              lines.add(
+                  'final $deserName = Duration(microseconds: $rawExpr as int);');
             } else if (pt.name == 'Uri') {
               lines.add('final $deserName = Uri.parse($rawExpr as String);');
             }
@@ -888,9 +903,7 @@ class DartGenerator extends GeneratorBase {
 
   /// Checks if a named type is a reference type class (has instance methods).
   bool _isReferenceTypeClass(UnifiedTypeSchema schema, String typeName) {
-    final cls = schema.classes
-        .where((c) => c.name == typeName)
-        .toList();
+    final cls = schema.classes.where((c) => c.name == typeName).toList();
     return cls.isNotEmpty && cls.first.methods.any((m) => !m.isStatic);
   }
 
@@ -946,9 +959,8 @@ class DartGenerator extends GeneratorBase {
       buffer.writeln('/// ${typeDef.documentation}');
     }
     // Check if this is a subclass of a sealed class
-    final extendsClause = typeDef.superclass != null
-        ? ' extends ${typeDef.superclass}'
-        : '';
+    final extendsClause =
+        typeDef.superclass != null ? ' extends ${typeDef.superclass}' : '';
     buffer.writeln('class ${typeDef.name}$extendsClause {');
 
     // Fields
@@ -1011,8 +1023,8 @@ class DartGenerator extends GeneratorBase {
         buffer.writeln(
             "    if (${field.name} != null) '${field.name}': ${_serializeField(schema, field)},");
       } else {
-        buffer.writeln(
-            "    '${field.name}': ${_serializeField(schema, field)},");
+        buffer
+            .writeln("    '${field.name}': ${_serializeField(schema, field)},");
       }
     }
     buffer.writeln('  };');
@@ -1060,7 +1072,8 @@ class DartGenerator extends GeneratorBase {
         final dartType = p.type.toDartType();
         if (p.isOptional) {
           // dynamic is already nullable; types already ending with '?' don't need another
-          final suffix = (dartType == 'dynamic' || dartType.endsWith('?')) ? '' : '?';
+          final suffix =
+              (dartType == 'dynamic' || dartType.endsWith('?')) ? '' : '?';
           namedParts.add('$dartType$suffix ${p.name}');
         } else {
           namedParts.add('required $dartType ${p.name}');
@@ -1080,8 +1093,7 @@ class DartGenerator extends GeneratorBase {
   ///
   /// [depth] tracks nesting level for unique variable names in nested
   /// collections (e.g., `e0`, `e1` instead of shadowed `e`).
-  String _serializeExpr(
-      UnifiedTypeSchema schema, UtsType type, String expr,
+  String _serializeExpr(UnifiedTypeSchema schema, UtsType type, String expr,
       {int depth = 0}) {
     if (type.kind == UtsTypeKind.primitive && type.name == 'DateTime') {
       return '$expr.toIso8601String()';
@@ -1116,12 +1128,13 @@ class DartGenerator extends GeneratorBase {
     }
     if (type.kind == UtsTypeKind.map) {
       final keyType = type.typeArguments?.first;
-      final valueType = type.typeArguments != null &&
-              type.typeArguments!.length > 1
-          ? type.typeArguments![1]
-          : null;
+      final valueType =
+          type.typeArguments != null && type.typeArguments!.length > 1
+              ? type.typeArguments![1]
+              : null;
       final keyNeedsSer = keyType != null && _needsTypeSerialization(keyType);
-      final valueNeedsSer = valueType != null && _needsTypeSerialization(valueType);
+      final valueNeedsSer =
+          valueType != null && _needsTypeSerialization(valueType);
       if (keyNeedsSer || valueNeedsSer) {
         final kVar = 'k$depth';
         final vVar = 'v$depth';
@@ -1158,10 +1171,10 @@ class DartGenerator extends GeneratorBase {
     }
     if (type.kind == UtsTypeKind.map) {
       final keyType = type.typeArguments?.first;
-      final valueType = type.typeArguments != null &&
-              type.typeArguments!.length > 1
-          ? type.typeArguments![1]
-          : null;
+      final valueType =
+          type.typeArguments != null && type.typeArguments!.length > 1
+              ? type.typeArguments![1]
+              : null;
       return (keyType != null && _needsTypeSerialization(keyType)) ||
           (valueType != null && _needsTypeSerialization(valueType));
     }
@@ -1203,12 +1216,13 @@ class DartGenerator extends GeneratorBase {
     }
     if (type.kind == UtsTypeKind.map) {
       final keyType = type.typeArguments?.first;
-      final valueType = type.typeArguments != null &&
-              type.typeArguments!.length > 1
-          ? type.typeArguments![1]
-          : null;
+      final valueType =
+          type.typeArguments != null && type.typeArguments!.length > 1
+              ? type.typeArguments![1]
+              : null;
       final keyNeedsSer = keyType != null && _needsTypeSerialization(keyType);
-      final valueNeedsSer = valueType != null && _needsTypeSerialization(valueType);
+      final valueNeedsSer =
+          valueType != null && _needsTypeSerialization(valueType);
       if (keyNeedsSer || valueNeedsSer) {
         final keySer = keyNeedsSer
             ? _serializeExpr(schema, keyType!, 'k0', depth: 1)
@@ -1275,8 +1289,7 @@ class DartGenerator extends GeneratorBase {
 
     if (type.kind == UtsTypeKind.list) {
       final elementType = type.typeArguments?.first;
-      if (elementType != null &&
-          _needsDeserialization(schema, elementType)) {
+      if (elementType != null && _needsDeserialization(schema, elementType)) {
         final elementDeser =
             _deserializeListElement(schema, elementType, 'e0', depth: 1);
         if (nullable) {
@@ -1294,12 +1307,14 @@ class DartGenerator extends GeneratorBase {
 
     if (type.kind == UtsTypeKind.map) {
       final keyType = type.typeArguments?.first;
-      final valueType = type.typeArguments != null &&
-              type.typeArguments!.length > 1
-          ? type.typeArguments![1]
-          : null;
-      final keyNeedsDeser = keyType != null && _needsDeserialization(schema, keyType);
-      final valueNeedsDeser = valueType != null && _needsDeserialization(schema, valueType);
+      final valueType =
+          type.typeArguments != null && type.typeArguments!.length > 1
+              ? type.typeArguments![1]
+              : null;
+      final keyNeedsDeser =
+          keyType != null && _needsDeserialization(schema, keyType);
+      final valueNeedsDeser =
+          valueType != null && _needsDeserialization(schema, valueType);
       if (keyNeedsDeser || valueNeedsDeser) {
         final keyDartType = keyType?.toDartType() ?? 'String';
         final keyDeser = keyNeedsDeser
@@ -1330,12 +1345,34 @@ class DartGenerator extends GeneratorBase {
 
   /// Names from dart:core that must never be stubbed as opaque handles.
   static const _dartCoreNames = {
-    'Object', 'Function', 'Type', 'Symbol', 'Null',
-    'Duration', 'DateTime', 'Uri', 'RegExp', 'Match',
-    'Error', 'Exception', 'StackTrace', 'Stopwatch',
-    'Comparable', 'Iterable', 'Iterator', 'Pattern',
-    'String', 'int', 'double', 'bool', 'num',
-    'List', 'Map', 'Set', 'Future', 'Stream',
+    'Object',
+    'Function',
+    'Type',
+    'Symbol',
+    'Null',
+    'Duration',
+    'DateTime',
+    'Uri',
+    'RegExp',
+    'Match',
+    'Error',
+    'Exception',
+    'StackTrace',
+    'Stopwatch',
+    'Comparable',
+    'Iterable',
+    'Iterator',
+    'Pattern',
+    'String',
+    'int',
+    'double',
+    'bool',
+    'num',
+    'List',
+    'Map',
+    'Set',
+    'Future',
+    'Stream',
   };
 
   /// Collects all nativeObject type names referenced in the schema

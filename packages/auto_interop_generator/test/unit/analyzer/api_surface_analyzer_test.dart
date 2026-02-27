@@ -34,9 +34,12 @@ void main() {
         );
         final result = analyzer.analyze(schema);
         expect(result.warnings, isNotEmpty);
-        expect(result.warnings.any(
-          (d) => d.message.contains('Unresolved type reference "UnknownType"'),
-        ), isTrue);
+        expect(
+            result.warnings.any(
+              (d) =>
+                  d.message.contains('Unresolved type reference "UnknownType"'),
+            ),
+            isTrue);
       });
 
       test('does not warn on defined types', () {
@@ -110,9 +113,11 @@ void main() {
         );
         final result = analyzer.analyze(schema);
         expect(result.hasErrors, isTrue);
-        expect(result.errors.any(
-          (d) => d.message.contains('Circular type dependency'),
-        ), isTrue);
+        expect(
+            result.errors.any(
+              (d) => d.message.contains('Circular type dependency'),
+            ),
+            isTrue);
       });
 
       test('no circular dependency for non-cycles', () {
@@ -162,9 +167,11 @@ void main() {
         );
         final result = analyzer.analyze(schema);
         expect(result.hasErrors, isFalse);
-        expect(result.warnings.any(
-          (d) => d.message.contains('Map with non-primitive key type'),
-        ), isTrue);
+        expect(
+            result.warnings.any(
+              (d) => d.message.contains('Map with non-primitive key type'),
+            ),
+            isTrue);
       });
 
       test('allows Map with enum key', () {
@@ -207,9 +214,11 @@ void main() {
         );
         final result = analyzer.analyze(schema);
         expect(result.hasErrors, isTrue);
-        expect(result.errors.any(
-          (d) => d.message.contains('Naming conflict'),
-        ), isTrue);
+        expect(
+            result.errors.any(
+              (d) => d.message.contains('Naming conflict'),
+            ),
+            isTrue);
       });
 
       test('warns on Dart reserved word collision', () {
@@ -220,9 +229,11 @@ void main() {
           classes: [UtsClass(name: 'class')],
         );
         final result = analyzer.analyze(schema);
-        expect(result.warnings.any(
-          (d) => d.message.contains('Dart reserved word'),
-        ), isTrue);
+        expect(
+            result.warnings.any(
+              (d) => d.message.contains('Dart reserved word'),
+            ),
+            isTrue);
       });
 
       test('no conflict for unique names', () {

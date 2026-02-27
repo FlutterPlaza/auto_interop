@@ -1,4 +1,5 @@
 #!/usr/bin/env dart
+
 // CLI tool for auto_interop code generation.
 //
 // Usage:

@@ -38,8 +38,7 @@ class PodInstaller {
     }
 
     // Try to find any target block and insert there
-    final anyTarget =
-        RegExp(r"target\s+'[^']+'\s+do", multiLine: true);
+    final anyTarget = RegExp(r"target\s+'[^']+'\s+do", multiLine: true);
     final anyMatch = anyTarget.firstMatch(podfileContent);
     if (anyMatch != null) {
       return _insertInBlock(podfileContent, anyMatch.end, newLine);
@@ -81,8 +80,8 @@ class PodInstaller {
     required String podfileContent,
     required String podName,
   }) {
-    final match =
-        RegExp("pod\\s+'$podName'\\s*,\\s*'([^']+)'").firstMatch(podfileContent);
+    final match = RegExp("pod\\s+'$podName'\\s*,\\s*'([^']+)'")
+        .firstMatch(podfileContent);
     return match?.group(1);
   }
 

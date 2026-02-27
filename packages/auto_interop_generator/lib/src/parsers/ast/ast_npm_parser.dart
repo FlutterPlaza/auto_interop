@@ -18,8 +18,7 @@ class AstNpmParser extends AstParserBase {
   }) : super(fallbackParser: NpmParser());
 
   @override
-  Future<bool> isToolchainAvailable() =>
-      toolchainDetector.hasNode();
+  Future<bool> isToolchainAvailable() => toolchainDetector.hasNode();
 
   @override
   Future<void> prepare() async {

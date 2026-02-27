@@ -42,7 +42,8 @@ class SwiftParser extends ParserBase {
       final rawLine = lines[i].trim();
 
       // Skip empty lines, imports, and /// doc comment lines
-      if (rawLine.isEmpty || rawLine.startsWith('import ') ||
+      if (rawLine.isEmpty ||
+          rawLine.startsWith('import ') ||
           rawLine.startsWith('///')) {
         i++;
         continue;
@@ -314,8 +315,7 @@ class SwiftParser extends ParserBase {
 
   _ParsedClass? _parseStruct(List<String> lines, int startIndex, String? doc) {
     final line = lines[startIndex].trim();
-    final nameMatch =
-        RegExp(r'(?:public\s+)?struct\s+(\w+)').firstMatch(line);
+    final nameMatch = RegExp(r'(?:public\s+)?struct\s+(\w+)').firstMatch(line);
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
@@ -509,8 +509,7 @@ class SwiftParser extends ParserBase {
         final casePart = bodyLine.substring(5).trim();
 
         // case name(param: Type, param: Type)
-        final caseMatch =
-            RegExp(r'(\w+)\s*\(([^)]*)\)').firstMatch(casePart);
+        final caseMatch = RegExp(r'(\w+)\s*\(([^)]*)\)').firstMatch(casePart);
         if (caseMatch != null) {
           final caseName = caseMatch.group(1)!;
           final paramStr = caseMatch.group(2) ?? '';
@@ -670,7 +669,8 @@ class SwiftParser extends ParserBase {
     return UtsMethod(
       name: name,
       isStatic: isStatic,
-      isAsync: isAsync || returnType.kind == UtsTypeKind.future ||
+      isAsync: isAsync ||
+          returnType.kind == UtsTypeKind.future ||
           returnType.kind == UtsTypeKind.stream,
       parameters: parameters,
       returnType: returnType,
@@ -702,8 +702,7 @@ class SwiftParser extends ParserBase {
 
       // Check for closure type
       final closureMatch =
-          RegExp(r'(?:(\w+)\s+)?(\w+)\s*:\s*(\(.*\)\s*->\s*.+)')
-              .firstMatch(p);
+          RegExp(r'(?:(\w+)\s+)?(\w+)\s*:\s*(\(.*\)\s*->\s*.+)').firstMatch(p);
       if (closureMatch != null) {
         final name = closureMatch.group(2)!;
         final closureTypeStr = closureMatch.group(3)!;
@@ -1120,10 +1119,7 @@ class SwiftParser extends ParserBase {
 
     // Single-line /** doc */
     if (lastLine.startsWith('/**') && lastLine.endsWith('*/')) {
-      return lastLine
-          .replaceFirst('/**', '')
-          .replaceFirst('*/', '')
-          .trim();
+      return lastLine.replaceFirst('/**', '').replaceFirst('*/', '').trim();
     }
 
     // Multi-line doc

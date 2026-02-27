@@ -57,10 +57,8 @@ void main() {
       });
 
       test('parses return types', () {
-        expect(
-            schema.classes[0].methods[0].returnType.toDartType(), 'String');
-        expect(
-            schema.classes[0].methods[2].returnType.toDartType(), 'void');
+        expect(schema.classes[0].methods[0].returnType.toDartType(), 'String');
+        expect(schema.classes[0].methods[2].returnType.toDartType(), 'void');
       });
 
       test('parses documentation', () {
@@ -113,8 +111,7 @@ void main() {
 
       test('parses collection type fields', () {
         final config = schema.types[1];
-        final headers =
-            config.fields.firstWhere((f) => f.name == 'headers');
+        final headers = config.fields.firstWhere((f) => f.name == 'headers');
         expect(headers.type.toDartType(), 'Map<String, String>');
       });
 
@@ -241,8 +238,7 @@ void main() {
       test('parses subclass data types', () {
         expect(schema.types, hasLength(3));
 
-        final success =
-            schema.types.firstWhere((t) => t.name == 'success');
+        final success = schema.types.firstWhere((t) => t.name == 'success');
         expect(success.kind, UtsClassKind.dataClass);
         expect(success.fields, hasLength(2));
         expect(success.fields[0].name, 'data');
@@ -250,15 +246,13 @@ void main() {
         expect(success.fields[1].name, 'statusCode');
         expect(success.fields[1].type.toDartType(), 'int');
 
-        final failure =
-            schema.types.firstWhere((t) => t.name == 'failure');
+        final failure = schema.types.firstWhere((t) => t.name == 'failure');
         expect(failure.fields, hasLength(1));
         expect(failure.fields[0].name, 'message');
       });
 
       test('parses subclass without associated values', () {
-        final loading =
-            schema.types.firstWhere((t) => t.name == 'loading');
+        final loading = schema.types.firstWhere((t) => t.name == 'loading');
         expect(loading.kind, UtsClassKind.concreteClass);
         expect(loading.fields, isEmpty);
       });
@@ -307,8 +301,7 @@ void main() {
 
       test('parses method with multiple params', () {
         final fetcher = schema.classes[0];
-        final upload =
-            fetcher.methods.firstWhere((m) => m.name == 'upload');
+        final upload = fetcher.methods.firstWhere((m) => m.name == 'upload');
         expect(upload.parameters, hasLength(2));
         expect(upload.parameters[0].name, 'data');
         expect(upload.parameters[1].name, 'url');
@@ -333,8 +326,7 @@ void main() {
 
       test('parses simple callback', () {
         final handler = schema.classes[0];
-        final onEvent =
-            handler.methods.firstWhere((m) => m.name == 'onEvent');
+        final onEvent = handler.methods.firstWhere((m) => m.name == 'onEvent');
         expect(onEvent.parameters, hasLength(1));
         final callback = onEvent.parameters[0];
         expect(callback.name, 'callback');
@@ -352,8 +344,8 @@ void main() {
 
       test('parses optional closure', () {
         final handler = schema.classes[0];
-        final fetch = handler.methods
-            .firstWhere((m) => m.name == 'fetchWithCompletion');
+        final fetch =
+            handler.methods.firstWhere((m) => m.name == 'fetchWithCompletion');
         expect(fetch.parameters, hasLength(2));
         final completion = fetch.parameters[1];
         expect(completion.name, 'completion');
@@ -445,8 +437,7 @@ void main() {
 
       test('parses class methods as static', () {
         final cls = schema.classes[0];
-        final format =
-            cls.methods.firstWhere((m) => m.name == 'format');
+        final format = cls.methods.firstWhere((m) => m.name == 'format');
         expect(format.isStatic, true);
       });
 
@@ -498,8 +489,8 @@ void main() {
       });
 
       test('parses multi-line method parameters', () {
-        final fetchData = schema.classes[0].methods
-            .firstWhere((m) => m.name == 'fetchData');
+        final fetchData =
+            schema.classes[0].methods.firstWhere((m) => m.name == 'fetchData');
         expect(fetchData.parameters, hasLength(3));
         expect(fetchData.parameters[0].name, 'url');
         expect(fetchData.parameters[1].name, 'method');
@@ -507,15 +498,15 @@ void main() {
       });
 
       test('parses multi-line async method', () {
-        final upload = schema.classes[0].methods
-            .firstWhere((m) => m.name == 'upload');
+        final upload =
+            schema.classes[0].methods.firstWhere((m) => m.name == 'upload');
         expect(upload.isAsync, true);
         expect(upload.parameters, hasLength(2));
       });
 
       test('still parses single-line methods', () {
-        final simple = schema.classes[0].methods
-            .firstWhere((m) => m.name == 'simple');
+        final simple =
+            schema.classes[0].methods.firstWhere((m) => m.name == 'simple');
         expect(simple.parameters, hasLength(1));
         expect(simple.returnType.toDartType(), 'int');
       });
@@ -674,8 +665,7 @@ public class Finder {
       });
 
       test('parses struct with attributed method', () {
-        final s =
-            schema.types.firstWhere((t) => t.name == 'AttributedStruct');
+        final s = schema.types.firstWhere((t) => t.name == 'AttributedStruct');
         final names = s.methods.map((m) => m.name).toList();
         expect(names, contains('compute'));
         expect(s.fields, hasLength(1));

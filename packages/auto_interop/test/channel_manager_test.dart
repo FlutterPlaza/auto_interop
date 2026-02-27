@@ -21,8 +21,7 @@ void main() {
           case 'greet':
             return 'Hello, ${call.arguments['name']}!';
           case 'add':
-            return (call.arguments['a'] as int) +
-                (call.arguments['b'] as int);
+            return (call.arguments['a'] as int) + (call.arguments['b'] as int);
           case 'getList':
             return ['a', 'b', 'c'];
           case 'getMap':
@@ -35,8 +34,7 @@ void main() {
             return null;
         }
       });
-      bridgeChannel =
-          AutoInteropChannel.withChannel('test', mockChannel);
+      bridgeChannel = AutoInteropChannel.withChannel('test', mockChannel);
     });
 
     tearDown(() {
@@ -49,8 +47,8 @@ void main() {
     });
 
     test('invoke calls method with arguments', () async {
-      final result = await bridgeChannel.invoke<String>(
-          'greet', {'name': 'World'});
+      final result =
+          await bridgeChannel.invoke<String>('greet', {'name': 'World'});
       expect(result, 'Hello, World!');
       expect(log.last.method, 'greet');
     });
@@ -61,8 +59,7 @@ void main() {
     });
 
     test('invoke returns typed result', () async {
-      final result =
-          await bridgeChannel.invoke<int>('add', {'a': 3, 'b': 4});
+      final result = await bridgeChannel.invoke<int>('add', {'a': 3, 'b': 4});
       expect(result, 7);
     });
 
@@ -72,8 +69,7 @@ void main() {
     });
 
     test('invokeMap returns map', () async {
-      final result =
-          await bridgeChannel.invokeMap<String, String>('getMap');
+      final result = await bridgeChannel.invokeMap<String, String>('getMap');
       expect(result, {'key': 'value'});
     });
 
@@ -112,10 +108,9 @@ void main() {
                   'error': {'code': 'TEST_ERROR', 'message': 'failed'}
                 });
               } else if (method == 'greet') {
-                final callArgs = Map<String, dynamic>.from(
-                    c['arguments'] as Map? ?? {});
-                results.add(
-                    {'result': 'Hello, ${callArgs['name']}!'});
+                final callArgs =
+                    Map<String, dynamic>.from(c['arguments'] as Map? ?? {});
+                results.add({'result': 'Hello, ${callArgs['name']}!'});
               } else {
                 results.add({'result': null});
               }

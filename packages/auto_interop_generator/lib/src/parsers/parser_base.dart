@@ -10,9 +10,8 @@ class ParseWarning {
   const ParseWarning(this.message, {this.suggestion});
 
   @override
-  String toString() => suggestion != null
-      ? '$message\n  Suggestion: $suggestion'
-      : message;
+  String toString() =>
+      suggestion != null ? '$message\n  Suggestion: $suggestion' : message;
 }
 
 /// Result of parsing a native package source.
@@ -72,8 +71,7 @@ abstract class ParserBase {
     if (totalApis == 0) {
       warnings.add(ParseWarning(
         'Parsing produced an empty API surface for "${schema.package}".',
-        suggestion:
-            'Check if a pre-built type definition exists: '
+        suggestion: 'Check if a pre-built type definition exists: '
             'dart run auto_interop_generator:generate list\n'
             '  Or provide a manual UTS override: '
             '--override ${schema.package}.uts.json',
@@ -81,9 +79,8 @@ abstract class ParserBase {
     } else if (totalApis <= 2 && schema.classes.isEmpty) {
       warnings.add(ParseWarning(
         'Parsing found very few API entries ($totalApis) for "${schema.package}". '
-            'The source may not have been parsed completely.',
-        suggestion:
-            'Consider using a pre-built type definition or providing '
+        'The source may not have been parsed completely.',
+        suggestion: 'Consider using a pre-built type definition or providing '
             'a manual UTS override for better coverage.',
       ));
     }
@@ -93,7 +90,7 @@ abstract class ParserBase {
       if (cls.methods.isEmpty && cls.fields.isEmpty) {
         warnings.add(ParseWarning(
           'Class "${cls.name}" has no methods or fields. '
-              'This may indicate a parsing issue.',
+          'This may indicate a parsing issue.',
         ));
       }
     }

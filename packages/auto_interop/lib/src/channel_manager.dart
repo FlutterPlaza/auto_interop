@@ -36,12 +36,14 @@ class AutoInteropChannel {
   /// When [timeout] is provided, the call will throw a
   /// [AutoInteropException] with code `'TIMEOUT'` if the native side does
   /// not respond within the specified duration.
-  Future<T> invoke<T>(String method, [Map<String, dynamic>? arguments, Duration? timeout]) {
+  Future<T> invoke<T>(String method,
+      [Map<String, dynamic>? arguments, Duration? timeout]) {
     return ErrorHandler.guard(() async {
       final convertedArgs = arguments != null
           ? TypeConverter.toPlatform(arguments) as Map<Object?, Object?>?
           : null;
-      Future<Object?> call = _channel.invokeMethod<Object?>(method, convertedArgs);
+      Future<Object?> call =
+          _channel.invokeMethod<Object?>(method, convertedArgs);
       if (timeout != null) {
         call = call.timeout(timeout);
       }
@@ -114,8 +116,8 @@ class AutoInteropChannel {
               })
           .toList();
 
-      Future<Object?> call = _channel.invokeMethod<Object?>(
-          '_batch', <String, dynamic>{'calls': payload});
+      Future<Object?> call = _channel
+          .invokeMethod<Object?>('_batch', <String, dynamic>{'calls': payload});
       if (timeout != null) {
         call = call.timeout(timeout);
       }
@@ -123,8 +125,8 @@ class AutoInteropChannel {
       final rawResults = await call;
       if (rawResults is! List) {
         return calls
-            .map((_) => BatchResult.error('INVALID_RESPONSE',
-                'Batch response was not a list'))
+            .map((_) => BatchResult.error(
+                'INVALID_RESPONSE', 'Batch response was not a list'))
             .toList();
       }
 
@@ -138,8 +140,7 @@ class AutoInteropChannel {
               error['message'] as String?,
             );
           }
-          return BatchResult.success(
-              TypeConverter.fromPlatform(map['result']));
+          return BatchResult.success(TypeConverter.fromPlatform(map['result']));
         }
         return BatchResult.success(TypeConverter.fromPlatform(raw));
       }).toList();

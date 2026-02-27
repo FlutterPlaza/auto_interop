@@ -21,8 +21,7 @@ class PackageCacheEntry {
   factory PackageCacheEntry.fromJson(Map<String, dynamic> json) {
     return PackageCacheEntry(
       inputChecksum: json['inputChecksum'] as String,
-      outputChecksums:
-          Map<String, String>.from(json['outputChecksums'] as Map),
+      outputChecksums: Map<String, String>.from(json['outputChecksums'] as Map),
       generatedAt: DateTime.parse(json['generatedAt'] as String),
     );
   }
@@ -58,8 +57,7 @@ class BuildCache {
       return BuildCache(configChecksum: '');
     }
     try {
-      final json =
-          jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       return BuildCache.fromJson(json);
     } on Object {
       return BuildCache(configChecksum: '');
@@ -67,8 +65,7 @@ class BuildCache {
   }
 
   factory BuildCache.fromJson(Map<String, dynamic> json) {
-    final packagesJson =
-        (json['packages'] as Map<String, dynamic>?) ?? {};
+    final packagesJson = (json['packages'] as Map<String, dynamic>?) ?? {};
     final packages = packagesJson.map(
       (key, value) => MapEntry(
         key,

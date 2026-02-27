@@ -94,7 +94,9 @@ class SwiftToDartMapper {
     }
 
     // Handle [T] → List<T>
-    if (swiftType.startsWith('[') && swiftType.endsWith(']') && !swiftType.contains(':')) {
+    if (swiftType.startsWith('[') &&
+        swiftType.endsWith(']') &&
+        !swiftType.contains(':')) {
       final inner = swiftType.substring(1, swiftType.length - 1);
       return UtsType.list(mapType(inner), nullable: nullable);
     }
@@ -106,7 +108,9 @@ class SwiftToDartMapper {
     }
 
     // Handle [K: V] → Map<K, V>
-    if (swiftType.startsWith('[') && swiftType.endsWith(']') && swiftType.contains(':')) {
+    if (swiftType.startsWith('[') &&
+        swiftType.endsWith(']') &&
+        swiftType.contains(':')) {
       final inner = swiftType.substring(1, swiftType.length - 1);
       final colonIdx = inner.indexOf(':');
       final key = inner.substring(0, colonIdx).trim();

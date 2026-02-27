@@ -128,8 +128,8 @@ void main() {
       expect(result.schema.package, 'NetworkLib');
 
       // NetworkService class
-      final service = result.schema.classes
-          .firstWhere((c) => c.name == 'NetworkService');
+      final service =
+          result.schema.classes.firstWhere((c) => c.name == 'NetworkService');
 
       // fetchData: throws → isAsync: true, Future return
       final fetchData =

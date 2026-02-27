@@ -28,8 +28,7 @@ void main() {
         message: 'Connection failed',
         details: 'timeout',
       );
-      final exception =
-          AutoInteropException.fromPlatformException(platformEx);
+      final exception = AutoInteropException.fromPlatformException(platformEx);
       expect(exception.code, 'NETWORK');
       expect(exception.message, 'Connection failed');
       expect(exception.details, 'timeout');

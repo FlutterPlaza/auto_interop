@@ -10,11 +10,10 @@ void main() {
     late MethodChannel mockLifecycleChannel;
 
     setUp(() {
-      mockLifecycleChannel =
-          const MethodChannel('test_lifecycle');
+      mockLifecycleChannel = const MethodChannel('test_lifecycle');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(
-              mockLifecycleChannel, (MethodCall call) async {
+          .setMockMethodCallHandler(mockLifecycleChannel,
+              (MethodCall call) async {
         return null;
       });
       AutoInteropLifecycle.instance =

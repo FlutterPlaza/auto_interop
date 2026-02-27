@@ -103,8 +103,7 @@ void main() {
       });
 
       test('removes from devDependencies', () {
-        const input =
-            '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
+        const input = '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
         final result = installer.removeDependency(
           packageJsonContent: input,
           packageName: 'jest',
@@ -114,8 +113,7 @@ void main() {
       });
 
       test('returns unchanged if dependency not found', () {
-        const input =
-            '{"name": "app", "dependencies": {"lodash": "^4.0.0"}}';
+        const input = '{"name": "app", "dependencies": {"lodash": "^4.0.0"}}';
         final result = installer.removeDependency(
           packageJsonContent: input,
           packageName: 'date-fns',
@@ -127,8 +125,7 @@ void main() {
 
     group('hasDependency', () {
       test('returns true when in dependencies', () {
-        const input =
-            '{"name": "app", "dependencies": {"date-fns": "^3.0.0"}}';
+        const input = '{"name": "app", "dependencies": {"date-fns": "^3.0.0"}}';
         expect(
           installer.hasDependency(
             packageJsonContent: input,
@@ -139,8 +136,7 @@ void main() {
       });
 
       test('returns true when in devDependencies', () {
-        const input =
-            '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
+        const input = '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
         expect(
           installer.hasDependency(
             packageJsonContent: input,
@@ -151,8 +147,7 @@ void main() {
       });
 
       test('returns false when not present', () {
-        const input =
-            '{"name": "app", "dependencies": {"lodash": "^4.0.0"}}';
+        const input = '{"name": "app", "dependencies": {"lodash": "^4.0.0"}}';
         expect(
           installer.hasDependency(
             packageJsonContent: input,
@@ -176,8 +171,7 @@ void main() {
 
     group('getDependencyVersion', () {
       test('returns version from dependencies', () {
-        const input =
-            '{"name": "app", "dependencies": {"date-fns": "^3.0.0"}}';
+        const input = '{"name": "app", "dependencies": {"date-fns": "^3.0.0"}}';
         expect(
           installer.getDependencyVersion(
             packageJsonContent: input,
@@ -188,8 +182,7 @@ void main() {
       });
 
       test('returns version from devDependencies', () {
-        const input =
-            '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
+        const input = '{"name": "app", "devDependencies": {"jest": "^29.0.0"}}';
         expect(
           installer.getDependencyVersion(
             packageJsonContent: input,

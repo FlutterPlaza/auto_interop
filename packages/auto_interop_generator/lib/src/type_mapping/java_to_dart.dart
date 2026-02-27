@@ -130,8 +130,7 @@ class JavaToDartMapper {
     // Handle @Nullable annotation (handled externally, nullable param)
 
     // Handle List<T> / ArrayList<T>
-    if ((javaType.startsWith('List<') ||
-            javaType.startsWith('ArrayList<')) &&
+    if ((javaType.startsWith('List<') || javaType.startsWith('ArrayList<')) &&
         javaType.endsWith('>')) {
       final start = javaType.indexOf('<') + 1;
       final inner = javaType.substring(start, javaType.length - 1);
@@ -139,8 +138,7 @@ class JavaToDartMapper {
     }
 
     // Handle Map<K, V> / HashMap<K, V>
-    if ((javaType.startsWith('Map<') ||
-            javaType.startsWith('HashMap<')) &&
+    if ((javaType.startsWith('Map<') || javaType.startsWith('HashMap<')) &&
         javaType.endsWith('>')) {
       final start = javaType.indexOf('<') + 1;
       final inner = javaType.substring(start, javaType.length - 1);

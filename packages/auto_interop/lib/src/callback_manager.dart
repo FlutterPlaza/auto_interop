@@ -27,8 +27,7 @@ class CallbackManager {
   int _nextId = 0;
 
   CallbackManager._()
-      : _callbackChannel =
-            const MethodChannel('auto_interop/callbacks') {
+      : _callbackChannel = const MethodChannel('auto_interop/callbacks') {
     _callbackChannel.setMethodCallHandler(_handleCallback);
   }
 

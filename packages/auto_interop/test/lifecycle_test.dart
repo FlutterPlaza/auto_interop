@@ -40,8 +40,7 @@ void main() {
       await lifecycle.initialize();
       await lifecycle.initialize();
       // Only called once
-      expect(
-          log.where((c) => c.method == 'initialize').length, 1);
+      expect(log.where((c) => c.method == 'initialize').length, 1);
     });
 
     test('dispose calls native dispose', () async {

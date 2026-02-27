@@ -84,8 +84,7 @@ void main() {
 
         final urlConfig =
             schema.types.firstWhere((t) => t.name == 'URLRequestConfig');
-        final headers =
-            urlConfig.fields.firstWhere((f) => f.name == 'headers');
+        final headers = urlConfig.fields.firstWhere((f) => f.name == 'headers');
         expect(headers.nullable, true);
       });
 
@@ -96,8 +95,7 @@ void main() {
           version: '5.9.0',
         );
 
-        final session =
-            schema.classes.firstWhere((c) => c.name == 'Session');
+        final session = schema.classes.firstWhere((c) => c.name == 'Session');
         final download =
             session.methods.firstWhere((m) => m.name == 'download');
         expect(download.isAsync, true);
@@ -138,8 +136,7 @@ void main() {
         );
         final files = swiftGen.generate(schema);
         final swiftCode = files['SdwebimagePlugin.swift']!;
-        final golden =
-            _golden('sdwebimage/SdwebimagePlugin.swift.golden');
+        final golden = _golden('sdwebimage/SdwebimagePlugin.swift.golden');
         expect(swiftCode, golden);
       });
 
@@ -149,8 +146,10 @@ void main() {
           packageName: 'SDWebImage',
           version: '5.19.0',
         );
-        expect(schema.classes,
-            hasLength(3)); // SDWebImageManager, SDImageCache, SDImageResult (sealed)
+        expect(
+            schema.classes,
+            hasLength(
+                3)); // SDWebImageManager, SDImageCache, SDImageResult (sealed)
         expect(schema.enums, hasLength(1)); // SDImageContentMode
       });
 
@@ -175,10 +174,8 @@ void main() {
         );
         final files = dartGen.generate(schema);
         final code = files['sdwebimage.dart']!;
-        expect(code,
-            contains('Manages image downloading and caching.'));
-        expect(code,
-            contains('Loads an image from a URL.'));
+        expect(code, contains('Manages image downloading and caching.'));
+        expect(code, contains('Loads an image from a URL.'));
       });
     });
 

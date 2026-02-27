@@ -59,8 +59,7 @@ class AutoInteropException implements Exception {
   bool get isNotFound => code == 'NOT_FOUND';
 
   /// Creates a [AutoInteropException] from a Flutter [PlatformException].
-  factory AutoInteropException.fromPlatformException(
-      PlatformException e) {
+  factory AutoInteropException.fromPlatformException(PlatformException e) {
     return AutoInteropException(
       code: e.code,
       message: e.message,

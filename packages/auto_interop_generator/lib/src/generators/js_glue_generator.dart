@@ -84,8 +84,8 @@ class JsGlueGenerator extends GeneratorBase {
   void _generateJsExtensionType(StringBuffer buffer, UtsClass typeDef) {
     final jsName = '_Js${typeDef.name}';
     buffer.writeln('@JS()');
-    buffer.writeln(
-        'extension type $jsName._(JSObject _) implements JSObject {');
+    buffer
+        .writeln('extension type $jsName._(JSObject _) implements JSObject {');
     for (final field in typeDef.fields) {
       final jsType = _toJsType(field.type);
       if (field.nullable) {
@@ -100,8 +100,8 @@ class JsGlueGenerator extends GeneratorBase {
   void _generateJsClassInterop(StringBuffer buffer, UtsClass classDef) {
     final jsName = '_Js${classDef.name}';
     buffer.writeln("@JS('${classDef.name}')");
-    buffer.writeln(
-        'extension type $jsName._(JSObject _) implements JSObject {');
+    buffer
+        .writeln('extension type $jsName._(JSObject _) implements JSObject {');
 
     // Constructor
     final constructorParams = <String>[];
@@ -123,7 +123,8 @@ class JsGlueGenerator extends GeneratorBase {
           .map((p) => '${_toJsType(p.type)} ${p.name}')
           .join(', ');
       final staticMod = method.isStatic ? 'static ' : '';
-      buffer.writeln('  external $staticMod$jsReturnType ${method.name}($params);');
+      buffer.writeln(
+          '  external $staticMod$jsReturnType ${method.name}($params);');
     }
 
     buffer.writeln('}');
@@ -132,15 +133,13 @@ class JsGlueGenerator extends GeneratorBase {
   void _generateJsExternalFunction(
       StringBuffer buffer, UtsMethod fn, String jsNamespace) {
     final jsReturnType = _toJsReturnType(fn);
-    final params = fn.parameters
-        .map((p) {
-          final jsType = _toJsType(p.type);
-          if (p.isOptional || p.type.nullable) {
-            return '$jsType? ${p.name}';
-          }
-          return '$jsType ${p.name}';
-        })
-        .join(', ');
+    final params = fn.parameters.map((p) {
+      final jsType = _toJsType(p.type);
+      if (p.isOptional || p.type.nullable) {
+        return '$jsType? ${p.name}';
+      }
+      return '$jsType ${p.name}';
+    }).join(', ');
     final jsFnName = '_js${_capitalize(fn.name)}';
 
     buffer.writeln("@JS('$jsNamespace.${fn.name}')");
@@ -209,12 +208,10 @@ class JsGlueGenerator extends GeneratorBase {
 
   void _generateFromJs(StringBuffer buffer, UtsClass classDef) {
     final jsName = '_Js${classDef.name}';
-    buffer.writeln(
-        '  factory ${classDef.name}.fromJs($jsName js) {');
+    buffer.writeln('  factory ${classDef.name}.fromJs($jsName js) {');
     buffer.writeln('    return ${classDef.name}(');
     for (final field in classDef.fields) {
-      buffer.writeln(
-          '      ${field.name}: ${_fromJsExpression(field)},');
+      buffer.writeln('      ${field.name}: ${_fromJsExpression(field)},');
     }
     buffer.writeln('    );');
     buffer.writeln('  }');
@@ -224,14 +221,13 @@ class JsGlueGenerator extends GeneratorBase {
     buffer.writeln('  JSObject toJs() {');
     buffer.writeln('    final obj = JSObject();');
     for (final field in classDef.fields) {
-      final jsExpr = _toJsExpression(
-          field.name, field.type, nullable: field.nullable);
+      final jsExpr =
+          _toJsExpression(field.name, field.type, nullable: field.nullable);
       if (field.nullable) {
         buffer.writeln(
             "    if (${field.name} != null) obj['${field.name}'] = $jsExpr;");
       } else {
-        buffer.writeln(
-            "    obj['${field.name}'] = $jsExpr;");
+        buffer.writeln("    obj['${field.name}'] = $jsExpr;");
       }
     }
     buffer.writeln('    return obj;');
@@ -274,8 +270,7 @@ class JsGlueGenerator extends GeneratorBase {
       buffer.writeln(
           '  ${classDef.name}(${constructorParams.join(', ')}) : _js = $jsName(${constructorArgs.join(', ')});');
     } else {
-      buffer.writeln(
-          '  ${classDef.name}() : _js = $jsName();');
+      buffer.writeln('  ${classDef.name}() : _js = $jsName();');
     }
     buffer.writeln();
 
@@ -299,8 +294,8 @@ class JsGlueGenerator extends GeneratorBase {
     }
 
     final dartReturnType = _dartReturnType(method);
-    final isAsync = method.isAsync ||
-        method.returnType.kind == UtsTypeKind.future;
+    final isAsync =
+        method.isAsync || method.returnType.kind == UtsTypeKind.future;
     final asyncMod = isAsync ? ' async' : '';
 
     // Parameter list
@@ -330,8 +325,7 @@ class JsGlueGenerator extends GeneratorBase {
       if (method.returnType.kind == UtsTypeKind.voidType) {
         buffer.writeln('$indent  $jsFnName($jsArgs);');
       } else {
-        buffer.writeln(
-            '$indent  final jsResult = $jsFnName($jsArgs);');
+        buffer.writeln('$indent  final jsResult = $jsFnName($jsArgs);');
         buffer.writeln(
             '$indent  return ${_fromJsValueExpression('jsResult', method.returnType)};');
       }
@@ -340,16 +334,17 @@ class JsGlueGenerator extends GeneratorBase {
     buffer.writeln('$indent}');
   }
 
-  void _generateDartClassStaticMethod(StringBuffer buffer, UtsMethod method,
-      UtsClass classDef, {String indent = ''}) {
+  void _generateDartClassStaticMethod(
+      StringBuffer buffer, UtsMethod method, UtsClass classDef,
+      {String indent = ''}) {
     if (method.documentation != null) {
       buffer.writeln('$indent/// ${method.documentation}');
     }
 
     final jsName = '_Js${classDef.name}';
     final dartReturnType = _dartReturnType(method);
-    final isAsync = method.isAsync ||
-        method.returnType.kind == UtsTypeKind.future;
+    final isAsync =
+        method.isAsync || method.returnType.kind == UtsTypeKind.future;
     final asyncMod = isAsync ? ' async' : '';
 
     final params = _buildDartParams(method.parameters);
@@ -366,8 +361,8 @@ class JsGlueGenerator extends GeneratorBase {
 
     if (isAsync) {
       if (innerType.kind == UtsTypeKind.voidType) {
-        buffer.writeln(
-            '$indent  await $jsName.${method.name}($jsArgs).toDart;');
+        buffer
+            .writeln('$indent  await $jsName.${method.name}($jsArgs).toDart;');
       } else {
         buffer.writeln(
             '$indent  final jsResult = await $jsName.${method.name}($jsArgs).toDart;');
@@ -395,14 +390,13 @@ class JsGlueGenerator extends GeneratorBase {
     }
 
     final dartReturnType = _dartReturnType(method);
-    final isAsync = method.isAsync ||
-        method.returnType.kind == UtsTypeKind.future;
+    final isAsync =
+        method.isAsync || method.returnType.kind == UtsTypeKind.future;
     final asyncMod = isAsync ? ' async' : '';
 
     final params = _buildDartParams(method.parameters);
 
-    buffer.writeln(
-        '$indent$dartReturnType ${method.name}($params)$asyncMod {');
+    buffer.writeln('$indent$dartReturnType ${method.name}($params)$asyncMod {');
 
     final jsArgs = method.parameters
         .map((p) => _toJsExpression(p.name, p.type,
@@ -413,8 +407,7 @@ class JsGlueGenerator extends GeneratorBase {
 
     if (isAsync) {
       if (innerType.kind == UtsTypeKind.voidType) {
-        buffer.writeln(
-            '$indent  await _js.${method.name}($jsArgs).toDart;');
+        buffer.writeln('$indent  await _js.${method.name}($jsArgs).toDart;');
       } else {
         buffer.writeln(
             '$indent  final jsResult = await _js.${method.name}($jsArgs).toDart;');
@@ -425,8 +418,8 @@ class JsGlueGenerator extends GeneratorBase {
       if (method.returnType.kind == UtsTypeKind.voidType) {
         buffer.writeln('$indent  _js.${method.name}($jsArgs);');
       } else {
-        buffer.writeln(
-            '$indent  final jsResult = _js.${method.name}($jsArgs);');
+        buffer
+            .writeln('$indent  final jsResult = _js.${method.name}($jsArgs);');
         buffer.writeln(
             '$indent  return ${_fromJsValueExpression('jsResult', method.returnType)};');
       }

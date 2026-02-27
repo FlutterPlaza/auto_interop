@@ -79,8 +79,7 @@ ToolchainDetector _mockDetector({required bool hasNode}) {
   return ToolchainDetector(
     processRunner: (exec, args, {workingDirectory}) async {
       if (exec == 'node' && args.contains('--version')) {
-        return _mockResult(hasNode ? 0 : 127,
-            stdout: hasNode ? 'v20.0.0' : '');
+        return _mockResult(hasNode ? 0 : 127, stdout: hasNode ? 'v20.0.0' : '');
       }
       return _mockResult(127);
     },

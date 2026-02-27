@@ -20,16 +20,18 @@ class GradleInstaller {
     bool isKotlinDsl = false,
   }) {
     final coordinate = '$group:$artifact:$version';
-    final existing = _findDependency(
-        buildGradleContent, group, artifact, isKotlinDsl: isKotlinDsl);
+    final existing = _findDependency(buildGradleContent, group, artifact,
+        isKotlinDsl: isKotlinDsl);
 
     if (existing != null) {
       // Update existing dependency version
-      return buildGradleContent.replaceFirst(existing, _formatDep(
-        configuration: configuration,
-        coordinate: coordinate,
-        isKotlinDsl: isKotlinDsl,
-      ));
+      return buildGradleContent.replaceFirst(
+          existing,
+          _formatDep(
+            configuration: configuration,
+            coordinate: coordinate,
+            isKotlinDsl: isKotlinDsl,
+          ));
     }
 
     // Add new dependency to dependencies block
@@ -84,8 +86,8 @@ class GradleInstaller {
     required String artifact,
     bool isKotlinDsl = false,
   }) {
-    return _findDependency(
-            buildGradleContent, group, artifact, isKotlinDsl: isKotlinDsl) !=
+    return _findDependency(buildGradleContent, group, artifact,
+            isKotlinDsl: isKotlinDsl) !=
         null;
   }
 
@@ -95,8 +97,7 @@ class GradleInstaller {
     required String group,
     required String artifact,
   }) {
-    final pattern =
-        RegExp('$group:$artifact:([^"\'\\s]+)');
+    final pattern = RegExp('$group:$artifact:([^"\'\\s]+)');
     final match = pattern.firstMatch(buildGradleContent);
     return match?.group(1);
   }
@@ -123,8 +124,7 @@ class GradleInstaller {
 
   // --- Private helpers ---
 
-  String? _findDependency(
-      String content, String group, String artifact,
+  String? _findDependency(String content, String group, String artifact,
       {bool isKotlinDsl = false}) {
     final depPattern = '$group:$artifact';
     // Match both Groovy and Kotlin DSL formats

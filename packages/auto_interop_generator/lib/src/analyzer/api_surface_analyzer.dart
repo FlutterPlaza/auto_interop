@@ -37,8 +37,9 @@ class AnalysisResult {
 
   List<AnalysisDiagnostic> get errors =>
       diagnostics.where((d) => d.isError).toList();
-  List<AnalysisDiagnostic> get warnings =>
-      diagnostics.where((d) => d.severity == DiagnosticSeverity.warning).toList();
+  List<AnalysisDiagnostic> get warnings => diagnostics
+      .where((d) => d.severity == DiagnosticSeverity.warning)
+      .toList();
 }
 
 /// Validates a [UnifiedTypeSchema] for correctness and completeness.
@@ -84,8 +85,15 @@ class ApiSurfaceAnalyzer {
     final definedNames = schema.definedTypeNames;
     // Also include primitive type names that don't need resolution
     final builtinNames = {
-      'String', 'int', 'double', 'bool', 'DateTime', 'void', 'dynamic',
-      'Object', 'Uint8List',
+      'String',
+      'int',
+      'double',
+      'bool',
+      'DateTime',
+      'void',
+      'dynamic',
+      'Object',
+      'Uint8List',
     };
 
     void checkType(UtsType type, String location) {
@@ -201,7 +209,8 @@ class ApiSurfaceAnalyzer {
             keyType.kind != UtsTypeKind.enumType) {
           diagnostics.add(AnalysisDiagnostic(
             severity: DiagnosticSeverity.warning,
-            message: 'Map with non-primitive key type "${keyType.toDartType()}"',
+            message:
+                'Map with non-primitive key type "${keyType.toDartType()}"',
             context: location,
           ));
         }
@@ -256,7 +265,8 @@ class ApiSurfaceAnalyzer {
       if (names.containsKey(name)) {
         diagnostics.add(AnalysisDiagnostic(
           severity: DiagnosticSeverity.error,
-          message: 'Naming conflict: "$name" defined as both ${names[name]} and $kind',
+          message:
+              'Naming conflict: "$name" defined as both ${names[name]} and $kind',
         ));
       } else {
         names[name] = kind;
@@ -275,15 +285,68 @@ class ApiSurfaceAnalyzer {
 
     // Check for Dart reserved word collisions
     const dartReserved = {
-      'abstract', 'as', 'assert', 'async', 'await', 'break', 'case',
-      'catch', 'class', 'const', 'continue', 'default', 'deferred', 'do',
-      'dynamic', 'else', 'enum', 'export', 'extends', 'extension',
-      'external', 'factory', 'false', 'final', 'finally', 'for', 'get',
-      'if', 'implements', 'import', 'in', 'interface', 'is', 'late',
-      'library', 'mixin', 'new', 'null', 'on', 'operator', 'part',
-      'required', 'rethrow', 'return', 'sealed', 'set', 'show', 'static',
-      'super', 'switch', 'sync', 'this', 'throw', 'true', 'try', 'type',
-      'typedef', 'var', 'void', 'while', 'with', 'yield',
+      'abstract',
+      'as',
+      'assert',
+      'async',
+      'await',
+      'break',
+      'case',
+      'catch',
+      'class',
+      'const',
+      'continue',
+      'default',
+      'deferred',
+      'do',
+      'dynamic',
+      'else',
+      'enum',
+      'export',
+      'extends',
+      'extension',
+      'external',
+      'factory',
+      'false',
+      'final',
+      'finally',
+      'for',
+      'get',
+      'if',
+      'implements',
+      'import',
+      'in',
+      'interface',
+      'is',
+      'late',
+      'library',
+      'mixin',
+      'new',
+      'null',
+      'on',
+      'operator',
+      'part',
+      'required',
+      'rethrow',
+      'return',
+      'sealed',
+      'set',
+      'show',
+      'static',
+      'super',
+      'switch',
+      'sync',
+      'this',
+      'throw',
+      'true',
+      'try',
+      'type',
+      'typedef',
+      'var',
+      'void',
+      'while',
+      'with',
+      'yield',
     };
 
     for (final name in names.keys) {

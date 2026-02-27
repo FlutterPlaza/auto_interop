@@ -29,8 +29,7 @@ class AstGradleParser extends AstParserBase {
   }) : super(fallbackParser: GradleParser());
 
   @override
-  Future<bool> isToolchainAvailable() =>
-      toolchainDetector.hasKotlinc();
+  Future<bool> isToolchainAvailable() => toolchainDetector.hasKotlinc();
 
   @override
   Future<void> prepare() async {
@@ -155,7 +154,8 @@ class AstGradleParser extends AstParserBase {
     try {
       final original = File(_originalHelperPath!).readAsStringSync();
       patched = original.replaceFirst(
-        RegExp(r'@file:DependsOn\("org\.jetbrains\.kotlin:kotlin-compiler-embeddable:[^"]+"\)'),
+        RegExp(
+            r'@file:DependsOn\("org\.jetbrains\.kotlin:kotlin-compiler-embeddable:[^"]+"\)'),
         '@file:DependsOn("org.jetbrains.kotlin:kotlin-compiler-embeddable:$version")',
       );
     } catch (_) {
@@ -164,8 +164,8 @@ class AstGradleParser extends AstParserBase {
 
     // Write if content changed or doesn't exist (auto-invalidates stale cache)
     final cachedFile = File(cachedScript);
-    final needsUpdate = !cachedFile.existsSync() ||
-        cachedFile.readAsStringSync() != patched;
+    final needsUpdate =
+        !cachedFile.existsSync() || cachedFile.readAsStringSync() != patched;
 
     if (needsUpdate) {
       cachedFile.writeAsStringSync(patched);
@@ -211,8 +211,7 @@ class AstGradleParser extends AstParserBase {
     if (File(warmStamp).existsSync()) return; // already warm
 
     stderr.writeln('');
-    stderr.writeln(
-        '  Kotlin AST helper \u2014 resolving dependencies...');
+    stderr.writeln('  Kotlin AST helper \u2014 resolving dependencies...');
 
     final stopwatch = Stopwatch()..start();
 

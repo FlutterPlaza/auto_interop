@@ -136,9 +136,8 @@ class JsToDartMapper {
     // Handle union types: string | number | null → pick first non-null type
     if (jsType.contains('|')) {
       final parts = jsType.split('|').map((s) => s.trim()).toList();
-      final isNullable = nullable ||
-          parts.contains('null') ||
-          parts.contains('undefined');
+      final isNullable =
+          nullable || parts.contains('null') || parts.contains('undefined');
       final nonNullParts =
           parts.where((p) => p != 'null' && p != 'undefined').toList();
 

@@ -160,8 +160,7 @@ abstract class AstParserBase extends ParserBase {
         version: version,
       );
     } catch (e) {
-      stderr.writeln(
-          'Warning: AST parser error for $packageName: $e');
+      stderr.writeln('Warning: AST parser error for $packageName: $e');
       stderr.writeln('  Falling back to regex parser.');
       return fallbackParser.parseFilesWithValidation(
         files: files,

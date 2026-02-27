@@ -70,8 +70,8 @@ void main() {
         final code = files['date_fns.dart']!;
         expect(code,
             contains('Formats a date according to the given format string.'));
-        expect(code, contains(
-            'Returns the number of calendar days between two dates.'));
+        expect(code,
+            contains('Returns the number of calendar days between two dates.'));
       });
     });
 
@@ -115,8 +115,7 @@ void main() {
           packageName: 'lodash',
           version: '4.17.21',
         );
-        final chunk =
-            schema.functions.firstWhere((f) => f.name == 'chunk');
+        final chunk = schema.functions.firstWhere((f) => f.name == 'chunk');
         expect(chunk.parameters[1].isOptional, true);
       });
     });

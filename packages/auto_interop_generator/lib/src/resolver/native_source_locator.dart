@@ -65,8 +65,7 @@ class NativeSourceLocator {
 
     if (files.isEmpty) {
       return SourceLocationResult(
-        warning:
-            'No source files (${extensions.join(', ')}) found in: $path',
+        warning: 'No source files (${extensions.join(', ')}) found in: $path',
       );
     }
 
@@ -100,8 +99,7 @@ class NativeSourceLocator {
     }
 
     return SourceLocationResult(
-      warning:
-          'Could not find CocoaPods sources for "$name". '
+      warning: 'Could not find CocoaPods sources for "$name". '
           'Tried: ${candidates.join(', ')}. '
           'Use source_path in auto_interop.yaml to specify the location.',
     );
@@ -132,8 +130,7 @@ class NativeSourceLocator {
     }
 
     return SourceLocationResult(
-      warning:
-          'Could not find SPM sources for "$name". '
+      warning: 'Could not find SPM sources for "$name". '
           'Tried: ${candidates.join(', ')}. '
           'Use source_path in auto_interop.yaml to specify the location.',
     );
@@ -154,8 +151,7 @@ class NativeSourceLocator {
     }
 
     return SourceLocationResult(
-      warning:
-          'Could not find npm package "$name" in node_modules/. '
+      warning: 'Could not find npm package "$name" in node_modules/. '
           'Run "npm install" first, or use source_path to specify the location.',
     );
   }
@@ -167,9 +163,10 @@ class NativeSourceLocator {
     final packageJsonFile = File('$modulePath/package.json');
     if (packageJsonFile.existsSync()) {
       try {
-        final packageJson =
-            jsonDecode(packageJsonFile.readAsStringSync()) as Map<String, dynamic>;
-        final typesPath = (packageJson['types'] ?? packageJson['typings']) as String?;
+        final packageJson = jsonDecode(packageJsonFile.readAsStringSync())
+            as Map<String, dynamic>;
+        final typesPath =
+            (packageJson['types'] ?? packageJson['typings']) as String?;
         if (typesPath != null) {
           final typesFile = File('$modulePath/$typesPath');
           if (typesFile.existsSync()) {
@@ -194,8 +191,7 @@ class NativeSourceLocator {
     }
 
     return SourceLocationResult(
-      warning:
-          'No TypeScript declaration files (.d.ts) found in $modulePath. '
+      warning: 'No TypeScript declaration files (.d.ts) found in $modulePath. '
           'Use source_path in auto_interop.yaml to specify the location.',
     );
   }
@@ -216,8 +212,7 @@ class NativeSourceLocator {
     }
 
     return SourceLocationResult(
-      warning:
-          'Could not find Gradle sources for "${spec.package}". '
+      warning: 'Could not find Gradle sources for "${spec.package}". '
           'Use source_path in auto_interop.yaml to specify the source location.',
     );
   }
@@ -236,8 +231,7 @@ class NativeSourceLocator {
   }
 
   /// Recursively collects files matching [extensions] from [dir].
-  Map<String, String> _collectFiles(
-      Directory dir, List<String> extensions) {
+  Map<String, String> _collectFiles(Directory dir, List<String> extensions) {
     final files = <String, String>{};
     try {
       for (final entity in dir.listSync(recursive: true)) {

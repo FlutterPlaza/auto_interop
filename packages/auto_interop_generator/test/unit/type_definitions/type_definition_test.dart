@@ -17,14 +17,16 @@ void main() {
 
     test('listAvailable returns all definition files', () {
       final available = loader.listAvailable();
-      expect(available, containsAll([
-        'alamofire',
-        'date_fns',
-        'lodash',
-        'okhttp3',
-        'sdwebimage',
-        'uuid',
-      ]));
+      expect(
+          available,
+          containsAll([
+            'alamofire',
+            'date_fns',
+            'lodash',
+            'okhttp3',
+            'sdwebimage',
+            'uuid',
+          ]));
     });
 
     test('load returns schema for existing definition', () {
@@ -193,8 +195,8 @@ UnifiedTypeSchema _loadDefinition(String name) {
 void _verifyRoundtrip(String name) {
   final file = File('test/fixtures/definitions/$name.uts.json');
   final originalJson = file.readAsStringSync();
-  final schema =
-      UnifiedTypeSchema.fromJson(jsonDecode(originalJson) as Map<String, dynamic>);
+  final schema = UnifiedTypeSchema.fromJson(
+      jsonDecode(originalJson) as Map<String, dynamic>);
   final reserializedJson =
       const JsonEncoder.withIndent('  ').convert(schema.toJson());
   expect(reserializedJson, originalJson);

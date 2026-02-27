@@ -21,8 +21,7 @@ void main() {
               name: 'format',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('String')),
+                UtsParameter(name: 'date', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -43,17 +42,15 @@ void main() {
 
     group('header', () {
       test('includes GENERATED header', () {
-        final code =
-            generator.generateDartCode(_createMinimalSchema());
+        final code = generator.generateDartCode(_createMinimalSchema());
         expect(code, contains('GENERATED'));
         expect(code, contains('DO NOT EDIT'));
       });
 
       test('imports auto_interop', () {
-        final code =
-            generator.generateDartCode(_createMinimalSchema());
-        expect(code,
-            contains("import 'package:auto_interop/auto_interop.dart';"));
+        final code = generator.generateDartCode(_createMinimalSchema());
+        expect(
+            code, contains("import 'package:auto_interop/auto_interop.dart';"));
       });
     });
 
@@ -143,10 +140,8 @@ void main() {
               name: 'add',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'a', type: UtsType.primitive('int')),
-                UtsParameter(
-                    name: 'b', type: UtsType.primitive('int')),
+                UtsParameter(name: 'a', type: UtsType.primitive('int')),
+                UtsParameter(name: 'b', type: UtsType.primitive('int')),
               ],
               returnType: UtsType.primitive('int'),
             ),
@@ -165,8 +160,7 @@ void main() {
               name: 'format',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('String')),
+                UtsParameter(name: 'date', type: UtsType.primitive('String')),
                 UtsParameter(
                   name: 'locale',
                   type: UtsType.primitive('String'),
@@ -227,8 +221,7 @@ void main() {
               name: 'setDate',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'date', type: UtsType.primitive('DateTime')),
+                UtsParameter(name: 'date', type: UtsType.primitive('DateTime')),
               ],
               returnType: UtsType.voidType(),
             ),
@@ -247,9 +240,7 @@ void main() {
               name: 'configure',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'options',
-                    type: UtsType.object('Options')),
+                UtsParameter(name: 'options', type: UtsType.object('Options')),
               ],
               returnType: UtsType.voidType(),
             ),
@@ -268,8 +259,7 @@ void main() {
               name: 'greet',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'name', type: UtsType.primitive('String')),
+                UtsParameter(name: 'name', type: UtsType.primitive('String')),
               ],
               returnType: UtsType.primitive('String'),
             ),
@@ -290,8 +280,7 @@ void main() {
               name: 'Options',
               kind: UtsClassKind.dataClass,
               fields: [
-                UtsField(
-                    name: 'timeout', type: UtsType.primitive('int')),
+                UtsField(name: 'timeout', type: UtsType.primitive('int')),
                 UtsField(
                     name: 'locale',
                     type: UtsType.primitive('String'),
@@ -315,8 +304,7 @@ void main() {
               name: 'Config',
               kind: UtsClassKind.dataClass,
               fields: [
-                UtsField(
-                    name: 'name', type: UtsType.primitive('String')),
+                UtsField(name: 'name', type: UtsType.primitive('String')),
                 UtsField(
                     name: 'count',
                     type: UtsType.primitive('int'),
@@ -450,8 +438,7 @@ void main() {
               name: 'Priority',
               documentation: 'Task priority levels.',
               values: [
-                UtsEnumValue(
-                    name: 'high', documentation: 'High priority.'),
+                UtsEnumValue(name: 'high', documentation: 'High priority.'),
                 UtsEnumValue(name: 'low'),
               ],
             ),
@@ -509,8 +496,7 @@ void main() {
                   isStatic: true,
                   parameters: [
                     UtsParameter(
-                        name: 'url',
-                        type: UtsType.primitive('String')),
+                        name: 'url', type: UtsType.primitive('String')),
                   ],
                   returnType: UtsType.primitive('String'),
                 ),
@@ -525,8 +511,7 @@ void main() {
         expect(code, contains('static Future<String> get'));
       });
 
-      test('generates interface for concrete class with instance methods',
-          () {
+      test('generates interface for concrete class with instance methods', () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'my-lib',
           source: PackageSource.npm,
@@ -539,8 +524,7 @@ void main() {
                   name: 'fetch',
                   parameters: [
                     UtsParameter(
-                        name: 'url',
-                        type: UtsType.primitive('String')),
+                        name: 'url', type: UtsType.primitive('String')),
                   ],
                   returnType: UtsType.primitive('String'),
                 ),
@@ -548,31 +532,25 @@ void main() {
             ),
           ],
         ));
-        expect(
-            code, contains('abstract interface class ApiClientInterface'));
-        expect(code,
-            contains('class ApiClient implements ApiClientInterface'));
+        expect(code, contains('abstract interface class ApiClientInterface'));
+        expect(code, contains('class ApiClient implements ApiClientInterface'));
         expect(code, contains('@override'));
       });
     });
 
     group('full date-fns example', () {
       test('generates complete date-fns binding with interface', () {
-        final code =
-            generator.generateDartCode(_createDateFnsSchema());
+        final code = generator.generateDartCode(_createDateFnsSchema());
 
         // Interface
-        expect(
-            code, contains('abstract interface class DateFnsInterface'));
+        expect(code, contains('abstract interface class DateFnsInterface'));
         expect(code, contains('Future<String> format('));
 
         // Class name
-        expect(
-            code, contains('class DateFns implements DateFnsInterface'));
+        expect(code, contains('class DateFns implements DateFnsInterface'));
 
         // Instance accessor
-        expect(code,
-            contains('static final DateFns instance = DateFns._();'));
+        expect(code, contains('static final DateFns instance = DateFns._();'));
         expect(code, contains('DateFns._();'));
 
         // Channel
@@ -599,24 +577,21 @@ void main() {
 
     group('interface generation', () {
       test('generates interface before binding class', () {
-        final code =
-            generator.generateDartCode(_createMinimalSchema());
+        final code = generator.generateDartCode(_createMinimalSchema());
         final interfacePos =
             code.indexOf('abstract interface class TestInterface');
-        final classPos =
-            code.indexOf('class Test implements TestInterface');
+        final classPos = code.indexOf('class Test implements TestInterface');
         expect(interfacePos, greaterThanOrEqualTo(0));
         expect(classPos, greaterThan(interfacePos));
       });
 
       test('interface contains method signatures without bodies', () {
-        final code =
-            generator.generateDartCode(_createMinimalSchema());
+        final code = generator.generateDartCode(_createMinimalSchema());
         // Interface should have signature ending with ;
         final interfaceBlock = code.substring(
           code.indexOf('abstract interface class TestInterface'),
-          code.indexOf('}',
-                  code.indexOf('abstract interface class TestInterface')) +
+          code.indexOf(
+                  '}', code.indexOf('abstract interface class TestInterface')) +
               1,
         );
         expect(interfaceBlock, contains('Future<void> noop();'));
@@ -640,17 +615,15 @@ void main() {
         ));
         final interfaceBlock = code.substring(
           code.indexOf('abstract interface class TestInterface'),
-          code.indexOf('}',
-                  code.indexOf('abstract interface class TestInterface')) +
+          code.indexOf(
+                  '}', code.indexOf('abstract interface class TestInterface')) +
               1,
         );
         expect(interfaceBlock, contains('/// Does some work.'));
         expect(interfaceBlock, contains('Future<String> doWork();'));
       });
 
-      test(
-          'generates interface for concrete class with instance methods',
-          () {
+      test('generates interface for concrete class with instance methods', () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'lib',
           source: PackageSource.gradle,
@@ -664,8 +637,7 @@ void main() {
                   name: 'toJson',
                   parameters: [
                     UtsParameter(
-                        name: 'src',
-                        type: UtsType.primitive('String')),
+                        name: 'src', type: UtsType.primitive('String')),
                   ],
                   returnType: UtsType.primitive('String'),
                 ),
@@ -673,10 +645,8 @@ void main() {
             ),
           ],
         ));
-        expect(code,
-            contains('abstract interface class GsonInterface'));
-        expect(code,
-            contains('class Gson implements GsonInterface'));
+        expect(code, contains('abstract interface class GsonInterface'));
+        expect(code, contains('class Gson implements GsonInterface'));
       });
 
       test('does not generate interface for sealed class', () {
@@ -706,8 +676,7 @@ void main() {
               name: 'Point',
               kind: UtsClassKind.dataClass,
               fields: [
-                UtsField(
-                    name: 'x', type: UtsType.primitive('double')),
+                UtsField(name: 'x', type: UtsType.primitive('double')),
               ],
             ),
           ],
@@ -746,8 +715,7 @@ void main() {
         expect(code, isNot(contains('create()')));
       });
 
-      test(
-          'concrete class with only static methods does not get interface',
+      test('concrete class with only static methods does not get interface',
           () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'test',
@@ -783,8 +751,7 @@ void main() {
               name: 'open',
               isStatic: true,
               parameters: [
-                UtsParameter(
-                    name: 'url', type: UtsType.primitive('Uri')),
+                UtsParameter(name: 'url', type: UtsType.primitive('Uri')),
               ],
               returnType: UtsType.voidType(),
             ),
@@ -843,8 +810,7 @@ void main() {
               isStatic: true,
               parameters: [
                 UtsParameter(
-                    name: 'request',
-                    type: UtsType.nativeObject('URLRequest')),
+                    name: 'request', type: UtsType.nativeObject('URLRequest')),
               ],
               returnType: UtsType.voidType(),
             ),
@@ -863,9 +829,7 @@ void main() {
               name: 'Container',
               kind: UtsClassKind.dataClass,
               fields: [
-                UtsField(
-                    name: 'error',
-                    type: UtsType.nativeObject('NSError')),
+                UtsField(name: 'error', type: UtsType.nativeObject('NSError')),
               ],
             ),
           ],
@@ -943,7 +907,8 @@ void main() {
     });
 
     group('double-nullable fix', () {
-      test('does not produce double ?? for already-nullable optional params', () {
+      test('does not produce double ?? for already-nullable optional params',
+          () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'test',
           source: PackageSource.npm,
@@ -1058,7 +1023,9 @@ void main() {
         // Interface should not contain toString
         final interfaceBlock = code.substring(
           code.indexOf('abstract interface class MyObjInterface'),
-          code.indexOf('}', code.indexOf('abstract interface class MyObjInterface')) + 1,
+          code.indexOf('}',
+                  code.indexOf('abstract interface class MyObjInterface')) +
+              1,
         );
         expect(interfaceBlock, isNot(contains('toString')));
         expect(interfaceBlock, contains('doWork'));
@@ -1277,8 +1244,7 @@ UnifiedTypeSchema _createDateFnsSchema() {
           ),
         ],
         returnType: UtsType.primitive('String'),
-        documentation:
-            'Formats a date according to the given format string.',
+        documentation: 'Formats a date according to the given format string.',
       ),
       UtsMethod(
         name: 'addDays',

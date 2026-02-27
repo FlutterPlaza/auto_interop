@@ -24,7 +24,10 @@ let package = Package(
           packageUrl: 'https://github.com/Alamofire/Alamofire',
           version: '5.9.0',
         );
-        expect(result, contains('.package(url: "https://github.com/Alamofire/Alamofire", from: "5.9.0")'));
+        expect(
+            result,
+            contains(
+                '.package(url: "https://github.com/Alamofire/Alamofire", from: "5.9.0")'));
       });
 
       test('adds dependency to existing dependencies', () {
@@ -76,8 +79,7 @@ let package = Package(
           packageUrl: 'https://github.com/Alamofire/Alamofire',
           version: '5.9.0',
         );
-        final count =
-            RegExp('Alamofire/Alamofire').allMatches(result).length;
+        final count = RegExp('Alamofire/Alamofire').allMatches(result).length;
         expect(count, 1);
       });
     });

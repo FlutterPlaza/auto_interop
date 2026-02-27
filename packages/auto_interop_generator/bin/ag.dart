@@ -1,4 +1,5 @@
 #!/usr/bin/env dart
+
 // Short alias for `dart run auto_interop_generator:generate`.
 //
 // Usage:

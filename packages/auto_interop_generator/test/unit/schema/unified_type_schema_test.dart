@@ -33,7 +33,8 @@ void main() {
               ),
             ],
             returnType: UtsType.primitive('String'),
-            documentation: 'Formats a date according to the given format string.',
+            documentation:
+                'Formats a date according to the given format string.',
           ),
           UtsMethod(
             name: 'addDays',
@@ -172,8 +173,7 @@ void main() {
       test('roundtrips through JSON', () {
         final json = schema.toJson();
         final jsonStr = jsonEncode(json);
-        final restored =
-            UnifiedTypeSchema.fromJson(jsonDecode(jsonStr));
+        final restored = UnifiedTypeSchema.fromJson(jsonDecode(jsonStr));
 
         expect(restored.package, schema.package);
         expect(restored.source, schema.source);

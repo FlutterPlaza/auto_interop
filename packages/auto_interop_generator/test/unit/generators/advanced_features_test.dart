@@ -59,8 +59,7 @@ void main() {
       test('extracts callback ID as String', () {
         final schema = _createSchemaWithCallback();
         final code = swiftGen.generateSwiftCode(schema);
-        expect(
-            code, contains('let onEvent = args["onEvent"] as! String'));
+        expect(code, contains('let onEvent = args["onEvent"] as! String'));
       });
     });
 
@@ -144,7 +143,8 @@ void main() {
       test('declares eventChannel and eventSink', () {
         final schema = _createSchemaWithStream();
         final code = kotlinGen.generateKotlinCode(schema);
-        expect(code, contains('private lateinit var eventChannel: EventChannel'));
+        expect(
+            code, contains('private lateinit var eventChannel: EventChannel'));
         expect(code,
             contains('private var eventSink: EventChannel.EventSink? = null'));
       });
@@ -357,7 +357,10 @@ void main() {
       test('callback with object param generates wrapper', () {
         final schema = _createSchemaWithObjectCallback();
         final code = dartGen.generateDartCode(schema);
-        expect(code, contains('final _onProgressId = CallbackManager.instance.register'));
+        expect(
+            code,
+            contains(
+                'final _onProgressId = CallbackManager.instance.register'));
         expect(code, contains('DownloadProgress.fromMap'));
         expect(code, contains("'onProgress': _onProgressId"));
       });
@@ -372,7 +375,8 @@ void main() {
       test('callback with enum param generates wrapper', () {
         final schema = _createSchemaWithEnumCallback();
         final code = dartGen.generateDartCode(schema);
-        expect(code, contains('final _onStatusId = CallbackManager.instance.register'));
+        expect(code,
+            contains('final _onStatusId = CallbackManager.instance.register'));
         expect(code, contains('Status.values.byName'));
         expect(code, contains("'onStatus': _onStatusId"));
       });
@@ -384,8 +388,10 @@ void main() {
       test('generates callbackChannel when callbacks present', () {
         final schema = _createSchemaWithObjectCallback();
         final code = swiftGen.generateSwiftCode(schema);
-        expect(code, contains('private var callbackChannel: FlutterMethodChannel!'));
-        expect(code, contains('FlutterMethodChannel(name: "auto_interop/callbacks"'));
+        expect(code,
+            contains('private var callbackChannel: FlutterMethodChannel!'));
+        expect(code,
+            contains('FlutterMethodChannel(name: "auto_interop/callbacks"'));
       });
 
       test('no callbackChannel without callbacks', () {
@@ -399,8 +405,12 @@ void main() {
       test('generates callbackChannel when callbacks present', () {
         final schema = _createSchemaWithObjectCallback();
         final code = kotlinGen.generateKotlinCode(schema);
-        expect(code, contains('private lateinit var callbackChannel: MethodChannel'));
-        expect(code, contains('MethodChannel(binding.binaryMessenger, "auto_interop/callbacks")'));
+        expect(code,
+            contains('private lateinit var callbackChannel: MethodChannel'));
+        expect(
+            code,
+            contains(
+                'MethodChannel(binding.binaryMessenger, "auto_interop/callbacks")'));
       });
 
       test('no callbackChannel without callbacks', () {
@@ -492,7 +502,8 @@ void main() {
       test('single stream extracts arguments from args', () {
         final schema = _createSchemaWithSingleStreamNoNativeBody();
         final code = swiftGen.generateSwiftCode(schema);
-        expect(code, contains('let samplingRate = args["samplingRate"] as! Int'));
+        expect(
+            code, contains('let samplingRate = args["samplingRate"] as! Int'));
       });
 
       test('single stream declares streamTask field', () {
@@ -508,7 +519,9 @@ void main() {
         expect(code, contains('streamTask = nil'));
       });
 
-      test('multi-stream with missing nativeBody emits auto-call in switch (no TODO)', () {
+      test(
+          'multi-stream with missing nativeBody emits auto-call in switch (no TODO)',
+          () {
         final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
         final code = swiftGen.generateSwiftCode(schema);
         expect(code, contains('switch method'));
@@ -519,18 +532,22 @@ void main() {
         expect(code, isNot(contains('TODO')));
       });
 
-      test('multi-stream partial auto extracts args for auto-generated case', () {
+      test('multi-stream partial auto extracts args for auto-generated case',
+          () {
         final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
         final code = swiftGen.generateSwiftCode(schema);
-        expect(code, contains('let sensitivity = args["sensitivity"] as! Double'));
+        expect(
+            code, contains('let sensitivity = args["sensitivity"] as! Double'));
       });
 
       test('instance method stream auto-generates handle lookup', () {
         final schema = _createSchemaWithInstanceStreamNoNativeBody();
         final code = swiftGen.generateSwiftCode(schema);
         expect(code, contains('let handle = args["_handle"] as! String'));
-        expect(code, contains('let instance = instances[handle] as! Connection'));
-        expect(code, contains('for try await nativeResult in instance.listen()'));
+        expect(
+            code, contains('let instance = instances[handle] as! Connection'));
+        expect(
+            code, contains('for try await nativeResult in instance.listen()'));
       });
     });
 
@@ -546,7 +563,8 @@ void main() {
       test('single stream extracts arguments from args', () {
         final schema = _createSchemaWithSingleStreamNoNativeBody();
         final code = kotlinGen.generateKotlinCode(schema);
-        expect(code, contains('val samplingRate = args["samplingRate"] as Int'));
+        expect(
+            code, contains('val samplingRate = args["samplingRate"] as Int'));
       });
 
       test('single stream declares streamJob field', () {
@@ -575,7 +593,9 @@ void main() {
         expect(code, contains('streamJob = null'));
       });
 
-      test('multi-stream with missing nativeBody emits auto-call in when (no TODO)', () {
+      test(
+          'multi-stream with missing nativeBody emits auto-call in when (no TODO)',
+          () {
         final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
         final code = kotlinGen.generateKotlinCode(schema);
         expect(code, contains('when (method)'));
@@ -586,17 +606,20 @@ void main() {
         expect(code, isNot(contains('TODO')));
       });
 
-      test('multi-stream partial auto extracts args for auto-generated case', () {
+      test('multi-stream partial auto extracts args for auto-generated case',
+          () {
         final schema = _createSchemaWithMultipleStreamsPartialNativeBody();
         final code = kotlinGen.generateKotlinCode(schema);
-        expect(code, contains('val sensitivity = args["sensitivity"] as Double'));
+        expect(
+            code, contains('val sensitivity = args["sensitivity"] as Double'));
       });
 
       test('instance method stream auto-generates handle lookup', () {
         final schema = _createSchemaWithInstanceStreamNoNativeBody();
         final code = kotlinGen.generateKotlinCode(schema);
         expect(code, contains('val handle = args["_handle"] as String'));
-        expect(code, contains('val instance = instances[handle] as Connection'));
+        expect(
+            code, contains('val instance = instances[handle] as Connection'));
         expect(code, contains('instance.listen().collect'));
       });
     });
@@ -1006,7 +1029,8 @@ UnifiedTypeSchema _createSchemaWithSingleStreamNativeBody() {
         isStatic: true,
         returnType: UtsType.stream(UtsType.primitive('double')),
         nativeBody: {
-          'swift_onListen': 'Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in\n    self.eventSink?(1.0)\n}',
+          'swift_onListen':
+              'Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in\n    self.eventSink?(1.0)\n}',
           'swift_onCancel': 'timer.invalidate()',
         },
       ),

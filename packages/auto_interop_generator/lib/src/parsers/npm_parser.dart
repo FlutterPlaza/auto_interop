@@ -166,8 +166,7 @@ class NpmParser extends ParserBase {
       line.startsWith('export enum ') ||
       line.startsWith('export default enum ');
 
-  bool _isPrivate(String name) =>
-      name.startsWith('_');
+  bool _isPrivate(String name) => name.startsWith('_');
 
   // --- Function parsing ---
 
@@ -268,8 +267,7 @@ class NpmParser extends ParserBase {
     if (colonMatch != null) {
       returnTypeStr = colonMatch.group(1)!;
     } else if (allowArrow) {
-      final arrowMatch =
-          RegExp(r'^=>\s*(.+?)\s*;?\s*$').firstMatch(afterParen);
+      final arrowMatch = RegExp(r'^=>\s*(.+?)\s*;?\s*$').firstMatch(afterParen);
       if (arrowMatch != null) {
         returnTypeStr = arrowMatch.group(1)!.replaceAll(';', '');
       }
@@ -421,7 +419,9 @@ class NpmParser extends ParserBase {
     return _ParsedClass(
       cls: UtsClass(
         name: name,
-        kind: methods.isEmpty ? UtsClassKind.dataClass : UtsClassKind.concreteClass,
+        kind: methods.isEmpty
+            ? UtsClassKind.dataClass
+            : UtsClassKind.concreteClass,
         fields: fields,
         methods: methods,
         documentation: documentation,
@@ -457,7 +457,8 @@ class NpmParser extends ParserBase {
     String? memberDoc;
     for (var i = startIndex + 1; i < blockEnd; i++) {
       final memberLine = lines[i].trim();
-      if (memberLine.isEmpty || memberLine == '};' || memberLine == '}') continue;
+      if (memberLine.isEmpty || memberLine == '};' || memberLine == '}')
+        continue;
 
       if (memberLine.startsWith('/**')) {
         final docResult = _parseJsDoc(lines, i);
@@ -467,8 +468,8 @@ class NpmParser extends ParserBase {
       }
 
       // Method signature using depth-tracking
-      final methodResult = _parseMethodMember(memberLine, memberDoc,
-          allowArrow: true);
+      final methodResult =
+          _parseMethodMember(memberLine, memberDoc, allowArrow: true);
       if (methodResult != null) {
         methods.add(methodResult);
         memberDoc = null;
@@ -518,7 +519,9 @@ class NpmParser extends ParserBase {
     return _ParsedClass(
       cls: UtsClass(
         name: name,
-        kind: methods.isEmpty ? UtsClassKind.dataClass : UtsClassKind.concreteClass,
+        kind: methods.isEmpty
+            ? UtsClassKind.dataClass
+            : UtsClassKind.concreteClass,
         fields: fields,
         methods: methods,
         documentation: documentation,
@@ -588,8 +591,7 @@ class NpmParser extends ParserBase {
       if (p.startsWith('...')) {
         _warnings.add(ParseWarning(
           'Rest parameter "$p" skipped — not supported.',
-          suggestion:
-              'Consider using a fixed-arity overload or providing '
+          suggestion: 'Consider using a fixed-arity overload or providing '
               'a manual type definition.',
         ));
         continue;
@@ -622,7 +624,8 @@ class NpmParser extends ParserBase {
         ).firstMatch(typeStr);
 
         if (callbackMatch != null) {
-          final callbackParams = _parseCallbackParamTypes(callbackMatch.group(1)!);
+          final callbackParams =
+              _parseCallbackParamTypes(callbackMatch.group(1)!);
           final callbackReturn = _mapTsType(callbackMatch.group(2)!);
           params.add(UtsParameter(
             name: name,
@@ -758,10 +761,7 @@ class NpmParser extends ParserBase {
 
       if (line.startsWith('/**') && line.endsWith('*/')) {
         // Single-line doc: /** text */
-        final text = line
-            .replaceFirst('/**', '')
-            .replaceFirst('*/', '')
-            .trim();
+        final text = line.replaceFirst('/**', '').replaceFirst('*/', '').trim();
         if (text.isNotEmpty) buffer.write(text);
         return _DocResult(
           doc: buffer.isEmpty ? null : buffer.toString(),
@@ -793,7 +793,8 @@ class NpmParser extends ParserBase {
       i++;
     }
 
-    return _DocResult(doc: buffer.isEmpty ? null : buffer.toString(), endIndex: i);
+    return _DocResult(
+        doc: buffer.isEmpty ? null : buffer.toString(), endIndex: i);
   }
 
   /// Looks backward from a line to find a JSDoc comment immediately preceding it.

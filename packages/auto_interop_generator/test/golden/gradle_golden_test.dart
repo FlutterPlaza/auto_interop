@@ -38,8 +38,7 @@ void main() {
           version: '4.12.0',
         );
         final files = dartGen.generate(schema);
-        final dartCode =
-            files['com_squareup_okhttp3_okhttp.dart']!;
+        final dartCode = files['com_squareup_okhttp3_okhttp.dart']!;
         final golden =
             _golden('okhttp/com_squareup_okhttp3_okhttp.dart.golden');
         expect(dartCode, golden);
@@ -52,8 +51,7 @@ void main() {
           version: '4.12.0',
         );
         final files = kotlinGen.generate(schema);
-        final kotlinCode =
-            files['ComSquareupOkhttp3OkhttpPlugin.kt']!;
+        final kotlinCode = files['ComSquareupOkhttp3OkhttpPlugin.kt']!;
         final golden =
             _golden('okhttp/ComSquareupOkhttp3OkhttpPlugin.kt.golden');
         expect(kotlinCode, golden);
@@ -91,8 +89,7 @@ void main() {
           version: '4.12.0',
         );
 
-        final request =
-            schema.types.firstWhere((t) => t.name == 'Request');
+        final request = schema.types.firstWhere((t) => t.name == 'Request');
         final body = request.fields.firstWhere((f) => f.name == 'body');
         expect(body.nullable, true);
       });
@@ -104,10 +101,8 @@ void main() {
           version: '4.12.0',
         );
 
-        final call =
-            schema.classes.firstWhere((c) => c.name == 'Call');
-        final execute =
-            call.methods.firstWhere((m) => m.name == 'execute');
+        final call = schema.classes.firstWhere((c) => c.name == 'Call');
+        final execute = call.methods.firstWhere((m) => m.name == 'execute');
         expect(execute.isAsync, true);
       });
     });
@@ -120,10 +115,8 @@ void main() {
           version: '2.10.1',
         );
         final files = dartGen.generate(schema);
-        final dartCode =
-            files['com_google_code_gson_gson.dart']!;
-        final golden =
-            _golden('gson/com_google_code_gson_gson.dart.golden');
+        final dartCode = files['com_google_code_gson_gson.dart']!;
+        final golden = _golden('gson/com_google_code_gson_gson.dart.golden');
         expect(dartCode, golden);
       });
 
@@ -134,10 +127,8 @@ void main() {
           version: '2.10.1',
         );
         final files = kotlinGen.generate(schema);
-        final kotlinCode =
-            files['ComGoogleCodeGsonGsonPlugin.kt']!;
-        final golden =
-            _golden('gson/ComGoogleCodeGsonGsonPlugin.kt.golden');
+        final kotlinCode = files['ComGoogleCodeGsonGsonPlugin.kt']!;
+        final golden = _golden('gson/ComGoogleCodeGsonGsonPlugin.kt.golden');
         expect(kotlinCode, golden);
       });
 
@@ -173,8 +164,7 @@ void main() {
         final code = files['com_google_code_gson_gson.dart']!;
         expect(code,
             contains('Main class for JSON serialization and deserialization.'));
-        expect(code,
-            contains('Deserializes a JSON string into an object.'));
+        expect(code, contains('Deserializes a JSON string into an object.'));
       });
     });
 

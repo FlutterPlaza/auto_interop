@@ -22,8 +22,7 @@ void main() {
   group('NativeSourceLocator', () {
     group('explicit sourcePath', () {
       test('locates files from explicit path', () {
-        final sourceDir = Directory('${tempDir.path}/sources')
-          ..createSync();
+        final sourceDir = Directory('${tempDir.path}/sources')..createSync();
         File('${sourceDir.path}/Example.swift')
             .writeAsStringSync('class Example {}');
         File('${sourceDir.path}/Helper.swift')
@@ -125,8 +124,8 @@ void main() {
           Directory.current = tempDir;
           final moduleDir = Directory('node_modules/date-fns')
             ..createSync(recursive: true);
-          File('${moduleDir.path}/package.json').writeAsStringSync(
-              '{"types": "index.d.ts"}');
+          File('${moduleDir.path}/package.json')
+              .writeAsStringSync('{"types": "index.d.ts"}');
           File('${moduleDir.path}/index.d.ts')
               .writeAsStringSync('export function format(): string;');
 
@@ -178,8 +177,7 @@ void main() {
       });
 
       test('works with explicit sourcePath', () {
-        final sourceDir = Directory('${tempDir.path}/gradle-src')
-          ..createSync();
+        final sourceDir = Directory('${tempDir.path}/gradle-src')..createSync();
         File('${sourceDir.path}/OkHttpClient.kt')
             .writeAsStringSync('class OkHttpClient {}');
 

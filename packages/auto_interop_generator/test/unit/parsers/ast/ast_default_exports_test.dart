@@ -115,8 +115,7 @@ void main() {
 
       // Default exported interface Config → dataClass
       expect(result.schema.types.length, 2);
-      final config =
-          result.schema.types.firstWhere((t) => t.name == 'Config');
+      final config = result.schema.types.firstWhere((t) => t.name == 'Config');
       expect(config.kind, UtsClassKind.dataClass);
       expect(config.fields.length, 3);
 
@@ -144,8 +143,7 @@ ToolchainDetector _mockDetector({required bool hasNode}) {
   return ToolchainDetector(
     processRunner: (exec, args, {workingDirectory}) async {
       if (exec == 'node' && args.contains('--version')) {
-        return _mockResult(hasNode ? 0 : 127,
-            stdout: hasNode ? 'v20.0.0' : '');
+        return _mockResult(hasNode ? 0 : 127, stdout: hasNode ? 'v20.0.0' : '');
       }
       return _mockResult(127);
     },

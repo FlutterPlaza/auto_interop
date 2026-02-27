@@ -22,8 +22,7 @@ class AutoInteropLifecycle {
   bool _initialized = false;
 
   AutoInteropLifecycle._()
-      : _lifecycleChannel =
-            const MethodChannel('auto_interop/lifecycle');
+      : _lifecycleChannel = const MethodChannel('auto_interop/lifecycle');
 
   /// Creates a lifecycle manager with a custom channel (for testing).
   AutoInteropLifecycle.withChannel(this._lifecycleChannel);

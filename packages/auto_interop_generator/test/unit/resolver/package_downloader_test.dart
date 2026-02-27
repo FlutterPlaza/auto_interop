@@ -375,8 +375,7 @@ void main() {
     group('gradle', () {
       test('downloads and extracts sources JAR', () async {
         final commands = <List<String>>[];
-        final targetPath =
-            '$buildDir/gradle/com.squareup.okhttp3:okhttp';
+        final targetPath = '$buildDir/gradle/com.squareup.okhttp3:okhttp';
 
         Future<ProcessResult> mockRunner(
           String executable,
@@ -417,10 +416,8 @@ void main() {
 
         // Verify curl was called with Maven Central URL
         final curlCmd = commands.firstWhere((c) => c[0] == 'curl');
-        expect(
-            curlCmd.any((a) => a.contains('repo1.maven.org')), isTrue);
-        expect(
-            curlCmd.any((a) => a.contains('okhttp-4.12.0-sources.jar')),
+        expect(curlCmd.any((a) => a.contains('repo1.maven.org')), isTrue);
+        expect(curlCmd.any((a) => a.contains('okhttp-4.12.0-sources.jar')),
             isTrue);
 
         // Verify unzip was called
@@ -431,8 +428,7 @@ void main() {
 
       test('tries multiple maven repositories on failure', () async {
         final commands = <List<String>>[];
-        final targetPath =
-            '$buildDir/gradle/com.google.firebase:firebase-core';
+        final targetPath = '$buildDir/gradle/com.google.firebase:firebase-core';
         var curlCallCount = 0;
 
         Future<ProcessResult> mockRunner(

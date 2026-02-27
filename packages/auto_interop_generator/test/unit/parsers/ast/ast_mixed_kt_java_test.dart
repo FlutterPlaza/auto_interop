@@ -54,7 +54,9 @@ void main() {
         processRunner: (exec, args, {workingDirectory}) async {
           // The AST subprocess should only receive .kt files
           if (exec == 'kotlinc') {
-            final fileArgs = args.where((a) => a.endsWith('.kt') || a.endsWith('.java')).toList();
+            final fileArgs = args
+                .where((a) => a.endsWith('.kt') || a.endsWith('.java'))
+                .toList();
             expect(fileArgs.every((f) => f.endsWith('.kt')), isTrue,
                 reason: 'Java files should not be sent to kotlinc');
             expect(fileArgs, isNot(contains(endsWith('.java'))));
@@ -86,16 +88,14 @@ public class JavaHelper {
       expect(result.schema.package, 'com.example:mixed');
 
       // KotlinClient from AST
-      final ktClient = result.schema.classes
-          .where((c) => c.name == 'KotlinClient')
-          .toList();
+      final ktClient =
+          result.schema.classes.where((c) => c.name == 'KotlinClient').toList();
       expect(ktClient, hasLength(1));
       expect(ktClient.first.methods.length, 2);
 
       // JavaHelper from regex fallback
-      final javaHelper = result.schema.classes
-          .where((c) => c.name == 'JavaHelper')
-          .toList();
+      final javaHelper =
+          result.schema.classes.where((c) => c.name == 'JavaHelper').toList();
       expect(javaHelper, hasLength(1));
       expect(javaHelper.first.methods.length, greaterThanOrEqualTo(1));
     });

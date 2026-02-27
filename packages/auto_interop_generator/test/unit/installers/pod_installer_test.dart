@@ -44,12 +44,9 @@ end
         expect(result, contains("pod 'Alamofire', '~> 5.9'"));
         // Pod should be in the App target area
         final lines = result.split('\n');
-        final alamofireIdx =
-            lines.indexWhere((l) => l.contains('Alamofire'));
-        final appIdx =
-            lines.indexWhere((l) => l.contains("target 'App'"));
-        final testsIdx =
-            lines.indexWhere((l) => l.contains("target 'Tests'"));
+        final alamofireIdx = lines.indexWhere((l) => l.contains('Alamofire'));
+        final appIdx = lines.indexWhere((l) => l.contains("target 'App'"));
+        final testsIdx = lines.indexWhere((l) => l.contains("target 'Tests'"));
         expect(alamofireIdx, greaterThan(appIdx));
         expect(alamofireIdx, lessThan(testsIdx));
       });
@@ -80,8 +77,7 @@ end
           podName: 'Alamofire',
           version: '~> 5.9',
         );
-        final count =
-            RegExp("pod 'Alamofire'").allMatches(result).length;
+        final count = RegExp("pod 'Alamofire'").allMatches(result).length;
         expect(count, 1);
       });
 

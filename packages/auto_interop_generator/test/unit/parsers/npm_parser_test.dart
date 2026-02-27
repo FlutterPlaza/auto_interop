@@ -125,8 +125,8 @@ void main() {
       });
 
       test('parses method documentation', () {
-        expect(schema.classes[0].methods[0].documentation,
-            'Sends a GET request.');
+        expect(
+            schema.classes[0].methods[0].documentation, 'Sends a GET request.');
       });
 
       test('parses interface as type', () {
@@ -160,8 +160,8 @@ void main() {
       });
 
       test('parses FormatOptions with optional fields', () {
-        final options = schema.types.firstWhere(
-            (t) => t.name == 'FormatOptions');
+        final options =
+            schema.types.firstWhere((t) => t.name == 'FormatOptions');
         expect(options.fields.length, greaterThanOrEqualTo(2));
 
         final locale = options.fields.firstWhere((f) => f.name == 'locale');
@@ -170,8 +170,7 @@ void main() {
       });
 
       test('parses DateRange with required fields', () {
-        final range = schema.types.firstWhere(
-            (t) => t.name == 'DateRange');
+        final range = schema.types.firstWhere((t) => t.name == 'DateRange');
         final start = range.fields.firstWhere((f) => f.name == 'start');
         expect(start.nullable, false);
         expect(start.type.toDartType(), 'DateTime');
@@ -199,16 +198,14 @@ void main() {
       });
 
       test('parses string enum', () {
-        final direction = schema.enums.firstWhere(
-            (e) => e.name == 'Direction');
+        final direction = schema.enums.firstWhere((e) => e.name == 'Direction');
         expect(direction.values, hasLength(4));
         expect(direction.values[0].rawValue, 'UP');
         expect(direction.values[1].rawValue, 'DOWN');
       });
 
       test('parses numeric enum', () {
-        final status = schema.enums.firstWhere(
-            (e) => e.name == 'HttpStatus');
+        final status = schema.enums.firstWhere((e) => e.name == 'HttpStatus');
         expect(status.values, hasLength(3));
 
         final ok = status.values.firstWhere((v) => v.name == 'ok');
@@ -216,8 +213,7 @@ void main() {
       });
 
       test('converts enum value names to camelCase', () {
-        final direction = schema.enums.firstWhere(
-            (e) => e.name == 'Direction');
+        final direction = schema.enums.firstWhere((e) => e.name == 'Direction');
         // "Up" → "up", "Down" → "down"
         expect(direction.values[0].name, 'up');
         expect(direction.values[1].name, 'down');
@@ -236,8 +232,7 @@ void main() {
       });
 
       test('parses optional string parameter', () {
-        final greet = schema.functions.firstWhere(
-            (f) => f.name == 'greet');
+        final greet = schema.functions.firstWhere((f) => f.name == 'greet');
         expect(greet.parameters, hasLength(2));
         expect(greet.parameters[0].isOptional, false);
         expect(greet.parameters[1].isOptional, true);
@@ -245,8 +240,7 @@ void main() {
       });
 
       test('parses function with optional object parameter', () {
-        final fetch = schema.functions.firstWhere(
-            (f) => f.name == 'fetch');
+        final fetch = schema.functions.firstWhere((f) => f.name == 'fetch');
         expect(fetch.parameters, hasLength(2));
         expect(fetch.parameters[1].isOptional, true);
       });
@@ -264,22 +258,22 @@ void main() {
       });
 
       test('parses Promise<string> as Future<String>', () {
-        final fetchData = schema.functions.firstWhere(
-            (f) => f.name == 'fetchData');
+        final fetchData =
+            schema.functions.firstWhere((f) => f.name == 'fetchData');
         expect(fetchData.returnType.kind, UtsTypeKind.future);
         expect(fetchData.returnType.toDartType(), 'Future<String>');
         expect(fetchData.isAsync, true);
       });
 
       test('parses Promise<Buffer> as Future<Uint8List>', () {
-        final download = schema.functions.firstWhere(
-            (f) => f.name == 'downloadFile');
+        final download =
+            schema.functions.firstWhere((f) => f.name == 'downloadFile');
         expect(download.returnType.toDartType(), 'Future<Uint8List>');
       });
 
       test('parses ReadableStream<string> as Stream<String>', () {
-        final watch = schema.functions.firstWhere(
-            (f) => f.name == 'watchChanges');
+        final watch =
+            schema.functions.firstWhere((f) => f.name == 'watchChanges');
         expect(watch.returnType.kind, UtsTypeKind.stream);
         expect(watch.returnType.toDartType(), 'Stream<String>');
       });
@@ -297,8 +291,8 @@ void main() {
       });
 
       test('parses function with callback parameter', () {
-        final addEventListener = schema.functions.firstWhere(
-            (f) => f.name == 'addEventListener');
+        final addEventListener =
+            schema.functions.firstWhere((f) => f.name == 'addEventListener');
         expect(addEventListener.parameters, hasLength(2));
 
         final handler = addEventListener.parameters[1];
@@ -306,8 +300,8 @@ void main() {
       });
 
       test('parses timer callback (no params)', () {
-        final timer = schema.functions.firstWhere(
-            (f) => f.name == 'createTimer');
+        final timer =
+            schema.functions.firstWhere((f) => f.name == 'createTimer');
         expect(timer.parameters[1].type.kind, UtsTypeKind.callback);
       });
     });
@@ -385,22 +379,21 @@ void main() {
       });
 
       test('parses union type picking first non-null type', () {
-        final parseInput = schema.functions
-            .firstWhere((f) => f.name == 'parseInput');
+        final parseInput =
+            schema.functions.firstWhere((f) => f.name == 'parseInput');
         // string | number → picks string
         expect(parseInput.parameters[0].type.toDartType(), 'String');
       });
 
       test('parses nullable union type', () {
-        final findItem = schema.functions
-            .firstWhere((f) => f.name == 'findItem');
+        final findItem =
+            schema.functions.firstWhere((f) => f.name == 'findItem');
         // string | null → String?
         expect(findItem.returnType.toDartType(), 'String?');
       });
 
       test('parses multi-type nullable union', () {
-        final convert = schema.functions
-            .firstWhere((f) => f.name == 'convert');
+        final convert = schema.functions.firstWhere((f) => f.name == 'convert');
         // Buffer | string | null → picks Buffer → Uint8List?
         expect(convert.parameters[0].type.toDartType(), 'Uint8List?');
       });
@@ -424,16 +417,15 @@ void main() {
       });
 
       test('parses on method with callback', () {
-        final on = schema.classes[0].methods
-            .firstWhere((m) => m.name == 'on');
+        final on = schema.classes[0].methods.firstWhere((m) => m.name == 'on');
         expect(on.parameters, hasLength(2));
         expect(on.parameters[0].name, 'event');
         expect(on.parameters[1].name, 'handler');
       });
 
       test('parses map method with callback', () {
-        final map = schema.classes[0].methods
-            .firstWhere((m) => m.name == 'map');
+        final map =
+            schema.classes[0].methods.firstWhere((m) => m.name == 'map');
         expect(map.parameters, hasLength(1));
         expect(map.parameters[0].name, 'fn');
       });
@@ -451,8 +443,7 @@ void main() {
         expect(result.schema.functions, hasLength(2));
 
         // log has ...args, so its params should only contain message
-        final log = result.schema.functions
-            .firstWhere((f) => f.name == 'log');
+        final log = result.schema.functions.firstWhere((f) => f.name == 'log');
         expect(log.parameters, hasLength(1));
         expect(log.parameters[0].name, 'message');
 
