@@ -154,7 +154,7 @@ class _TestAstParser extends AstParserBase {
     this.processDelay,
     this.prepareError,
     Duration timeout = const Duration(seconds: 30),
-  })  : super(
+  }) : super(
           fallbackParser: NpmParser(),
           toolchainDetector: ToolchainDetector(
             processRunner: (exec, args, {workingDirectory}) async {
