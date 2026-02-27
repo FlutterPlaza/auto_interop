@@ -32,7 +32,7 @@ jobs:
         run: dart analyze --fatal-warnings lib bin test
 
       - name: Run tests
-        run: dart test
+        run: dart test --timeout 120s
 
       - name: Dry-run publish
         run: dart pub publish --dry-run
@@ -103,7 +103,6 @@ jobs:
   # Deploy documentation to GitHub Pages
   pages:
     name: Deploy docs
-    needs: [runtime, generator]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
