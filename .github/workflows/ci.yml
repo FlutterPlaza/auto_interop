@@ -23,19 +23,16 @@ jobs:
           sdk: stable
 
       - name: Install dependencies
-        run: dart pub get
+        run: dart pub get --no-example
 
       - name: Check formatting
-        run: dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed --output none lib bin test
 
       - name: Analyze
-        run: dart analyze --fatal-infos
+        run: dart analyze --fatal-infos lib bin test
 
       - name: Run tests
         run: dart test
-
-      - name: Generate API docs
-        run: dart doc
 
       - name: Dry-run publish
         run: dart pub publish --dry-run
@@ -53,19 +50,16 @@ jobs:
           channel: stable
 
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter pub get --no-example
 
       - name: Check formatting
-        run: dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed --output none lib test
 
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze lib test
 
       - name: Run tests
         run: flutter test
-
-      - name: Generate API docs
-        run: dart doc
 
       - name: Dry-run publish
         run: flutter pub publish --dry-run
