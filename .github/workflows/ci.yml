@@ -95,10 +95,10 @@ jobs:
         working-directory: packages/auto_interop_generator
     steps:
       - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
         with:
-          sdk: stable
-      - run: dart pub publish --force
+          channel: stable
+      - run: flutter pub publish --force
 
   # Deploy documentation to GitHub Pages
   pages:

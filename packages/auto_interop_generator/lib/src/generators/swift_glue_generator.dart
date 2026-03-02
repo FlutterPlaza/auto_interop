@@ -254,11 +254,14 @@ class SwiftGlueGenerator extends GeneratorBase {
       for (final cls in schema.classes) {
         // Constructor factory for concrete classes with instance methods
         final hasInstanceMethods = cls.methods.any((m) => !m.isStatic);
-        if (hasInstanceMethods && cls.kind != UtsClassKind.abstractClass) {
+        if (hasInstanceMethods &&
+            cls.kind != UtsClassKind.abstractClass &&
+            cls.constructorParameters != null) {
           _writeCreateCase(buffer, cls, indent: '        ');
         }
 
-        for (final method in cls.methods) {
+        final dedupedMethods = _deduplicateMethods(cls.methods);
+        for (final method in dedupedMethods) {
           _writeMethodCase(buffer, schema, method,
               indent: '        ',
               prefix: '${cls.name}.',
@@ -639,9 +642,10 @@ class SwiftGlueGenerator extends GeneratorBase {
   void _writeCreateCase(StringBuffer buffer, UtsClass cls,
       {String indent = ''}) {
     buffer.writeln('${indent}case "${cls.name}._create":');
-    if (cls.constructorParameters.isNotEmpty) {
+    if (cls.constructorParameters != null &&
+        cls.constructorParameters!.isNotEmpty) {
       // Named-parameter construction
-      for (final param in cls.constructorParameters) {
+      for (final param in cls.constructorParameters!) {
         final swiftType = _toSwiftType(param.type);
         if (param.isOptional || param.type.nullable) {
           buffer.writeln(
@@ -651,7 +655,7 @@ class SwiftGlueGenerator extends GeneratorBase {
               '$indent    let ${param.name} = args["${param.name}"] as! $swiftType');
         }
       }
-      final argParts = cls.constructorParameters
+      final argParts = cls.constructorParameters!
           .map((p) => '${p.name}: ${p.name}')
           .join(', ');
       buffer.writeln('$indent    let instance = ${cls.name}($argParts)');
@@ -1120,6 +1124,24 @@ class SwiftGlueGenerator extends GeneratorBase {
         .where((s) => s.isNotEmpty)
         .map((s) => s[0].toUpperCase() + s.substring(1).toLowerCase())
         .join();
+  }
+
+  /// Removes duplicate methods by name, preferring instance over static.
+  static List<UtsMethod> _deduplicateMethods(List<UtsMethod> methods) {
+    final byName = <String, UtsMethod>{};
+    for (final m in methods) {
+      final existing = byName[m.name];
+      if (existing == null) {
+        byName[m.name] = m;
+      } else if (existing.isStatic && !m.isStatic) {
+        byName[m.name] = m;
+      }
+    }
+    final seen = <String>{};
+    return methods
+        .where((m) => seen.add(m.name))
+        .map((m) => byName[m.name]!)
+        .toList();
   }
 }
 

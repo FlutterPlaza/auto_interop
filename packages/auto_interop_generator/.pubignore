@@ -1,6 +1,5 @@
 # Test files (not needed by consumers)
 test/
-example/
 
 # AST helper build artifacts (525MB+)
 .build/

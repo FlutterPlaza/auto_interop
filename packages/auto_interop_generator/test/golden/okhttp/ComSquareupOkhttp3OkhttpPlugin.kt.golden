@@ -75,11 +75,6 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
-            "OkHttpClient._create" -> {
-                val instance = OkHttpClient()
-                val handle = createHandle(instance)
-                result.success(handle)
-            }
             "OkHttpClient.newCall" -> {
                 val request = call.argument<Map<String, Any?>>("request")!!
                 try {

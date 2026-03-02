@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Version bump to accompany `auto_interop_generator` 0.2.2 (no runtime changes).
+
 ## 0.2.1
 
 - Fix dartdoc crash by adding missing category markdown files (`doc/categories/`).

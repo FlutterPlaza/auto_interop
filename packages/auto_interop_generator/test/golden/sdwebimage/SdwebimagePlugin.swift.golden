@@ -42,10 +42,6 @@ public class SdwebimagePlugin: NSObject, FlutterPlugin {
         let args = (call.arguments as? [String: Any]) ?? [:]
 
         switch call.method {
-        case "SDWebImageManager._create":
-            let instance = SDWebImageManager()
-            let handle = createHandle(instance)
-            result(handle)
         case "SDWebImageManager.loadImage":
             let url = args["url"] as! String
             let handle = args["_handle"] as! String
@@ -88,10 +84,6 @@ public class SdwebimagePlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
-        case "SDImageCache._create":
-            let instance = SDImageCache()
-            let handle = createHandle(instance)
-            result(handle)
         case "SDImageCache.store":
             let data = args["data"] as! FlutterStandardTypedData
             let key = args["key"] as! String

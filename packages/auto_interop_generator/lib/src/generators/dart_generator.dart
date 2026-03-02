@@ -48,6 +48,19 @@ class DartGenerator extends GeneratorBase {
     return fields.where((f) => seen.add(f.name)).toList();
   }
 
+  /// Writes a multi-line doc comment, splitting on `\n`.
+  static void _writeDoc(StringBuffer buffer, String? doc, String indent) {
+    if (doc == null) return;
+    for (final line in doc.split('\n')) {
+      final trimmed = line.trimRight();
+      if (trimmed.isEmpty) {
+        buffer.writeln('$indent///');
+      } else {
+        buffer.writeln('$indent/// $trimmed');
+      }
+    }
+  }
+
   @override
   Map<String, String> generate(UnifiedTypeSchema schema,
       {Map<String, String> customTypes = const {}}) {
@@ -181,9 +194,7 @@ class DartGenerator extends GeneratorBase {
 
   void _generateClassInterface(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass classDef) {
-    if (classDef.documentation != null) {
-      buffer.writeln('/// ${classDef.documentation}');
-    }
+    _writeDoc(buffer, classDef.documentation, '');
 
     buffer.writeln('abstract interface class ${classDef.name}Interface {');
     final instanceMethods = _deduplicateMethods(classDef.methods)
@@ -202,9 +213,7 @@ class DartGenerator extends GeneratorBase {
     final channelName = _packageToChannelName(schema.package);
 
     // Documentation
-    if (classDef.documentation != null) {
-      buffer.writeln('/// ${classDef.documentation}');
-    }
+    _writeDoc(buffer, classDef.documentation, '');
 
     // Determine if this class has instance methods (making it a reference type)
     final hasInstanceMethods = classDef.methods.any((m) => !m.isStatic);
@@ -213,6 +222,8 @@ class DartGenerator extends GeneratorBase {
     final isReferenceType = hasInstanceMethods;
     final isConcreteReferenceType =
         isReferenceType && classDef.kind != UtsClassKind.abstractClass;
+    final isAbstractInterface =
+        classDef.kind == UtsClassKind.abstractClass && !hasInstanceMethods;
 
     // Class declaration
     if (classDef.kind == UtsClassKind.abstractClass) {
@@ -276,12 +287,12 @@ class DartGenerator extends GeneratorBase {
           '  static ${classDef.name} fromHandle(String handle) => ${classDef.name}._(handle);');
     }
 
-    // Factory constructor for concrete reference types
-    if (isConcreteReferenceType) {
+    // Factory constructor for concrete reference types (only when a public init was found)
+    if (isConcreteReferenceType && classDef.constructorParameters != null) {
       buffer.writeln();
-      if (classDef.constructorParameters.isNotEmpty) {
+      if (classDef.constructorParameters!.isNotEmpty) {
         // Builder-aware factory with named parameters
-        final params = classDef.constructorParameters.map((p) {
+        final params = classDef.constructorParameters!.map((p) {
           final dartType = p.type.toDartType();
           if (p.isOptional || p.type.nullable) {
             final suffix = dartType == 'dynamic' ? '' : '?';
@@ -293,7 +304,7 @@ class DartGenerator extends GeneratorBase {
             '  static Future<${classDef.name}> create({$params}) async {');
         buffer.writeln(
             "    final handle = await _channel.invoke<String>('${classDef.name}._create', {");
-        for (final p in classDef.constructorParameters) {
+        for (final p in classDef.constructorParameters!) {
           if (p.isOptional || p.type.nullable) {
             buffer.writeln(
                 "      if (${_esc(p.name)} != null) '${p.name}': ${_serializeExpr(schema, p.type, _esc(p.name), nullChecked: true)},");
@@ -313,11 +324,9 @@ class DartGenerator extends GeneratorBase {
     }
 
     // Fields (only for non-reference types; reference types access state via handle)
-    if (!isReferenceType) {
+    if (!isReferenceType && !isAbstractInterface) {
       for (final field in classDef.fields) {
-        if (field.documentation != null) {
-          buffer.writeln('  /// ${field.documentation}');
-        }
+        _writeDoc(buffer, field.documentation, '  ');
         final nullable = field.nullable ? '?' : '';
         buffer.writeln(
             '  final ${field.type.toDartType()}$nullable ${_esc(field.name)};');
@@ -347,6 +356,8 @@ class DartGenerator extends GeneratorBase {
       if (_objectReservedNames.contains(method.name)) continue;
       // Skip static methods whose name conflicts with an instance method
       if (method.isStatic && instanceNames.contains(method.name)) continue;
+      // Skip 'create' — already emitted as a factory constructor above
+      if (isConcreteReferenceType && method.name == 'create') continue;
       buffer.writeln();
       _generateMethod(buffer, schema, method,
           indent: '  ',
@@ -370,9 +381,7 @@ class DartGenerator extends GeneratorBase {
   void _generateInterfaceMethodSignature(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsMethod method,
       {String indent = ''}) {
-    if (method.documentation != null) {
-      buffer.writeln('$indent/// ${method.documentation}');
-    }
+    _writeDoc(buffer, method.documentation, indent);
 
     final params = _buildParameterList(method.parameters);
     final effectiveReturnType = _effectiveReturnType(method.returnType);
@@ -401,9 +410,7 @@ class DartGenerator extends GeneratorBase {
     final effectiveReturnType = _effectiveReturnType(method.returnType);
 
     // Documentation
-    if (method.documentation != null) {
-      buffer.writeln('$indent/// ${method.documentation}');
-    }
+    _writeDoc(buffer, method.documentation, indent);
 
     // Warn about synchronous callback parameters (non-void return type)
     for (final param in method.parameters) {
@@ -1035,9 +1042,7 @@ class DartGenerator extends GeneratorBase {
 
   void _generateDataClass(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass typeDef) {
-    if (typeDef.documentation != null) {
-      buffer.writeln('/// ${typeDef.documentation}');
-    }
+    _writeDoc(buffer, typeDef.documentation, '');
     // Check if this is a subclass of a sealed class
     final extendsClause =
         typeDef.superclass != null ? ' extends ${typeDef.superclass}' : '';
@@ -1060,9 +1065,7 @@ class DartGenerator extends GeneratorBase {
 
     // Fields
     for (final field in dedupedFields) {
-      if (field.documentation != null) {
-        buffer.writeln('  /// ${field.documentation}');
-      }
+      _writeDoc(buffer, field.documentation, '  ');
       final nullable = field.nullable ? '?' : '';
       buffer.writeln(
           '  final ${field.type.toDartType()}$nullable ${_esc(field.name)};');
@@ -1126,9 +1129,7 @@ class DartGenerator extends GeneratorBase {
   }
 
   void _generateEnum(StringBuffer buffer, UtsEnum enumDef) {
-    if (enumDef.documentation != null) {
-      buffer.writeln('/// ${enumDef.documentation}');
-    }
+    _writeDoc(buffer, enumDef.documentation, '');
     if (enumDef.values.isEmpty) {
       // Dart requires at least one enum constant. Emit a placeholder so the
       // type name is still valid when referenced elsewhere in the schema.
@@ -1140,9 +1141,7 @@ class DartGenerator extends GeneratorBase {
     buffer.writeln('enum ${enumDef.name} {');
     for (var i = 0; i < enumDef.values.length; i++) {
       final value = enumDef.values[i];
-      if (value.documentation != null) {
-        buffer.writeln('  /// ${value.documentation}');
-      }
+      _writeDoc(buffer, value.documentation, '  ');
       final comma = i < enumDef.values.length - 1 ? ',' : ';';
       buffer.writeln('  ${_esc(value.name)}$comma');
     }
@@ -1525,8 +1524,10 @@ class DartGenerator extends GeneratorBase {
           walkType(param.type);
         }
       }
-      for (final param in cls.constructorParameters) {
-        walkType(param.type);
+      if (cls.constructorParameters != null) {
+        for (final param in cls.constructorParameters!) {
+          walkType(param.type);
+        }
       }
     }
     for (final func in schema.functions) {

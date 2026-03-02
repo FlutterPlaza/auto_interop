@@ -28,11 +28,6 @@ class Gson implements GsonInterface {
 
   static Gson fromHandle(String handle) => Gson._(handle);
 
-  static Future<Gson> create() async {
-    final handle = await _channel.invoke<String>('Gson._create');
-    return Gson._(handle);
-  }
-
   /// Deserializes a JSON string into an object.
   @override
   Future<String> fromJson(String json) async {
@@ -80,11 +75,6 @@ class GsonBuilder implements GsonBuilderInterface {
 
   static GsonBuilder fromHandle(String handle) => GsonBuilder._(handle);
 
-  static Future<GsonBuilder> create() async {
-    final handle = await _channel.invoke<String>('GsonBuilder._create');
-    return GsonBuilder._(handle);
-  }
-
   /// Enables pretty printing.
   @override
   Future<GsonBuilder> setPrettyPrinting() async {
@@ -102,15 +92,6 @@ class GsonBuilder implements GsonBuilderInterface {
       'pattern': pattern,
     });
     return GsonBuilder.fromHandle(result);
-  }
-
-  /// Builds the Gson instance.
-  @override
-  Future<Gson> create() async {
-    final result = await _channel.invoke<String>('GsonBuilder.create', {
-      '_handle': _handle,
-    });
-    return Gson.fromHandle(result);
   }
 
   Future<void> dispose() async {

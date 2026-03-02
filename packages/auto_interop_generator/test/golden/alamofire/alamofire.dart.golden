@@ -104,11 +104,6 @@ class Session implements SessionInterface {
 
   static Session fromHandle(String handle) => Session._(handle);
 
-  static Future<Session> create() async {
-    final handle = await _channel.invoke<String>('Session._create');
-    return Session._(handle);
-  }
-
   /// Makes an HTTP request.
   @override
   Future<DataRequest> request(String url, String method, Map<String, String>? headers) async {
@@ -169,11 +164,6 @@ class DataRequest implements DataRequestInterface {
   DataRequest._(this._handle);
 
   static DataRequest fromHandle(String handle) => DataRequest._(handle);
-
-  static Future<DataRequest> create() async {
-    final handle = await _channel.invoke<String>('DataRequest._create');
-    return DataRequest._(handle);
-  }
 
   /// Adds a response handler.
   @override

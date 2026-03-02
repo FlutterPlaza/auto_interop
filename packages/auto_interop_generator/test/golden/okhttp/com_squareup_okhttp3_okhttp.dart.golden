@@ -88,11 +88,6 @@ class OkHttpClient implements OkHttpClientInterface {
 
   static OkHttpClient fromHandle(String handle) => OkHttpClient._(handle);
 
-  static Future<OkHttpClient> create() async {
-    final handle = await _channel.invoke<String>('OkHttpClient._create');
-    return OkHttpClient._(handle);
-  }
-
   /// Creates a new call for the given request.
   @override
   Future<Call> newCall(Request request) async {

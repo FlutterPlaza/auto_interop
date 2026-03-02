@@ -530,11 +530,12 @@ void main() {
       test('parses class constructor parameters', () {
         final cls = schema.classes[0];
         expect(cls.name, 'NetworkSession');
+        expect(cls.constructorParameters, isNotNull);
         expect(cls.constructorParameters, hasLength(2));
-        expect(cls.constructorParameters[0].name, 'baseURL');
-        expect(cls.constructorParameters[0].type.toDartType(), 'String');
-        expect(cls.constructorParameters[1].name, 'timeout');
-        expect(cls.constructorParameters[1].type.toDartType(), 'int');
+        expect(cls.constructorParameters![0].name, 'baseURL');
+        expect(cls.constructorParameters![0].type.toDartType(), 'String');
+        expect(cls.constructorParameters![1].name, 'timeout');
+        expect(cls.constructorParameters![1].type.toDartType(), 'int');
       });
 
       test('class still has methods and fields', () {
@@ -548,10 +549,11 @@ void main() {
       test('parses struct constructor parameters', () {
         final config = schema.types[0];
         expect(config.name, 'Config');
+        expect(config.constructorParameters, isNotNull);
         expect(config.constructorParameters, hasLength(2));
-        expect(config.constructorParameters[0].name, 'host');
-        expect(config.constructorParameters[1].name, 'port');
-        expect(config.constructorParameters[1].isOptional, true);
+        expect(config.constructorParameters![0].name, 'host');
+        expect(config.constructorParameters![1].name, 'port');
+        expect(config.constructorParameters![1].isOptional, true);
       });
     });
 

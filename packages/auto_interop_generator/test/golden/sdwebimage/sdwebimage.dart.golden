@@ -110,11 +110,6 @@ class SDWebImageManager implements SDWebImageManagerInterface {
 
   static SDWebImageManager fromHandle(String handle) => SDWebImageManager._(handle);
 
-  static Future<SDWebImageManager> create() async {
-    final handle = await _channel.invoke<String>('SDWebImageManager._create');
-    return SDWebImageManager._(handle);
-  }
-
   /// Loads an image from a URL.
   @override
   Future<Uint8List> loadImage(String url) async {
@@ -179,11 +174,6 @@ class SDImageCache implements SDImageCacheInterface {
   SDImageCache._(this._handle);
 
   static SDImageCache fromHandle(String handle) => SDImageCache._(handle);
-
-  static Future<SDImageCache> create() async {
-    final handle = await _channel.invoke<String>('SDImageCache._create');
-    return SDImageCache._(handle);
-  }
 
   /// Stores an image in the cache.
   @override

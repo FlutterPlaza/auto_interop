@@ -1,3 +1,15 @@
+## 0.2.2
+
+### Bug Fixes
+
+- **Multi-line doc comments**: Preserve line breaks in `///` and `/** */` documentation instead of collapsing to a single line.
+- **Duplicate `create` method**: Skip emitting a `create` method in the methods loop when one is already generated as a factory constructor.
+- **Abstract interface classes**: No longer emit fields, constructors, `fromMap`, or `toMap` for abstract interface classes (protocols without instance methods).
+- **Nested types**: Parse nested enums, structs, and classes inside Swift structs and classes (e.g., `SHA2.Variant` becomes `SHA2Variant`).
+- **Dotted type resolution**: Resolve dotted type references (`Outer.Inner` to `OuterInner`) throughout the schema, including enum type promotion.
+- **Nullable `constructorParameters`**: Distinguish "no public init found" (`null`) from "parameterless init" (`[]`). Classes without public initializers no longer emit broken `create()` factories.
+- **Glue method deduplication**: Deduplicate methods in Swift and Kotlin glue generators to prevent duplicate `case`/`when` labels for overloaded methods.
+
 ## 0.2.1
 
 - Version bump to accompany `auto_interop` 0.2.1 (no generator changes).

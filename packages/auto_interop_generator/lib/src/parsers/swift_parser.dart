@@ -117,6 +117,8 @@ class SwiftParser extends ParserBase {
         final result = _parseStruct(lines, i, doc);
         if (result != null) {
           types.add(result.cls);
+          enums.addAll(result.nestedEnums);
+          types.addAll(result.nestedClasses);
           i = result.endIndex;
           continue;
         }
@@ -127,6 +129,8 @@ class SwiftParser extends ParserBase {
         final result = _parseClass(lines, i, doc);
         if (result != null) {
           classes.add(result.cls);
+          enums.addAll(result.nestedEnums);
+          types.addAll(result.nestedClasses);
           i = result.endIndex;
           continue;
         }
@@ -178,7 +182,7 @@ class SwiftParser extends ParserBase {
       }
     }
 
-    return UnifiedTypeSchema(
+    final schema = UnifiedTypeSchema(
       package: packageName,
       source: PackageSource.cocoapods,
       version: version,
@@ -187,6 +191,9 @@ class SwiftParser extends ParserBase {
       types: types,
       enums: enums,
     );
+
+    // Resolve dotted type references (e.g., SHA2.Variant → SHA2Variant)
+    return _resolveNestedTypeRefs(schema);
   }
 
   // ========== Matchers ==========
@@ -205,7 +212,8 @@ class SwiftParser extends ParserBase {
     if (line.contains('struct ') ||
         line.contains('protocol ') ||
         line.contains('enum ') ||
-        line.contains('extension ')) {
+        line.contains('extension ') ||
+        line.contains('func ')) {
       return false;
     }
     return RegExp(r'(?:public\s+|open\s+)?(?:final\s+)?class\s+\w+')
@@ -261,10 +269,18 @@ class SwiftParser extends ParserBase {
     final methods = <UtsMethod>[];
     final fields = <UtsField>[];
     final constructorParams = <UtsParameter>[];
+    final nestedEnums = <UtsEnum>[];
+    final nestedClasses = <UtsClass>[];
+    var foundInit = false;
 
     for (var j = 0; j < bodyLines.length; j++) {
       final rawBodyLine = bodyLines[j].trim();
-      if (rawBodyLine.isEmpty) continue;
+      if (rawBodyLine.isEmpty ||
+          rawBodyLine.startsWith('///') ||
+          rawBodyLine.startsWith('/**') ||
+          rawBodyLine.startsWith('*')) {
+        continue;
+      }
 
       final bodyLine = _stripAttributes(rawBodyLine);
 
@@ -277,7 +293,53 @@ class SwiftParser extends ParserBase {
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
+      // Nested enum
+      if (_matchesEnum(bodyLine)) {
+        final result = _parseEnum(bodyLines, j, memberDoc);
+        if (result != null) {
+          if (result.isSealedClass) {
+            nestedClasses.add(_prefixClass(name, result.sealedClass!));
+            for (final sub in result.subclasses) {
+              nestedClasses.add(_prefixClass(name, sub));
+            }
+          } else {
+            nestedEnums.add(_prefixEnum(name, result.enumDef!));
+          }
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
+      // Nested struct
+      if (_matchesStruct(bodyLine)) {
+        final result = _parseStruct(bodyLines, j, memberDoc);
+        if (result != null) {
+          nestedClasses.add(_prefixClass(name, result.cls));
+          nestedEnums
+              .addAll(result.nestedEnums.map((e) => _prefixEnum(name, e)));
+          nestedClasses
+              .addAll(result.nestedClasses.map((c) => _prefixClass(name, c)));
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
+      // Nested class
+      if (_matchesClass(bodyLine)) {
+        final result = _parseClass(bodyLines, j, memberDoc);
+        if (result != null) {
+          nestedClasses.add(_prefixClass(name, result.cls));
+          nestedEnums
+              .addAll(result.nestedEnums.map((e) => _prefixEnum(name, e)));
+          nestedClasses
+              .addAll(result.nestedClasses.map((c) => _prefixClass(name, c)));
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
       if (_matchesInit(bodyLine)) {
+        foundInit = true;
         final sig = _collectFunctionSignature(bodyLines, j);
         final params = _parseInit(sig.text);
         constructorParams.addAll(params);
@@ -306,10 +368,12 @@ class SwiftParser extends ParserBase {
         kind: UtsClassKind.concreteClass,
         methods: methods,
         fields: fields,
-        constructorParameters: constructorParams,
+        constructorParameters: foundInit ? constructorParams : null,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
+      nestedEnums: nestedEnums,
+      nestedClasses: nestedClasses,
     );
   }
 
@@ -325,21 +389,62 @@ class SwiftParser extends ParserBase {
     final fields = <UtsField>[];
     final methods = <UtsMethod>[];
     final constructorParams = <UtsParameter>[];
+    final nestedEnums = <UtsEnum>[];
+    final nestedClasses = <UtsClass>[];
+    var foundInit = false;
 
     for (var j = 0; j < bodyLines.length; j++) {
       final rawBodyLine = bodyLines[j].trim();
-      if (rawBodyLine.isEmpty) continue;
+      if (rawBodyLine.isEmpty ||
+          rawBodyLine.startsWith('///') ||
+          rawBodyLine.startsWith('/**') ||
+          rawBodyLine.startsWith('*')) {
+        continue;
+      }
 
       final bodyLine = _stripAttributes(rawBodyLine);
 
       if (bodyLine.startsWith('private ') ||
           bodyLine.startsWith('fileprivate ')) {
+        j = _skipBlockInBody(bodyLines, j);
         continue;
       }
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
 
+      // Nested enum
+      if (_matchesEnum(bodyLine)) {
+        final result = _parseEnum(bodyLines, j, memberDoc);
+        if (result != null) {
+          if (result.isSealedClass) {
+            nestedClasses.add(_prefixClass(name, result.sealedClass!));
+            for (final sub in result.subclasses) {
+              nestedClasses.add(_prefixClass(name, sub));
+            }
+          } else {
+            nestedEnums.add(_prefixEnum(name, result.enumDef!));
+          }
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
+      // Nested struct
+      if (_matchesStruct(bodyLine)) {
+        final result = _parseStruct(bodyLines, j, memberDoc);
+        if (result != null) {
+          nestedClasses.add(_prefixClass(name, result.cls));
+          nestedEnums
+              .addAll(result.nestedEnums.map((e) => _prefixEnum(name, e)));
+          nestedClasses
+              .addAll(result.nestedClasses.map((c) => _prefixClass(name, c)));
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
       if (_matchesInit(bodyLine)) {
+        foundInit = true;
         final sig = _collectFunctionSignature(bodyLines, j);
         final params = _parseInit(sig.text);
         constructorParams.addAll(params);
@@ -368,10 +473,12 @@ class SwiftParser extends ParserBase {
         kind: UtsClassKind.dataClass,
         fields: fields,
         methods: methods,
-        constructorParameters: constructorParams,
+        constructorParameters: foundInit ? constructorParams : null,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
+      nestedEnums: nestedEnums,
+      nestedClasses: nestedClasses,
     );
   }
 
@@ -1104,7 +1211,7 @@ class SwiftParser extends ParserBase {
       }
     }
     if (tripleSlashLines.isNotEmpty) {
-      return tripleSlashLines.join(' ').trim();
+      return tripleSlashLines.join('\n').trim();
     }
 
     // Look for /** ... */ block
@@ -1153,7 +1260,7 @@ class SwiftParser extends ParserBase {
       i--;
     }
 
-    return docLines.isEmpty ? null : docLines.join(' ').trim();
+    return docLines.isEmpty ? null : docLines.join('\n').trim();
   }
 
   _DocResult _collectDocBlock(List<String> lines, int index) {
@@ -1167,6 +1274,150 @@ class SwiftParser extends ParserBase {
     }
     return _DocResult(null, index);
   }
+
+  // ========== Nested Type Helpers ==========
+
+  /// Prefixes an enum name with its parent type name (e.g., SHA2 + Variant → SHA2Variant).
+  UtsEnum _prefixEnum(String parent, UtsEnum e) {
+    return UtsEnum(
+      name: '$parent${e.name}',
+      values: e.values,
+      documentation: e.documentation,
+    );
+  }
+
+  /// Prefixes a class name with its parent type name (e.g., SHA2 + Variant → SHA2Variant).
+  UtsClass _prefixClass(String parent, UtsClass c) {
+    return UtsClass(
+      name: '$parent${c.name}',
+      kind: c.kind,
+      fields: c.fields,
+      methods: c.methods,
+      superclass: c.superclass != null ? '$parent${c.superclass}' : null,
+      interfaces: c.interfaces,
+      sealedSubclasses: c.sealedSubclasses.map((s) => '$parent$s').toList(),
+      documentation: c.documentation,
+      constructorParameters: c.constructorParameters,
+    );
+  }
+
+  // ========== Dotted Type Resolution ==========
+
+  /// Resolves dotted type references (e.g., `SHA2.Variant` → `SHA2Variant`)
+  /// throughout the schema, updating type kinds when the target is found.
+  UnifiedTypeSchema _resolveNestedTypeRefs(UnifiedTypeSchema schema) {
+    final enumNames = schema.enums.map((e) => e.name).toSet();
+    final classNames = schema.classes.map((c) => c.name).toSet();
+    final typeNames = schema.types.map((t) => t.name).toSet();
+
+    UtsType resolveType(UtsType type) {
+      if (type.kind == UtsTypeKind.object && type.name.contains('.')) {
+        final joined = type.name.split('.').join();
+        if (enumNames.contains(joined)) {
+          return UtsType.enumType(joined, nullable: type.nullable);
+        }
+        if (classNames.contains(joined) || typeNames.contains(joined)) {
+          return UtsType(
+            kind: type.kind,
+            name: joined,
+            nullable: type.nullable,
+            typeArguments: type.typeArguments,
+          );
+        }
+      }
+      // Recurse into type arguments
+      if (type.typeArguments != null && type.typeArguments!.isNotEmpty) {
+        final resolved = type.typeArguments!.map(resolveType).toList();
+        if (_typeArgsChanged(type.typeArguments!, resolved)) {
+          return UtsType(
+            kind: type.kind,
+            name: type.name,
+            nullable: type.nullable,
+            typeArguments: resolved,
+            returnType: type.returnType,
+            parameterTypes: type.parameterTypes,
+          );
+        }
+      }
+      return type;
+    }
+
+    UtsField resolveField(UtsField f) {
+      final resolved = resolveType(f.type);
+      if (identical(resolved, f.type)) return f;
+      return UtsField(
+        name: f.name,
+        type: resolved,
+        nullable: f.nullable,
+        isReadOnly: f.isReadOnly,
+        defaultValue: f.defaultValue,
+        documentation: f.documentation,
+      );
+    }
+
+    UtsParameter resolveParam(UtsParameter p) {
+      final resolved = resolveType(p.type);
+      if (identical(resolved, p.type)) return p;
+      return UtsParameter(
+        name: p.name,
+        type: resolved,
+        isOptional: p.isOptional,
+        isNamed: p.isNamed,
+        defaultValue: p.defaultValue,
+        documentation: p.documentation,
+        nativeLabel: p.nativeLabel,
+        nativeType: p.nativeType,
+      );
+    }
+
+    UtsMethod resolveMethod(UtsMethod m) {
+      final resolvedReturn = resolveType(m.returnType);
+      final resolvedParams = m.parameters.map(resolveParam).toList();
+      return UtsMethod(
+        name: m.name,
+        isStatic: m.isStatic,
+        isAsync: m.isAsync,
+        parameters: resolvedParams,
+        returnType: resolvedReturn,
+        documentation: m.documentation,
+        nativeBody: m.nativeBody,
+      );
+    }
+
+    UtsClass resolveClass(UtsClass c) {
+      return UtsClass(
+        name: c.name,
+        kind: c.kind,
+        fields: c.fields.map(resolveField).toList(),
+        methods: c.methods.map(resolveMethod).toList(),
+        superclass: c.superclass,
+        interfaces: c.interfaces,
+        sealedSubclasses: c.sealedSubclasses,
+        documentation: c.documentation,
+        constructorParameters:
+            c.constructorParameters?.map(resolveParam).toList(),
+      );
+    }
+
+    return UnifiedTypeSchema(
+      package: schema.package,
+      source: schema.source,
+      version: schema.version,
+      classes: schema.classes.map(resolveClass).toList(),
+      functions: schema.functions.map(resolveMethod).toList(),
+      types: schema.types.map(resolveClass).toList(),
+      enums: schema.enums,
+      nativeImports: schema.nativeImports,
+      nativeFields: schema.nativeFields,
+    );
+  }
+
+  bool _typeArgsChanged(List<UtsType> original, List<UtsType> resolved) {
+    for (var i = 0; i < original.length; i++) {
+      if (!identical(original[i], resolved[i])) return true;
+    }
+    return false;
+  }
 }
 
 // ========== Internal Helper Classes ==========
@@ -1174,7 +1425,14 @@ class SwiftParser extends ParserBase {
 class _ParsedClass {
   final UtsClass cls;
   final int endIndex;
-  _ParsedClass({required this.cls, required this.endIndex});
+  final List<UtsEnum> nestedEnums;
+  final List<UtsClass> nestedClasses;
+  _ParsedClass({
+    required this.cls,
+    required this.endIndex,
+    this.nestedEnums = const [],
+    this.nestedClasses = const [],
+  });
 }
 
 class _ParsedEnumResult {

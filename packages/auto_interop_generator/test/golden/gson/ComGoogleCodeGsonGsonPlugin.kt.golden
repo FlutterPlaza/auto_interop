@@ -36,11 +36,6 @@ class ComGoogleCodeGsonGsonPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
-            "Gson._create" -> {
-                val instance = Gson()
-                val handle = createHandle(instance)
-                result.success(handle)
-            }
             "Gson.fromJson" -> {
                 val json = call.argument<String>("json")!!
                 try {
@@ -62,11 +57,6 @@ class ComGoogleCodeGsonGsonPlugin : FlutterPlugin, MethodCallHandler {
                 } catch (e: Exception) {
                     result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
-            }
-            "GsonBuilder._create" -> {
-                val instance = GsonBuilder()
-                val handle = createHandle(instance)
-                result.success(handle)
             }
             "GsonBuilder.setPrettyPrinting" -> {
                 try {

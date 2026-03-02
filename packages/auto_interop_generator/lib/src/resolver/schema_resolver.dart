@@ -426,8 +426,10 @@ class SchemaResolver {
             walkType(param.type);
           }
         }
-        for (final param in cls.constructorParameters) {
-          walkType(param.type);
+        if (cls.constructorParameters != null) {
+          for (final param in cls.constructorParameters!) {
+            walkType(param.type);
+          }
         }
       }
       for (final func in schema.functions) {

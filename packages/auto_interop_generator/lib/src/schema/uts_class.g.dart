@@ -55,9 +55,8 @@ UtsClass _$UtsClassFromJson(Map<String, dynamic> json) => UtsClass(
           const [],
       documentation: json['documentation'] as String?,
       constructorParameters: (json['constructorParameters'] as List<dynamic>?)
-              ?.map((e) => UtsParameter.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+          ?.map((e) => UtsParameter.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UtsClassToJson(UtsClass instance) {
@@ -71,9 +70,10 @@ Map<String, dynamic> _$UtsClassToJson(UtsClass instance) {
     'sealedSubclasses': instance.sealedSubclasses,
     'documentation': instance.documentation,
   };
-  if (instance.constructorParameters.isNotEmpty) {
+  if (instance.constructorParameters != null &&
+      instance.constructorParameters!.isNotEmpty) {
     json['constructorParameters'] =
-        instance.constructorParameters.map((e) => e.toJson()).toList();
+        instance.constructorParameters!.map((e) => e.toJson()).toList();
   }
   return json;
 }

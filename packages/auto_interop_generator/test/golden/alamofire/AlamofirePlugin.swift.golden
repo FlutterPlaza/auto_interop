@@ -58,10 +58,6 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
         let args = (call.arguments as? [String: Any]) ?? [:]
 
         switch call.method {
-        case "Session._create":
-            let instance = Session()
-            let handle = createHandle(instance)
-            result(handle)
         case "Session.request":
             let url = args["url"] as! String
             let method = args["method"] as! String
@@ -105,10 +101,6 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
-        case "DataRequest._create":
-            let instance = DataRequest()
-            let handle = createHandle(instance)
-            result(handle)
         case "DataRequest.response":
             let handle = args["_handle"] as! String
             let instance = instances[handle] as! DataRequest
