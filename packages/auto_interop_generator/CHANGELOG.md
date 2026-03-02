@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Version bump to accompany `auto_interop` 0.2.1 (no generator changes).
+
 ## 0.2.0
 
 ### AST-Based Parsing (Near-100% Reliability)

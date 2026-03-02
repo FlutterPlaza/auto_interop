@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   late Directory tempDir;
 
-  UnifiedTypeSchema _makeSchema(String name) => UnifiedTypeSchema(
+  UnifiedTypeSchema makeSchema(String name) => UnifiedTypeSchema(
         package: name,
         source: PackageSource.npm,
         version: '3.6.0',
@@ -21,7 +21,7 @@ void main() {
         ],
       );
 
-  String _toJson(UnifiedTypeSchema schema) =>
+  String toJson(UnifiedTypeSchema schema) =>
       const JsonEncoder.withIndent('  ').convert(schema.toJson());
 
   /// Computes the SHA-256 hex digest of [data] using the same algorithm
@@ -47,7 +47,7 @@ void main() {
     group('fetch flow', () {
       test('fetches and caches a schema from registry', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
         final checksum = sha256Hex(schemaBody);
 
         final index = RegistryIndex(
@@ -101,7 +101,7 @@ void main() {
       test('falls back to latestVersion when exact version not found',
           () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
         final checksum = sha256Hex(schemaBody);
 
         final index = RegistryIndex(
@@ -146,7 +146,7 @@ void main() {
     group('cache freshness', () {
       test('uses cached index when TTL not expired', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
         final checksum = sha256Hex(schemaBody);
 
         final index = RegistryIndex(
@@ -201,7 +201,7 @@ void main() {
     group('TTL expiry', () {
       test('re-fetches index when TTL expired', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
         final checksum = sha256Hex(schemaBody);
 
         final index = RegistryIndex(
@@ -260,7 +260,7 @@ void main() {
     group('offline fallback', () {
       test('uses stale cache when network fails', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
 
         final index = RegistryIndex(
           version: 1,
@@ -333,7 +333,7 @@ void main() {
     group('checksum verification', () {
       test('accepts schema with valid checksum', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
         final checksum = sha256Hex(schemaBody);
 
         final index = RegistryIndex(
@@ -375,7 +375,7 @@ void main() {
 
       test('rejects schema with mismatched checksum', () async {
         final cacheDir = '${tempDir.path}/cache';
-        final schemaBody = _toJson(_makeSchema('date-fns'));
+        final schemaBody = toJson(makeSchema('date-fns'));
 
         final index = RegistryIndex(
           version: 1,

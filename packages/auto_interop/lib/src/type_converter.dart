@@ -37,9 +37,9 @@ class TypeConverter {
       return value.map((e) => fromPlatform(e, dartType: dartType)).toList();
     }
     if (value is Map) {
-      return <dynamic, dynamic>{
+      return <String, dynamic>{
         for (final entry in value.entries)
-          fromPlatform(entry.key, dartType: dartType):
+          '${fromPlatform(entry.key, dartType: dartType)}':
               fromPlatform(entry.value),
       };
     }

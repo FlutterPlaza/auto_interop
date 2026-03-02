@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   late Directory tempDir;
 
-  UnifiedTypeSchema _makeSchema(String name) => UnifiedTypeSchema(
+  UnifiedTypeSchema makeSchema(String name) => UnifiedTypeSchema(
         package: name,
         source: PackageSource.npm,
         version: '1.0.0',
@@ -21,7 +21,7 @@ void main() {
         ],
       );
 
-  String _toJson(UnifiedTypeSchema schema) =>
+  String toJson(UnifiedTypeSchema schema) =>
       const JsonEncoder.withIndent('  ').convert(schema.toJson());
 
   setUp(() {
@@ -37,9 +37,9 @@ void main() {
       test('loads exact name match from project dir', () {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
-        final schema = _makeSchema('date-fns');
+        final schema = makeSchema('date-fns');
         File('${projectDir.path}/date-fns.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -55,9 +55,9 @@ void main() {
       test('loads snake_case fallback', () {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
-        final schema = _makeSchema('date-fns');
+        final schema = makeSchema('date-fns');
         File('${projectDir.path}/date_fns.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -72,9 +72,9 @@ void main() {
       test('loads lowercase fallback', () {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
-        final schema = _makeSchema('Alamofire');
+        final schema = makeSchema('Alamofire');
         File('${projectDir.path}/alamofire.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -91,11 +91,11 @@ void main() {
       test('loads from {source}/{package}/{version}.uts.json', () {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
-        final schema = _makeSchema('date-fns');
+        final schema = makeSchema('date-fns');
         final structuredDir = Directory('${projectDir.path}/npm/date-fns')
           ..createSync(recursive: true);
         File('${structuredDir.path}/3.6.0.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -111,9 +111,9 @@ void main() {
       test('falls back to flat when structured not found', () {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
-        final schema = _makeSchema('date-fns');
+        final schema = makeSchema('date-fns');
         File('${projectDir.path}/date-fns.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -145,9 +145,9 @@ void main() {
         );
 
         File('${projectDir.path}/date-fns.uts.json')
-            .writeAsStringSync(_toJson(projectSchema));
+            .writeAsStringSync(toJson(projectSchema));
         File('${globalDir.path}/date-fns.uts.json')
-            .writeAsStringSync(_toJson(globalSchema));
+            .writeAsStringSync(toJson(globalSchema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,
@@ -163,9 +163,9 @@ void main() {
       test('falls back to global when project has no override', () {
         final globalDir = Directory('${tempDir.path}/global_overrides')
           ..createSync();
-        final schema = _makeSchema('Alamofire');
+        final schema = makeSchema('Alamofire');
         File('${globalDir.path}/Alamofire.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: '${tempDir.path}/no_such_project_dir',
@@ -209,9 +209,9 @@ void main() {
         final projectDir = Directory('${tempDir.path}/project_overrides')
           ..createSync();
         // File is named differently than the package
-        final schema = _makeSchema('com.squareup.okhttp3:okhttp');
+        final schema = makeSchema('com.squareup.okhttp3:okhttp');
         File('${projectDir.path}/okhttp.uts.json')
-            .writeAsStringSync(_toJson(schema));
+            .writeAsStringSync(toJson(schema));
 
         final loader = OverrideLoader(
           projectDir: projectDir.path,

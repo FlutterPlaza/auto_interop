@@ -24,42 +24,55 @@ enum HTTPMethod {
 class URLRequestConfig {
   /// The request URL.
   final String url;
+
   /// The HTTP method.
   final String method;
+
   /// Optional request headers.
   final Map<String, String>? headers;
+
   /// Optional request body.
   final Uint8List? body;
+
   /// Timeout interval in seconds.
   final double timeoutInterval;
 
-  URLRequestConfig({required this.url, required this.method, this.headers, this.body, required this.timeoutInterval});
+  URLRequestConfig(
+      {required this.url,
+      required this.method,
+      this.headers,
+      this.body,
+      required this.timeoutInterval});
 
   factory URLRequestConfig.fromMap(Map<String, dynamic> map) {
     return URLRequestConfig(
       url: map['url'] as String,
       method: map['method'] as String,
-      headers: map['headers'] != null ? (map['headers'] as Map).cast<String, String>() : null,
+      headers: map['headers'] != null
+          ? (map['headers'] as Map).cast<String, String>()
+          : null,
       body: map['body'] as Uint8List?,
       timeoutInterval: map['timeoutInterval'] as double,
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'url': url,
-    'method': method,
-    if (headers != null) 'headers': headers,
-    if (body != null) 'body': body,
-    'timeoutInterval': timeoutInterval,
-  };
+        'url': url,
+        'method': method,
+        if (headers != null) 'headers': headers,
+        if (body != null) 'body': body,
+        'timeoutInterval': timeoutInterval,
+      };
 }
 
 /// Represents the response from an HTTP request.
 class DataResponse {
   /// The response data.
   final Uint8List? data;
+
   /// The HTTP status code.
   final int statusCode;
+
   /// Response headers.
   final Map<String, String> headers;
 
@@ -74,16 +87,17 @@ class DataResponse {
   }
 
   Map<String, dynamic> toMap() => {
-    if (data != null) 'data': data,
-    'statusCode': statusCode,
-    'headers': headers,
-  };
+        if (data != null) 'data': data,
+        'statusCode': statusCode,
+        'headers': headers,
+      };
 }
 
 /// Manages HTTP requests with session management.
 abstract interface class SessionInterface {
   /// Makes an HTTP request.
-  Future<DataRequest> request(String url, HTTPMethod method, Map<String, String>? headers);
+  Future<DataRequest> request(
+      String url, HTTPMethod method, Map<String, String>? headers);
 
   /// Downloads a file from a URL.
   Future<String> download(String url, String? destination);
@@ -109,7 +123,8 @@ class Session implements SessionInterface {
 
   /// Makes an HTTP request.
   @override
-  Future<DataRequest> request(String url, HTTPMethod method, Map<String, String>? headers) async {
+  Future<DataRequest> request(
+      String url, HTTPMethod method, Map<String, String>? headers) async {
     final result = await _channel.invoke<String>('Session.request', {
       '_handle': _handle,
       'url': url,
@@ -158,7 +173,8 @@ class DataRequest {
 
   /// Adds a response handler.
   Future<DataResponse> response() async {
-    final result = await _channel.invoke<Map<String, dynamic>>('DataRequest.response', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>>('DataRequest.response', {
       '_handle': _handle,
     });
     return DataResponse.fromMap(result);
@@ -182,4 +198,3 @@ class DataRequest {
     await _channel.invoke<void>('_dispose', {'_handle': _handle});
   }
 }
-

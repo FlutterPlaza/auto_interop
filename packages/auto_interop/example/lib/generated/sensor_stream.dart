@@ -11,14 +11,21 @@ import 'package:auto_interop/auto_interop.dart';
 class AccelerometerEvent {
   /// X-axis acceleration
   final double x;
+
   /// Y-axis acceleration
   final double y;
+
   /// Z-axis acceleration
   final double z;
+
   /// Event timestamp
   final DateTime timestamp;
 
-  AccelerometerEvent({required this.x, required this.y, required this.z, required this.timestamp});
+  AccelerometerEvent(
+      {required this.x,
+      required this.y,
+      required this.z,
+      required this.timestamp});
 
   factory AccelerometerEvent.fromMap(Map<String, dynamic> map) {
     return AccelerometerEvent(
@@ -30,11 +37,11 @@ class AccelerometerEvent {
   }
 
   Map<String, dynamic> toMap() => {
-    'x': x,
-    'y': y,
-    'z': z,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'x': x,
+        'y': y,
+        'z': z,
+        'timestamp': timestamp.toIso8601String(),
+      };
 }
 
 abstract interface class SensorStreamInterface {
@@ -61,9 +68,9 @@ class SensorStream implements SensorStreamInterface {
         if (samplingRate != null) 'samplingRate': samplingRate,
       },
     ).map((raw) {
-    final map = (raw as Map).map((k, v) => MapEntry(k.toString(), v));
-    return AccelerometerEvent.fromMap(map);
-  });
+      final map = (raw as Map).map((k, v) => MapEntry(k.toString(), v));
+      return AccelerometerEvent.fromMap(map);
+    });
   }
 
   /// Stops all sensor streams.
@@ -71,6 +78,4 @@ class SensorStream implements SensorStreamInterface {
   Future<void> stopAll() async {
     await _channel.invoke<void>('stopAll');
   }
-
 }
-

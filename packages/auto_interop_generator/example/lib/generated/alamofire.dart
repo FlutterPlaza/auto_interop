@@ -5,6 +5,8 @@
 // Source: cocoapods
 // Platform availability: iOS and macOS only (CocoaPods package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'dart:typed_data';
 
 import 'package:auto_interop/auto_interop.dart';
@@ -13,14 +15,16 @@ import 'package:auto_interop/auto_interop.dart';
 class CancellationToken {
   final String _handle;
   CancellationToken._(this._handle);
-  static CancellationToken fromHandle(String handle) => CancellationToken._(handle);
+  static CancellationToken fromHandle(String handle) =>
+      CancellationToken._(handle);
 }
 
 /// Opaque handle to a native ChallengeEvaluation object.
 class ChallengeEvaluation {
   final String _handle;
   ChallengeEvaluation._(this._handle);
-  static ChallengeEvaluation fromHandle(String handle) => ChallengeEvaluation._(handle);
+  static ChallengeEvaluation fromHandle(String handle) =>
+      ChallengeEvaluation._(handle);
 }
 
 /// Opaque handle to a native Configuration object.
@@ -41,7 +45,8 @@ class Destination {
 class DispatchWorkItem {
   final String _handle;
   DispatchWorkItem._(this._handle);
-  static DispatchWorkItem fromHandle(String handle) => DispatchWorkItem._(handle);
+  static DispatchWorkItem fromHandle(String handle) =>
+      DispatchWorkItem._(handle);
 }
 
 /// Opaque handle to a native Downloadable object.
@@ -76,7 +81,8 @@ class Kind {
 class MultipartEncodingFailureReason {
   final String _handle;
   MultipartEncodingFailureReason._(this._handle);
-  static MultipartEncodingFailureReason fromHandle(String handle) => MultipartEncodingFailureReason._(handle);
+  static MultipartEncodingFailureReason fromHandle(String handle) =>
+      MultipartEncodingFailureReason._(handle);
 }
 
 /// Opaque handle to a native Output object.
@@ -97,14 +103,16 @@ class OutputStream {
 class ParameterEncoderFailureReason {
   final String _handle;
   ParameterEncoderFailureReason._(this._handle);
-  static ParameterEncoderFailureReason fromHandle(String handle) => ParameterEncoderFailureReason._(handle);
+  static ParameterEncoderFailureReason fromHandle(String handle) =>
+      ParameterEncoderFailureReason._(handle);
 }
 
 /// Opaque handle to a native ParameterEncodingFailureReason object.
 class ParameterEncodingFailureReason {
   final String _handle;
   ParameterEncodingFailureReason._(this._handle);
-  static ParameterEncodingFailureReason fromHandle(String handle) => ParameterEncodingFailureReason._(handle);
+  static ParameterEncodingFailureReason fromHandle(String handle) =>
+      ParameterEncodingFailureReason._(handle);
 }
 
 /// Opaque handle to a native Parameters object.
@@ -132,14 +140,16 @@ class RequestSetup {
 class ResponseSerializationFailureReason {
   final String _handle;
   ResponseSerializationFailureReason._(this._handle);
-  static ResponseSerializationFailureReason fromHandle(String handle) => ResponseSerializationFailureReason._(handle);
+  static ResponseSerializationFailureReason fromHandle(String handle) =>
+      ResponseSerializationFailureReason._(handle);
 }
 
 /// Opaque handle to a native ResponseValidationFailureReason object.
 class ResponseValidationFailureReason {
   final String _handle;
   ResponseValidationFailureReason._(this._handle);
-  static ResponseValidationFailureReason fromHandle(String handle) => ResponseValidationFailureReason._(handle);
+  static ResponseValidationFailureReason fromHandle(String handle) =>
+      ResponseValidationFailureReason._(handle);
 }
 
 /// Opaque handle to a native SecKey object.
@@ -160,7 +170,8 @@ class Self {
 class ServerTrustFailureReason {
   final String _handle;
   ServerTrustFailureReason._(this._handle);
-  static ServerTrustFailureReason fromHandle(String handle) => ServerTrustFailureReason._(handle);
+  static ServerTrustFailureReason fromHandle(String handle) =>
+      ServerTrustFailureReason._(handle);
 }
 
 /// Opaque handle to a native Success object.
@@ -174,7 +185,8 @@ class Success {
 class URLAuthenticationChallenge {
   final String _handle;
   URLAuthenticationChallenge._(this._handle);
-  static URLAuthenticationChallenge fromHandle(String handle) => URLAuthenticationChallenge._(handle);
+  static URLAuthenticationChallenge fromHandle(String handle) =>
+      URLAuthenticationChallenge._(handle);
 }
 
 /// Opaque handle to a native URLCredential object.
@@ -188,14 +200,16 @@ class URLCredential {
 class URLProtectionSpace {
   final String _handle;
   URLProtectionSpace._(this._handle);
-  static URLProtectionSpace fromHandle(String handle) => URLProtectionSpace._(handle);
+  static URLProtectionSpace fromHandle(String handle) =>
+      URLProtectionSpace._(handle);
 }
 
 /// Opaque handle to a native URLRequestValidationFailureReason object.
 class URLRequestValidationFailureReason {
   final String _handle;
   URLRequestValidationFailureReason._(this._handle);
-  static URLRequestValidationFailureReason fromHandle(String handle) => URLRequestValidationFailureReason._(handle);
+  static URLRequestValidationFailureReason fromHandle(String handle) =>
+      URLRequestValidationFailureReason._(handle);
 }
 
 /// Opaque handle to a native URLResponse object.
@@ -216,14 +230,16 @@ class URLSession {
 class URLSessionDataTask {
   final String _handle;
   URLSessionDataTask._(this._handle);
-  static URLSessionDataTask fromHandle(String handle) => URLSessionDataTask._(handle);
+  static URLSessionDataTask fromHandle(String handle) =>
+      URLSessionDataTask._(handle);
 }
 
 /// Opaque handle to a native URLSessionDownloadTask object.
 class URLSessionDownloadTask {
   final String _handle;
   URLSessionDownloadTask._(this._handle);
-  static URLSessionDownloadTask fromHandle(String handle) => URLSessionDownloadTask._(handle);
+  static URLSessionDownloadTask fromHandle(String handle) =>
+      URLSessionDownloadTask._(handle);
 }
 
 /// Opaque handle to a native URLSessionTask object.
@@ -237,14 +253,16 @@ class URLSessionTask {
 class URLSessionTaskMetrics {
   final String _handle;
   URLSessionTaskMetrics._(this._handle);
-  static URLSessionTaskMetrics fromHandle(String handle) => URLSessionTaskMetrics._(handle);
+  static URLSessionTaskMetrics fromHandle(String handle) =>
+      URLSessionTaskMetrics._(handle);
 }
 
 /// Opaque handle to a native URLSessionWebSocketTask object.
 class URLSessionWebSocketTask {
   final String _handle;
   URLSessionWebSocketTask._(this._handle);
-  static URLSessionWebSocketTask fromHandle(String handle) => URLSessionWebSocketTask._(handle);
+  static URLSessionWebSocketTask fromHandle(String handle) =>
+      URLSessionWebSocketTask._(handle);
 }
 
 /// Opaque handle to a native Uploadable object.
@@ -267,25 +285,25 @@ class bodyPartURLInvalid extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'url': url.toString(),
-  };
+        'url': url.toString(),
+      };
 }
 
 /// The filename of the `fileURL` provided has either an empty `lastPathComponent` or `pathExtension`.
 class bodyPartFilenameInvalid extends AFError {
-  final Uri in;
+  final Uri in$;
 
-  bodyPartFilenameInvalid({required this.in});
+  bodyPartFilenameInvalid({required this.in$});
 
   factory bodyPartFilenameInvalid.fromMap(Map<String, dynamic> map) {
     return bodyPartFilenameInvalid(
-      in: Uri.parse(map['in'] as String),
+      in$: Uri.parse(map['in'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'in': in.toString(),
-  };
+        'in': in$.toString(),
+      };
 }
 
 /// The file at the `fileURL` provided was not reachable.
@@ -301,8 +319,8 @@ class bodyPartFileNotReachable extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// Attempting to check the reachability of the `fileURL` provided threw an error.
@@ -320,9 +338,9 @@ class bodyPartFileNotReachableWithError extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'atURL': atURL.toString(),
-    'error': error,
-  };
+        'atURL': atURL.toString(),
+        'error': error,
+      };
 }
 
 /// The file at the `fileURL` provided is actually a directory.
@@ -338,8 +356,8 @@ class bodyPartFileIsDirectory extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// The size of the file at the `fileURL` provided was not returned by the system.
@@ -355,8 +373,8 @@ class bodyPartFileSizeNotAvailable extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// The attempt to find the size of the file at the `fileURL` provided threw an error.
@@ -364,9 +382,11 @@ class bodyPartFileSizeQueryFailedWithError extends AFError {
   final Uri forURL;
   final dynamic error;
 
-  bodyPartFileSizeQueryFailedWithError({required this.forURL, required this.error});
+  bodyPartFileSizeQueryFailedWithError(
+      {required this.forURL, required this.error});
 
-  factory bodyPartFileSizeQueryFailedWithError.fromMap(Map<String, dynamic> map) {
+  factory bodyPartFileSizeQueryFailedWithError.fromMap(
+      Map<String, dynamic> map) {
     return bodyPartFileSizeQueryFailedWithError(
       forURL: Uri.parse(map['forURL'] as String),
       error: map['error'] as dynamic,
@@ -374,43 +394,43 @@ class bodyPartFileSizeQueryFailedWithError extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'forURL': forURL.toString(),
-    'error': error,
-  };
+        'forURL': forURL.toString(),
+        'error': error,
+      };
 }
 
 /// An `InputStream` could not be created for the provided `fileURL`.
 class bodyPartInputStreamCreationFailed extends AFError {
-  final Uri for;
+  final Uri for$;
 
-  bodyPartInputStreamCreationFailed({required this.for});
+  bodyPartInputStreamCreationFailed({required this.for$});
 
   factory bodyPartInputStreamCreationFailed.fromMap(Map<String, dynamic> map) {
     return bodyPartInputStreamCreationFailed(
-      for: Uri.parse(map['for'] as String),
+      for$: Uri.parse(map['for'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'for': for.toString(),
-  };
+        'for': for$.toString(),
+      };
 }
 
 /// An `OutputStream` could not be created when attempting to write the encoded data to disk.
 class outputStreamCreationFailed extends AFError {
-  final Uri for;
+  final Uri for$;
 
-  outputStreamCreationFailed({required this.for});
+  outputStreamCreationFailed({required this.for$});
 
   factory outputStreamCreationFailed.fromMap(Map<String, dynamic> map) {
     return outputStreamCreationFailed(
-      for: Uri.parse(map['for'] as String),
+      for$: Uri.parse(map['for'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'for': for.toString(),
-  };
+        'for': for$.toString(),
+      };
 }
 
 /// The encoded body data could not be written to disk because a file already exists at the provided `fileURL`.
@@ -426,8 +446,8 @@ class outputStreamFileAlreadyExists extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// The `fileURL` provided for writing the encoded body data to disk is not a file `URL`.
@@ -443,8 +463,8 @@ class outputStreamURLInvalid extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'url': url.toString(),
-  };
+        'url': url.toString(),
+      };
 }
 
 /// The attempt to write the encoded body data to disk failed with an underlying error.
@@ -460,8 +480,8 @@ class outputStreamWriteFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// The attempt to read an encoded body part `InputStream` failed with underlying system error.
@@ -477,22 +497,19 @@ class inputStreamReadFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// The `URLRequest` did not have a `URL` to encode.
 class missingURL extends AFError {
-
   missingURL();
 
   factory missingURL.fromMap(Map<String, dynamic> map) {
-    return missingURL(
-    );
+    return missingURL();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// JSON serialization failed with an underlying system error during the encoding process.
@@ -508,8 +525,8 @@ class jsonEncodingFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// Custom parameter encoding failed due to the associated `Error`.
@@ -525,22 +542,19 @@ class customEncodingFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// The `URL` was missing or unable to be extracted from the passed `URLRequest` or during encoding.
 class url extends AFError {
-
   url();
 
   factory url.fromMap(Map<String, dynamic> map) {
-    return url(
-    );
+    return url();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// The `HTTPMethod` could not be extracted from the passed `URLRequest`.
@@ -556,22 +570,19 @@ class httpMethod extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'rawValue': rawValue,
-  };
+        'rawValue': rawValue,
+      };
 }
 
 /// A `RequiredComponent` was missing during encoding.
 class missingRequiredComponent extends AFError {
-
   missingRequiredComponent();
 
   factory missingRequiredComponent.fromMap(Map<String, dynamic> map) {
-    return missingRequiredComponent(
-    );
+    return missingRequiredComponent();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// The underlying encoder failed with the associated error.
@@ -587,22 +598,19 @@ class encoderFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// The data file containing the server response did not exist.
 class dataFileNil extends AFError {
-
   dataFileNil();
 
   factory dataFileNil.fromMap(Map<String, dynamic> map) {
-    return dataFileNil(
-    );
+    return dataFileNil();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// The data file containing the server response at the associated `URL` could not be read.
@@ -618,8 +626,8 @@ class dataFileReadFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// The response did not contain a `Content-Type` and the `acceptableContentTypes` provided did not contain a wildcard type.
@@ -630,13 +638,14 @@ class missingContentType extends AFError {
 
   factory missingContentType.fromMap(Map<String, dynamic> map) {
     return missingContentType(
-      acceptableContentTypes: (map['acceptableContentTypes'] as List).cast<String>(),
+      acceptableContentTypes:
+          (map['acceptableContentTypes'] as List).cast<String>(),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'acceptableContentTypes': acceptableContentTypes,
-  };
+        'acceptableContentTypes': acceptableContentTypes,
+      };
 }
 
 /// The response `Content-Type` did not match any type in the provided `acceptableContentTypes`.
@@ -644,19 +653,22 @@ class unacceptableContentType extends AFError {
   final List<String> acceptableContentTypes;
   final String responseContentType;
 
-  unacceptableContentType({required this.acceptableContentTypes, required this.responseContentType});
+  unacceptableContentType(
+      {required this.acceptableContentTypes,
+      required this.responseContentType});
 
   factory unacceptableContentType.fromMap(Map<String, dynamic> map) {
     return unacceptableContentType(
-      acceptableContentTypes: (map['acceptableContentTypes'] as List).cast<String>(),
+      acceptableContentTypes:
+          (map['acceptableContentTypes'] as List).cast<String>(),
       responseContentType: map['responseContentType'] as String,
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'acceptableContentTypes': acceptableContentTypes,
-    'responseContentType': responseContentType,
-  };
+        'acceptableContentTypes': acceptableContentTypes,
+        'responseContentType': responseContentType,
+      };
 }
 
 /// The response status code was not acceptable.
@@ -672,8 +684,8 @@ class unacceptableStatusCode extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'code': code,
-  };
+        'code': code,
+      };
 }
 
 /// Custom response validation failed due to the associated `Error`.
@@ -689,36 +701,30 @@ class customValidationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// The server response contained no data or the data was zero length.
 class inputDataNilOrZeroLength extends AFError {
-
   inputDataNilOrZeroLength();
 
   factory inputDataNilOrZeroLength.fromMap(Map<String, dynamic> map) {
-    return inputDataNilOrZeroLength(
-    );
+    return inputDataNilOrZeroLength();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// The file containing the server response did not exist.
 class inputFileNil extends AFError {
-
   inputFileNil();
 
   factory inputFileNil.fromMap(Map<String, dynamic> map) {
-    return inputFileNil(
-    );
+    return inputFileNil();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// The file containing the server response could not be read from the associated `URL`.
@@ -734,8 +740,8 @@ class inputFileReadFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'at': at.toString(),
-  };
+        'at': at.toString(),
+      };
 }
 
 /// String serialization failed using the provided `String.Encoding`.
@@ -751,8 +757,8 @@ class stringSerializationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'encoding': encoding,
-  };
+        'encoding': encoding,
+      };
 }
 
 /// JSON serialization failed with an underlying system error.
@@ -768,8 +774,8 @@ class jsonSerializationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// A `DataDecoder` failed to decode the response due to the associated `Error`.
@@ -785,8 +791,8 @@ class decodingFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// A custom response serializer failed due to the associated `Error`.
@@ -802,25 +808,25 @@ class customSerializationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// Generic serialization failed for an empty response that wasn't type `Empty` but instead the associated type.
 class invalidEmptyResponse extends AFError {
-  final String type;
+  final String type$;
 
-  invalidEmptyResponse({required this.type});
+  invalidEmptyResponse({required this.type$});
 
   factory invalidEmptyResponse.fromMap(Map<String, dynamic> map) {
     return invalidEmptyResponse(
-      type: map['type'] as String,
+      type$: map['type'] as String,
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'type': type,
-  };
+        'type': type$,
+      };
 }
 
 /// No `ServerTrustEvaluator` was found for the associated host.
@@ -836,36 +842,30 @@ class noRequiredEvaluator extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'host': host,
-  };
+        'host': host,
+      };
 }
 
 /// No certificates were found with which to perform the trust evaluation.
 class noCertificatesFound extends AFError {
-
   noCertificatesFound();
 
   factory noCertificatesFound.fromMap(Map<String, dynamic> map) {
-    return noCertificatesFound(
-    );
+    return noCertificatesFound();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// No public keys were found with which to perform the trust evaluation.
 class noPublicKeysFound extends AFError {
-
   noPublicKeysFound();
 
   factory noPublicKeysFound.fromMap(Map<String, dynamic> map) {
-    return noPublicKeysFound(
-    );
+    return noPublicKeysFound();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// During evaluation, application of the associated `SecPolicy` failed.
@@ -874,21 +874,22 @@ class policyApplicationFailed extends AFError {
   final SecPolicy policy;
   final OSStatus status;
 
-  policyApplicationFailed({required this.trust, required this.policy, required this.status});
+  policyApplicationFailed(
+      {required this.trust, required this.policy, required this.status});
 
   factory policyApplicationFailed.fromMap(Map<String, dynamic> map) {
     return policyApplicationFailed(
-      trust: SecTrust.fromMap(map['trust'] as Map<String, dynamic>),
-      policy: SecPolicy.fromMap(map['policy'] as Map<String, dynamic>),
-      status: OSStatus.fromMap(map['status'] as Map<String, dynamic>),
+      trust: map['trust'] as SecTrust,
+      policy: map['policy'] as SecPolicy,
+      status: map['status'] as OSStatus,
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'trust': trust.toMap(),
-    'policy': policy.toMap(),
-    'status': status.toMap(),
-  };
+        'trust': trust,
+        'policy': policy,
+        'status': status,
+      };
 }
 
 /// During evaluation, setting the associated anchor certificates failed.
@@ -896,33 +897,33 @@ class settingAnchorCertificatesFailed extends AFError {
   final OSStatus status;
   final List<SecCertificate> certificates;
 
-  settingAnchorCertificatesFailed({required this.status, required this.certificates});
+  settingAnchorCertificatesFailed(
+      {required this.status, required this.certificates});
 
   factory settingAnchorCertificatesFailed.fromMap(Map<String, dynamic> map) {
     return settingAnchorCertificatesFailed(
-      status: OSStatus.fromMap(map['status'] as Map<String, dynamic>),
-      certificates: (map['certificates'] as List).map((e) => SecCertificate.fromMap(e as Map<String, dynamic>)).toList(),
+      status: map['status'] as OSStatus,
+      certificates: (map['certificates'] as List)
+          .map((e0) => e0 as SecCertificate)
+          .toList(),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'status': status.toMap(),
-    'certificates': certificates.map((e) => e.toMap()).toList(),
-  };
+        'status': status,
+        'certificates': certificates.map((e0) => e0).toList(),
+      };
 }
 
 /// During evaluation, creation of the revocation policy failed.
 class revocationPolicyCreationFailed extends AFError {
-
   revocationPolicyCreationFailed();
 
   factory revocationPolicyCreationFailed.fromMap(Map<String, dynamic> map) {
-    return revocationPolicyCreationFailed(
-    );
+    return revocationPolicyCreationFailed();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// `SecTrust` evaluation failed with the associated `Error`, if one was produced.
@@ -938,8 +939,8 @@ class trustEvaluationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// Default evaluation failed with the associated `Output`.
@@ -955,8 +956,8 @@ class defaultEvaluationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'output': output._handle,
-  };
+        'output': output._handle,
+      };
 }
 
 /// Host validation failed with the associated `Output`.
@@ -972,8 +973,8 @@ class hostValidationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'output': output._handle,
-  };
+        'output': output._handle,
+      };
 }
 
 /// Revocation check failed with the associated `Output` and options.
@@ -991,9 +992,9 @@ class revocationCheckFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'output': output._handle,
-    'options': options,
-  };
+        'output': output._handle,
+        'options': options,
+      };
 }
 
 /// Certificate pinning failed.
@@ -1003,23 +1004,31 @@ class certificatePinningFailed extends AFError {
   final List<SecCertificate> pinnedCertificates;
   final List<SecCertificate> serverCertificates;
 
-  certificatePinningFailed({required this.host, required this.trust, required this.pinnedCertificates, required this.serverCertificates});
+  certificatePinningFailed(
+      {required this.host,
+      required this.trust,
+      required this.pinnedCertificates,
+      required this.serverCertificates});
 
   factory certificatePinningFailed.fromMap(Map<String, dynamic> map) {
     return certificatePinningFailed(
       host: map['host'] as String,
-      trust: SecTrust.fromMap(map['trust'] as Map<String, dynamic>),
-      pinnedCertificates: (map['pinnedCertificates'] as List).map((e) => SecCertificate.fromMap(e as Map<String, dynamic>)).toList(),
-      serverCertificates: (map['serverCertificates'] as List).map((e) => SecCertificate.fromMap(e as Map<String, dynamic>)).toList(),
+      trust: map['trust'] as SecTrust,
+      pinnedCertificates: (map['pinnedCertificates'] as List)
+          .map((e0) => e0 as SecCertificate)
+          .toList(),
+      serverCertificates: (map['serverCertificates'] as List)
+          .map((e0) => e0 as SecCertificate)
+          .toList(),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'host': host,
-    'trust': trust.toMap(),
-    'pinnedCertificates': pinnedCertificates.map((e) => e.toMap()).toList(),
-    'serverCertificates': serverCertificates.map((e) => e.toMap()).toList(),
-  };
+        'host': host,
+        'trust': trust,
+        'pinnedCertificates': pinnedCertificates.map((e0) => e0).toList(),
+        'serverCertificates': serverCertificates.map((e0) => e0).toList(),
+      };
 }
 
 /// Public key pinning failed.
@@ -1029,23 +1038,31 @@ class publicKeyPinningFailed extends AFError {
   final List<SecKey> pinnedKeys;
   final List<SecKey> serverKeys;
 
-  publicKeyPinningFailed({required this.host, required this.trust, required this.pinnedKeys, required this.serverKeys});
+  publicKeyPinningFailed(
+      {required this.host,
+      required this.trust,
+      required this.pinnedKeys,
+      required this.serverKeys});
 
   factory publicKeyPinningFailed.fromMap(Map<String, dynamic> map) {
     return publicKeyPinningFailed(
       host: map['host'] as String,
-      trust: SecTrust.fromMap(map['trust'] as Map<String, dynamic>),
-      pinnedKeys: (map['pinnedKeys'] as List).map((e) => SecKey.fromHandle(e as String)).toList(),
-      serverKeys: (map['serverKeys'] as List).map((e) => SecKey.fromHandle(e as String)).toList(),
+      trust: map['trust'] as SecTrust,
+      pinnedKeys: (map['pinnedKeys'] as List)
+          .map((e0) => SecKey.fromHandle(e0 as String))
+          .toList(),
+      serverKeys: (map['serverKeys'] as List)
+          .map((e0) => SecKey.fromHandle(e0 as String))
+          .toList(),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'host': host,
-    'trust': trust.toMap(),
-    'pinnedKeys': pinnedKeys.map((e) => e._handle).toList(),
-    'serverKeys': serverKeys.map((e) => e._handle).toList(),
-  };
+        'host': host,
+        'trust': trust,
+        'pinnedKeys': pinnedKeys.map((e0) => e0._handle).toList(),
+        'serverKeys': serverKeys.map((e0) => e0._handle).toList(),
+      };
 }
 
 /// Custom server trust evaluation failed due to the associated `Error`.
@@ -1061,22 +1078,19 @@ class customEvaluationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// URLRequest with GET method had body data.
 class bodyDataInGETRequest extends AFError {
-
   bodyDataInGETRequest();
 
   factory bodyDataInGETRequest.fromMap(Map<String, dynamic> map) {
-    return bodyDataInGETRequest(
-    );
+    return bodyDataInGETRequest();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// `UploadableConvertible` threw an error in `createUploadable()`.
@@ -1092,8 +1106,8 @@ class createUploadableFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// `URLRequestConvertible` threw an error in `asURLRequest()`.
@@ -1109,8 +1123,8 @@ class createURLRequestFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL.
@@ -1119,7 +1133,8 @@ class downloadedFileMoveFailed extends AFError {
   final Uri source;
   final Uri destination;
 
-  downloadedFileMoveFailed({required this.error, required this.source, required this.destination});
+  downloadedFileMoveFailed(
+      {required this.error, required this.source, required this.destination});
 
   factory downloadedFileMoveFailed.fromMap(Map<String, dynamic> map) {
     return downloadedFileMoveFailed(
@@ -1130,24 +1145,21 @@ class downloadedFileMoveFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-    'source': source.toString(),
-    'destination': destination.toString(),
-  };
+        'error': error,
+        'source': source.toString(),
+        'destination': destination.toString(),
+      };
 }
 
 /// `Request` was explicitly cancelled.
 class explicitlyCancelled extends AFError {
-
   explicitlyCancelled();
 
   factory explicitlyCancelled.fromMap(Map<String, dynamic> map) {
-    return explicitlyCancelled(
-    );
+    return explicitlyCancelled();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// `URLConvertible` type failed to create a valid `URL`.
@@ -1163,8 +1175,8 @@ class invalidURL extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'url': url,
-  };
+        'url': url,
+      };
 }
 
 /// Multipart form encoding failed.
@@ -1175,13 +1187,14 @@ class multipartEncodingFailed extends AFError {
 
   factory multipartEncodingFailed.fromMap(Map<String, dynamic> map) {
     return multipartEncodingFailed(
-      reason: MultipartEncodingFailureReason.fromHandle(map['reason'] as String),
+      reason:
+          MultipartEncodingFailureReason.fromHandle(map['reason'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// `ParameterEncoding` threw an error during the encoding process.
@@ -1192,13 +1205,14 @@ class parameterEncodingFailed extends AFError {
 
   factory parameterEncodingFailed.fromMap(Map<String, dynamic> map) {
     return parameterEncodingFailed(
-      reason: ParameterEncodingFailureReason.fromHandle(map['reason'] as String),
+      reason:
+          ParameterEncodingFailureReason.fromHandle(map['reason'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// `ParameterEncoder` threw an error while running the encoder.
@@ -1214,8 +1228,8 @@ class parameterEncoderFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// `RequestAdapter` threw an error during adaptation.
@@ -1231,8 +1245,8 @@ class requestAdaptationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// `RequestRetrier` threw an error during the request retry process.
@@ -1250,9 +1264,9 @@ class requestRetryFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'retryError': retryError,
-    'originalError': originalError,
-  };
+        'retryError': retryError,
+        'originalError': originalError,
+      };
 }
 
 /// Response validation failed.
@@ -1263,13 +1277,14 @@ class responseValidationFailed extends AFError {
 
   factory responseValidationFailed.fromMap(Map<String, dynamic> map) {
     return responseValidationFailed(
-      reason: ResponseValidationFailureReason.fromHandle(map['reason'] as String),
+      reason:
+          ResponseValidationFailureReason.fromHandle(map['reason'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// Response serialization failed.
@@ -1280,13 +1295,14 @@ class responseSerializationFailed extends AFError {
 
   factory responseSerializationFailed.fromMap(Map<String, dynamic> map) {
     return responseSerializationFailed(
-      reason: ResponseSerializationFailureReason.fromHandle(map['reason'] as String),
+      reason: ResponseSerializationFailureReason.fromHandle(
+          map['reason'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// `ServerTrustEvaluating` instance threw an error during trust evaluation.
@@ -1302,22 +1318,19 @@ class serverTrustEvaluationFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
 class sessionDeinitialized extends AFError {
-
   sessionDeinitialized();
 
   factory sessionDeinitialized.fromMap(Map<String, dynamic> map) {
-    return sessionDeinitialized(
-    );
+    return sessionDeinitialized();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
@@ -1333,8 +1346,8 @@ class sessionInvalidated extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// `URLSessionTask` completed with error.
@@ -1350,8 +1363,8 @@ class sessionTaskFailed extends AFError {
   }
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-  };
+        'error': error,
+      };
 }
 
 /// `URLRequest` failed validation.
@@ -1362,13 +1375,14 @@ class urlRequestValidationFailed extends AFError {
 
   factory urlRequestValidationFailed.fromMap(Map<String, dynamic> map) {
     return urlRequestValidationFailed(
-      reason: URLRequestValidationFailureReason.fromHandle(map['reason'] as String),
+      reason:
+          URLRequestValidationFailureReason.fromHandle(map['reason'] as String),
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'reason': reason._handle,
-  };
+        'reason': reason._handle,
+      };
 }
 
 /// Type representing HTTP methods. Raw `String` value is stored and compared case-sensitively, so `HTTPMethod.get != HTTPMethod(rawValue: "get")`.  See https://tools.ietf.org/html/rfc7231#section-4.3
@@ -1384,8 +1398,8 @@ class HTTPMethod {
   }
 
   Map<String, dynamic> toMap() => {
-    'rawValue': rawValue,
-  };
+        'rawValue': rawValue,
+      };
 }
 
 /// `Session` creates and manages Alamofire's `Request` types during their lifetimes. It also provides common functionality for all `Request`s, including queuing, interception, trust management, redirect handling, and response cache handling.
@@ -1394,17 +1408,12 @@ abstract interface class SessionInterface {
   Future<void> withAllRequests(dynamic action);
 
   /// Cancel all active `Request`s, optionally calling a completion handler when complete.  - Note: This is an asynchronous operation and does not block the creation of future `Request`s. Cancelled `Request`s may not cancel immediately due internal work, and may not cancel at all if they are close to completion when cancelled.  - Parameters: - queue:      `DispatchQueue` on which the completion handler is run. `.main` by default. - completion: Closure to be called when all `Request`s have been cancelled.
-  Future<void> cancelAllRequests(dynamic Function(dynamic) completion, {DispatchQueue? queue});
-
-  Future<URLRequest> asURLRequest();
-
-  Future<URLRequest> asURLRequest();
+  Future<void> cancelAllRequests(dynamic Function(dynamic) completion,
+      {DispatchQueue? queue});
 
   Future<URLRequest> asURLRequest();
 
   Future<dynamic> createUploadable();
-
-  Future<URLRequest> asURLRequest();
 
   Future<void> performEagerlyIfNecessary(Request request);
 
@@ -1447,7 +1456,8 @@ abstract interface class SessionInterface {
 
   Future<void> didCompleteTask(URLSessionTask task, dynamic completion);
 
-  Future<URLCredential?> credential(URLSessionTask task, URLProtectionSpace protectionSpace);
+  Future<URLCredential?> credential(
+      URLSessionTask task, URLProtectionSpace protectionSpace);
 
   Future<void> cancelRequestsForSessionInvalidation(dynamic error);
 }
@@ -1466,132 +1476,6 @@ class Session implements SessionInterface {
     final handle = await _channel.invoke<String>('Session._create');
     return Session._(handle);
   }
-  /// Underlying `URLSession` used to create `URLSessionTasks` for this instance, and for which this instance's `delegate` handles `URLSessionDelegate` callbacks.  - Note: This instance should **NOT** be used to interact with the underlying `URLSessionTask`s. Doing so will break internal Alamofire logic that tracks those tasks.
-  final URLSession session;
-  /// Instance's `SessionDelegate`, which handles the `URLSessionDelegate` methods and `Request` interaction.
-  final SessionDelegate delegate;
-  /// Root `DispatchQueue` for all internal callbacks and state update. **MUST** be a serial queue.
-  final DispatchQueue rootQueue;
-  /// Value determining whether this instance automatically calls `resume()` on all created `Request`s.
-  final bool startRequestsImmediately;
-  /// Value determining the timing of `Request` setup after creation. `.lazy` by default.  - Note: Prior to Alamofire 5.11, `Session` acted as if this was set to `.eager`, so if any behavior changes are noted, `.eager` can be used for backward compatibility.
-  final RequestSetup requestSetup;
-  /// `DispatchQueue` on which `URLRequest`s are created asynchronously. By default this queue uses `rootQueue` as its `target`, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile and test before introducing an additional queue.
-  final DispatchQueue requestQueue;
-  /// `DispatchQueue` passed to all `Request`s on which they perform their response serialization. By default this queue uses `rootQueue` as its `target` but a separate queue can be used if response serialization is determined to be a bottleneck. Always profile and test before introducing an additional queue.
-  final DispatchQueue serializationQueue;
-  /// `RequestInterceptor` used for all `Request` created by the instance. `RequestInterceptor`s can also be added on a per-`Request` basis, in which case interceptors from the `Session` are executed first. `nil` by default.
-  final dynamic? interceptor;
-  /// `ServerTrustManager` instance used to evaluate all trust challenges and provide certificate and key pinning.
-  final ServerTrustManager? serverTrustManager;
-  /// `RedirectHandler` instance used to provide customization for request redirection.
-  final dynamic? redirectHandler;
-  /// `CachedResponseHandler` instance used to provide customization of cached response handling.
-  final dynamic? cachedResponseHandler;
-  /// `CompositeEventMonitor` used to compose any passed `EventMonitor`s. `EventMonitor`s can also be added on a per-`Request` basis, in which case monitors from the `Session` are executed first.
-  final CompositeEventMonitor eventMonitor;
-  final List<dynamic> defaultEventMonitors;
-  /// `Set` of currently active `Request`s.
-  final List<Request> activeRequests;
-  /// Completion events awaiting `URLSessionTaskMetrics`.
-  final Map<dynamic, dynamic> waitingCompletions;
-  final dynamic url;
-  final HTTPMethod method;
-  final Parameters? parameters;
-  final dynamic encoding;
-  final HTTPHeaders? headers;
-  final RequestModifier? requestModifier;
-  final dynamic url;
-  final HTTPMethod method;
-  final Parameters? parameters;
-  final dynamic encoder;
-  final HTTPHeaders? headers;
-  final RequestModifier? requestModifier;
-  final dynamic url;
-  final HTTPMethod method;
-  final HTTPHeaders? headers;
-  final RequestModifier? requestModifier;
-  final dynamic request;
-  final dynamic uploadable;
-  final URLRequest initialRequest;
-
-  Session({required this.session, required this.delegate, required this.rootQueue, required this.startRequestsImmediately, required this.requestSetup, required this.requestQueue, required this.serializationQueue, this.interceptor, this.serverTrustManager, this.redirectHandler, this.cachedResponseHandler, required this.eventMonitor, required this.defaultEventMonitors, required this.activeRequests, required this.waitingCompletions, required this.url, required this.method, this.parameters, required this.encoding, this.headers, this.requestModifier, required this.url, required this.method, this.parameters, required this.encoder, this.headers, this.requestModifier, required this.url, required this.method, this.headers, this.requestModifier, required this.request, required this.uploadable, required this.initialRequest});
-
-  factory Session.fromMap(Map<String, dynamic> map) {
-    return Session(
-      session: URLSession.fromHandle(map['session'] as String),
-      delegate: SessionDelegate.fromMap(map['delegate'] as Map<String, dynamic>),
-      rootQueue: DispatchQueue.fromHandle(map['rootQueue'] as String),
-      startRequestsImmediately: map['startRequestsImmediately'] as bool,
-      requestSetup: RequestSetup.fromHandle(map['requestSetup'] as String),
-      requestQueue: DispatchQueue.fromHandle(map['requestQueue'] as String),
-      serializationQueue: DispatchQueue.fromHandle(map['serializationQueue'] as String),
-      interceptor: map['interceptor'] as dynamic?,
-      serverTrustManager: map['serverTrustManager'] != null ? ServerTrustManager.fromMap(map['serverTrustManager'] as Map<String, dynamic>) : null,
-      redirectHandler: map['redirectHandler'] as dynamic?,
-      cachedResponseHandler: map['cachedResponseHandler'] as dynamic?,
-      eventMonitor: CompositeEventMonitor.fromMap(map['eventMonitor'] as Map<String, dynamic>),
-      defaultEventMonitors: (map['defaultEventMonitors'] as List).cast<dynamic>(),
-      activeRequests: (map['activeRequests'] as List).map((e) => Request.fromMap(e as Map<String, dynamic>)).toList(),
-      waitingCompletions: (map['waitingCompletions'] as Map).cast<dynamic, dynamic>(),
-      url: map['url'] as dynamic,
-      method: HTTPMethod.fromMap(map['method'] as Map<String, dynamic>),
-      parameters: map['parameters'] != null ? Parameters.fromHandle(map['parameters'] as String) : null,
-      encoding: map['encoding'] as dynamic,
-      headers: map['headers'] != null ? HTTPHeaders.fromMap(map['headers'] as Map<String, dynamic>) : null,
-      requestModifier: map['requestModifier'] != null ? RequestModifier.fromHandle(map['requestModifier'] as String) : null,
-      url: map['url'] as dynamic,
-      method: HTTPMethod.fromMap(map['method'] as Map<String, dynamic>),
-      parameters: map['parameters'] != null ? Parameters.fromHandle(map['parameters'] as String) : null,
-      encoder: map['encoder'] as dynamic,
-      headers: map['headers'] != null ? HTTPHeaders.fromMap(map['headers'] as Map<String, dynamic>) : null,
-      requestModifier: map['requestModifier'] != null ? RequestModifier.fromHandle(map['requestModifier'] as String) : null,
-      url: map['url'] as dynamic,
-      method: HTTPMethod.fromMap(map['method'] as Map<String, dynamic>),
-      headers: map['headers'] != null ? HTTPHeaders.fromMap(map['headers'] as Map<String, dynamic>) : null,
-      requestModifier: map['requestModifier'] != null ? RequestModifier.fromHandle(map['requestModifier'] as String) : null,
-      request: map['request'] as dynamic,
-      uploadable: map['uploadable'] as dynamic,
-      initialRequest: URLRequest.fromHandle(map['initialRequest'] as String),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'session': session._handle,
-    'delegate': delegate._handle,
-    'rootQueue': rootQueue._handle,
-    'startRequestsImmediately': startRequestsImmediately,
-    'requestSetup': requestSetup._handle,
-    'requestQueue': requestQueue._handle,
-    'serializationQueue': serializationQueue._handle,
-    if (interceptor != null) 'interceptor': interceptor,
-    if (serverTrustManager != null) 'serverTrustManager': serverTrustManager?._handle,
-    if (redirectHandler != null) 'redirectHandler': redirectHandler,
-    if (cachedResponseHandler != null) 'cachedResponseHandler': cachedResponseHandler,
-    'eventMonitor': eventMonitor._handle,
-    'defaultEventMonitors': defaultEventMonitors,
-    'activeRequests': activeRequests.map((e) => e.toMap()).toList(),
-    'waitingCompletions': waitingCompletions,
-    'url': url,
-    'method': method.toMap(),
-    if (parameters != null) 'parameters': parameters?._handle,
-    'encoding': encoding,
-    if (headers != null) 'headers': headers?._handle,
-    if (requestModifier != null) 'requestModifier': requestModifier?._handle,
-    'url': url,
-    'method': method.toMap(),
-    if (parameters != null) 'parameters': parameters?._handle,
-    'encoder': encoder,
-    if (headers != null) 'headers': headers?._handle,
-    if (requestModifier != null) 'requestModifier': requestModifier?._handle,
-    'url': url,
-    'method': method.toMap(),
-    if (headers != null) 'headers': headers?._handle,
-    if (requestModifier != null) 'requestModifier': requestModifier?._handle,
-    'request': request,
-    'uploadable': uploadable,
-    'initialRequest': initialRequest._handle,
-  };
 
   /// Perform an action on all active `Request`s.  - Note: The provided `action` closure is performed asynchronously, meaning that some `Request`s may complete and be unavailable by time it runs. Additionally, this action is performed on the instances's `rootQueue`, so care should be taken that actions are fast. Once the work on the `Request`s is complete, any additional work should be performed on another queue.  - Parameters: - action:     Closure to perform with all `Request`s.
   @override
@@ -1606,28 +1490,13 @@ class Session implements SessionInterface {
   /// **Warning:** The `completion` callback is invoked asynchronously via
   /// platform channels. It cannot return a value synchronously to the native side.
   @override
-  Future<void> cancelAllRequests(dynamic Function(dynamic) completion, {DispatchQueue? queue}) async {
+  Future<void> cancelAllRequests(dynamic Function(dynamic) completion,
+      {DispatchQueue? queue}) async {
     await _channel.invoke<void>('Session.cancelAllRequests', {
       '_handle': _handle,
       'completion': CallbackManager.instance.register(completion),
       if (queue != null) 'queue': queue._handle,
     });
-  }
-
-  @override
-  Future<URLRequest> asURLRequest() async {
-    final result = await _channel.invoke<String>('Session.asURLRequest', {
-      '_handle': _handle,
-    });
-    return URLRequest.fromHandle(result);
-  }
-
-  @override
-  Future<URLRequest> asURLRequest() async {
-    final result = await _channel.invoke<String>('Session.asURLRequest', {
-      '_handle': _handle,
-    });
-    return URLRequest.fromHandle(result);
   }
 
   @override
@@ -1647,18 +1516,10 @@ class Session implements SessionInterface {
   }
 
   @override
-  Future<URLRequest> asURLRequest() async {
-    final result = await _channel.invoke<String>('Session.asURLRequest', {
-      '_handle': _handle,
-    });
-    return URLRequest.fromHandle(result);
-  }
-
-  @override
   Future<void> performEagerlyIfNecessary(Request request) async {
     await _channel.invoke<void>('Session.performEagerlyIfNecessary', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -1667,7 +1528,7 @@ class Session implements SessionInterface {
   Future<void> perform(Request request) async {
     await _channel.invoke<void>('Session.perform', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -1712,16 +1573,18 @@ class Session implements SessionInterface {
   }
 
   @override
-  Future<void> didCreateURLRequest(URLRequest urlRequest, Request request) async {
+  Future<void> didCreateURLRequest(
+      URLRequest urlRequest, Request request) async {
     await _channel.invoke<void>('Session.didCreateURLRequest', {
       '_handle': _handle,
       'urlRequest': urlRequest._handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
   @override
-  Future<void> didReceiveResumeData(Uint8List data, DownloadRequest request) async {
+  Future<void> didReceiveResumeData(
+      Uint8List data, DownloadRequest request) async {
     await _channel.invoke<void>('Session.didReceiveResumeData', {
       '_handle': _handle,
       'data': data,
@@ -1734,7 +1597,7 @@ class Session implements SessionInterface {
     await _channel.invoke<void>('Session.updateStatesForTask', {
       '_handle': _handle,
       'task': task._handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -1742,7 +1605,7 @@ class Session implements SessionInterface {
   Future<dynamic> adapter(Request request) async {
     final result = await _channel.invoke<dynamic>('Session.adapter', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
     return result;
   }
@@ -1751,7 +1614,7 @@ class Session implements SessionInterface {
   Future<dynamic> retrier(Request request) async {
     final result = await _channel.invoke<dynamic>('Session.retrier', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
     return result;
   }
@@ -1767,7 +1630,7 @@ class Session implements SessionInterface {
   Future<void> readyToPerform(Request request) async {
     await _channel.invoke<void>('Session.readyToPerform', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -1775,16 +1638,17 @@ class Session implements SessionInterface {
   Future<void> cleanup(Request request) async {
     await _channel.invoke<void>('Session.cleanup', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
   @override
-  Future<void> retryResult(Request request, AFError error, dynamic completion) async {
+  Future<void> retryResult(
+      Request request, AFError error, dynamic completion) async {
     await _channel.invoke<void>('Session.retryResult', {
       '_handle': _handle,
-      'request': request.toMap(),
-      'error': error.toMap(),
+      'request': request,
+      'error': error,
       'completion': completion,
     });
   }
@@ -1793,18 +1657,19 @@ class Session implements SessionInterface {
   Future<void> retryRequest(Request request, double? timeDelay) async {
     await _channel.invoke<void>('Session.retryRequest', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
       'timeDelay': timeDelay,
     });
   }
 
   @override
   Future<Request?> request(URLSessionTask task) async {
-    final result = await _channel.invoke<Map<String, dynamic>?>('Session.request', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>?>('Session.request', {
       '_handle': _handle,
       'task': task._handle,
     });
-    return result != null ? Request.fromMap(result) : null;
+    return result != null ? result as Request : null;
   }
 
   @override
@@ -1825,7 +1690,8 @@ class Session implements SessionInterface {
   }
 
   @override
-  Future<URLCredential?> credential(URLSessionTask task, URLProtectionSpace protectionSpace) async {
+  Future<URLCredential?> credential(
+      URLSessionTask task, URLProtectionSpace protectionSpace) async {
     final result = await _channel.invoke<String?>('Session.credential', {
       '_handle': _handle,
       'task': task._handle,
@@ -1836,7 +1702,8 @@ class Session implements SessionInterface {
 
   @override
   Future<void> cancelRequestsForSessionInvalidation(dynamic error) async {
-    await _channel.invoke<void>('Session.cancelRequestsForSessionInvalidation', {
+    await _channel
+        .invoke<void>('Session.cancelRequestsForSessionInvalidation', {
       '_handle': _handle,
       'error': error,
     });
@@ -1849,6 +1716,7 @@ class Session implements SessionInterface {
 
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with their own associated reasons.
 sealed class AFError {
+  AFError();
   factory AFError.fromMap(Map<String, dynamic> map) {
     switch (map['_type'] as String) {
       case 'bodyPartURLInvalid':
@@ -1992,16 +1860,14 @@ abstract interface class DataStreamRequestInterface {
   /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
   Future<void> cancel();
 
-  /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
-  Future<void> cancel();
-
   Future<URLSessionTask> task(URLRequest request, URLSession session);
 
   Future<void> finish({AFError? error});
 
   Future<void> didReceive(Uint8List data);
 
-  Future<void> didReceiveResponse(HTTPURLResponse response, dynamic completionHandler);
+  Future<void> didReceiveResponse(
+      HTTPURLResponse response, dynamic completionHandler);
 
   Future<Self> validate(dynamic validation);
 
@@ -2021,86 +1887,12 @@ class DataStreamRequest implements DataStreamRequestInterface {
 
   DataStreamRequest._(this._handle);
 
-  static DataStreamRequest fromHandle(String handle) => DataStreamRequest._(handle);
+  static DataStreamRequest fromHandle(String handle) =>
+      DataStreamRequest._(handle);
 
   static Future<DataStreamRequest> create() async {
     final handle = await _channel.invoke<String>('DataStreamRequest._create');
     return DataStreamRequest._(handle);
-  }
-  /// Latest `Event` from the stream.
-  final dynamic event;
-  /// Token used to cancel the stream.
-  final CancellationToken token;
-  /// Last `URLRequest` issued by the instance.
-  final URLRequest? request;
-  /// Last `HTTPURLResponse` received by the instance.
-  final HTTPURLResponse? response;
-  /// Last `URLSessionTaskMetrics` produced for the instance.
-  final URLSessionTaskMetrics? metrics;
-  /// `AFError` produced for the instance, if any.
-  final AFError? error;
-  final DataStreamRequest? request;
-  /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
-  final dynamic convertible;
-  /// Whether or not the instance will be cancelled if stream parsing encounters an error.
-  final bool automaticallyCancelOnStreamError;
-  /// `OutputStream` bound to the `InputStream` produced by `asInputStream`, if it has been called.
-  final OutputStream? outputStream;
-  /// Stream closures called as `Data` is received.
-  final Map<dynamic, dynamic> streams;
-  /// Completion calls enqueued while streams are still executing.
-  final List<dynamic> enqueuedCompletionEvents;
-  /// Handler for any `HTTPURLResponse`s received.
-  final dynamic httpResponseHandler;
-  final dynamic validator;
-  final InputStream? inputStream;
-
-  DataStreamRequest({required this.event, required this.token, this.request, this.response, this.metrics, this.error, this.request, required this.convertible, required this.automaticallyCancelOnStreamError, this.outputStream, required this.streams, required this.enqueuedCompletionEvents, required this.httpResponseHandler, required this.validator, this.inputStream});
-
-  factory DataStreamRequest.fromMap(Map<String, dynamic> map) {
-    return DataStreamRequest(
-      event: map['event'] as dynamic,
-      token: CancellationToken.fromHandle(map['token'] as String),
-      request: map['request'] != null ? URLRequest.fromHandle(map['request'] as String) : null,
-      response: map['response'] != null ? HTTPURLResponse.fromHandle(map['response'] as String) : null,
-      metrics: map['metrics'] != null ? URLSessionTaskMetrics.fromHandle(map['metrics'] as String) : null,
-      error: map['error'] != null ? AFError.fromMap(map['error'] as Map<String, dynamic>) : null,
-      request: map['request'] != null ? DataStreamRequest.fromMap(map['request'] as Map<String, dynamic>) : null,
-      convertible: map['convertible'] as dynamic,
-      automaticallyCancelOnStreamError: map['automaticallyCancelOnStreamError'] as bool,
-      outputStream: map['outputStream'] != null ? OutputStream.fromHandle(map['outputStream'] as String) : null,
-      streams: (map['streams'] as Map).cast<dynamic, dynamic>(),
-      enqueuedCompletionEvents: (map['enqueuedCompletionEvents'] as List).cast<dynamic>(),
-      httpResponseHandler: map['httpResponseHandler'] as dynamic,
-      validator: map['validator'] as dynamic,
-      inputStream: map['inputStream'] != null ? InputStream.fromHandle(map['inputStream'] as String) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'event': event,
-    'token': token._handle,
-    if (request != null) 'request': request?._handle,
-    if (response != null) 'response': response?._handle,
-    if (metrics != null) 'metrics': metrics?._handle,
-    if (error != null) 'error': error?.toMap(),
-    if (request != null) 'request': request?._handle,
-    'convertible': convertible,
-    'automaticallyCancelOnStreamError': automaticallyCancelOnStreamError,
-    if (outputStream != null) 'outputStream': outputStream?._handle,
-    'streams': streams,
-    'enqueuedCompletionEvents': enqueuedCompletionEvents,
-    'httpResponseHandler': httpResponseHandler,
-    'validator': validator,
-    if (inputStream != null) 'inputStream': inputStream?._handle,
-  };
-
-  /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
-  @override
-  Future<void> cancel() async {
-    await _channel.invoke<void>('DataStreamRequest.cancel', {
-      '_handle': _handle,
-    });
   }
 
   /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
@@ -2125,7 +1917,7 @@ class DataStreamRequest implements DataStreamRequestInterface {
   Future<void> finish({AFError? error}) async {
     await _channel.invoke<void>('DataStreamRequest.finish', {
       '_handle': _handle,
-      if (error != null) 'error': error.toMap(),
+      if (error != null) 'error': error,
     });
   }
 
@@ -2138,7 +1930,8 @@ class DataStreamRequest implements DataStreamRequestInterface {
   }
 
   @override
-  Future<void> didReceiveResponse(HTTPURLResponse response, dynamic completionHandler) async {
+  Future<void> didReceiveResponse(
+      HTTPURLResponse response, dynamic completionHandler) async {
     await _channel.invoke<void>('DataStreamRequest.didReceiveResponse', {
       '_handle': _handle,
       'response': response._handle,
@@ -2158,7 +1951,8 @@ class DataStreamRequest implements DataStreamRequestInterface {
   /// Produces an `InputStream` that receives the `Data` received by the instance.  - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`. Additionally, this method will automatically call `resume()` on the instance, regardless of whether or not the creating session has `startRequestsImmediately` set to `true`.  - Parameter bufferSize: Size, in bytes, of the buffer between the `OutputStream` and `InputStream`.  - Returns:              The `InputStream` bound to the internal `OutboundStream`.
   @override
   Future<InputStream?> asInputStream({int? bufferSize}) async {
-    final result = await _channel.invoke<String?>('DataStreamRequest.asInputStream', {
+    final result =
+        await _channel.invoke<String?>('DataStreamRequest.asInputStream', {
       '_handle': _handle,
       if (bufferSize != null) 'bufferSize': bufferSize,
     });
@@ -2175,7 +1969,8 @@ class DataStreamRequest implements DataStreamRequestInterface {
 
   @override
   Future<Self> responseStream(dynamic stream, {DispatchQueue? queue}) async {
-    final result = await _channel.invoke<String>('DataStreamRequest.responseStream', {
+    final result =
+        await _channel.invoke<String>('DataStreamRequest.responseStream', {
       '_handle': _handle,
       'stream': stream,
       if (queue != null) 'queue': queue._handle,
@@ -2196,18 +1991,12 @@ abstract interface class DownloadRequestInterface {
   Future<void> didFinishDownloading(URLSessionTask task, Future<Uri> result);
 
   /// Updates the `downloadProgress` using the provided values.  - Parameters: - bytesWritten:              Total bytes written so far. - totalBytesExpectedToWrite: Total bytes expected to write.
-  Future<void> updateDownloadProgress(int bytesWritten, int totalBytesExpectedToWrite);
+  Future<void> updateDownloadProgress(
+      int bytesWritten, int totalBytesExpectedToWrite);
 
   Future<URLSessionTask> task(URLRequest request, URLSession session);
 
-  /// Creates a `URLSessionTask` from the provided resume data.  - Parameters: - data:    `Data` used to resume the download. - session: `URLSession` used to create the `URLSessionTask`.  - Returns:   The `URLSessionTask` created.
-  Future<URLSessionTask> task(Uint8List data, URLSession session);
-
   Future<Self> cancel();
-
-  Future<Self> cancel(bool shouldProduceResumeData);
-
-  Future<Self> cancel(dynamic completionHandler);
 
   Future<Self> validate(dynamic validation);
 }
@@ -2226,55 +2015,6 @@ class DownloadRequest implements DownloadRequestInterface {
     final handle = await _channel.invoke<String>('DownloadRequest._create');
     return DownloadRequest._(handle);
   }
-  final int rawValue;
-  /// Default `Destination` used by Alamofire to ensure all downloads persist. This `Destination` prepends `Alamofire_` to the automatically generated download name and moves it within the temporary directory. Files with this destination must be additionally moved if they should survive the system reclamation of temporary space.
-  final Destination defaultDestination;
-  /// Default `URL` creation closure. Creates a `URL` in the temporary directory with `Alamofire_` prepended to the provided file name.
-  final dynamic defaultDestinationURL;
-  /// If the download is resumable and is eventually cancelled or fails, this value may be used to resume the download using the `download(resumingWith data:)` API.  - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-  final Uint8List? resumeData;
-  /// If the download is successful, the `URL` where the file was downloaded.
-  final Uri? fileURL;
-  /// `Downloadable` value used for this instance.
-  final Downloadable downloadable;
-  /// The `Destination` to which the downloaded file is moved.
-  final Destination destination;
-  final dynamic validator;
-  final dynamic result;
-  final dynamic? didComplete;
-  final dynamic result;
-
-  DownloadRequest({required this.rawValue, required this.defaultDestination, required this.defaultDestinationURL, this.resumeData, this.fileURL, required this.downloadable, required this.destination, required this.validator, required this.result, this.didComplete, required this.result});
-
-  factory DownloadRequest.fromMap(Map<String, dynamic> map) {
-    return DownloadRequest(
-      rawValue: map['rawValue'] as int,
-      defaultDestination: Destination.fromHandle(map['defaultDestination'] as String),
-      defaultDestinationURL: map['defaultDestinationURL'] as dynamic,
-      resumeData: map['resumeData'] as Uint8List?,
-      fileURL: map['fileURL'] != null ? Uri.parse(map['fileURL'] as String) : null,
-      downloadable: Downloadable.fromHandle(map['downloadable'] as String),
-      destination: Destination.fromHandle(map['destination'] as String),
-      validator: map['validator'] as dynamic,
-      result: map['result'] as dynamic,
-      didComplete: map['didComplete'] as dynamic?,
-      result: map['result'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'rawValue': rawValue,
-    'defaultDestination': defaultDestination._handle,
-    'defaultDestinationURL': defaultDestinationURL,
-    if (resumeData != null) 'resumeData': resumeData,
-    if (fileURL != null) 'fileURL': fileURL?.toString(),
-    'downloadable': downloadable._handle,
-    'destination': destination._handle,
-    'validator': validator,
-    'result': result,
-    if (didComplete != null) 'didComplete': didComplete,
-    'result': result,
-  };
 
   @override
   Future<void> reset() async {
@@ -2285,7 +2025,8 @@ class DownloadRequest implements DownloadRequestInterface {
 
   /// Called when a download has finished.  - Parameters: - task:   `URLSessionTask` that finished the download. - result: `Result` of the automatic move to `destination`.
   @override
-  Future<void> didFinishDownloading(URLSessionTask task, Future<Uri> result) async {
+  Future<void> didFinishDownloading(
+      URLSessionTask task, Future<Uri> result) async {
     await _channel.invoke<void>('DownloadRequest.didFinishDownloading', {
       '_handle': _handle,
       'task': task._handle,
@@ -2295,7 +2036,8 @@ class DownloadRequest implements DownloadRequestInterface {
 
   /// Updates the `downloadProgress` using the provided values.  - Parameters: - bytesWritten:              Total bytes written so far. - totalBytesExpectedToWrite: Total bytes expected to write.
   @override
-  Future<void> updateDownloadProgress(int bytesWritten, int totalBytesExpectedToWrite) async {
+  Future<void> updateDownloadProgress(
+      int bytesWritten, int totalBytesExpectedToWrite) async {
     await _channel.invoke<void>('DownloadRequest.updateDownloadProgress', {
       '_handle': _handle,
       'bytesWritten': bytesWritten,
@@ -2313,39 +2055,10 @@ class DownloadRequest implements DownloadRequestInterface {
     return URLSessionTask.fromHandle(result);
   }
 
-  /// Creates a `URLSessionTask` from the provided resume data.  - Parameters: - data:    `Data` used to resume the download. - session: `URLSession` used to create the `URLSessionTask`.  - Returns:   The `URLSessionTask` created.
-  @override
-  Future<URLSessionTask> task(Uint8List data, URLSession session) async {
-    final result = await _channel.invoke<String>('DownloadRequest.task', {
-      '_handle': _handle,
-      'data': data,
-      'session': session._handle,
-    });
-    return URLSessionTask.fromHandle(result);
-  }
-
   @override
   Future<Self> cancel() async {
     final result = await _channel.invoke<String>('DownloadRequest.cancel', {
       '_handle': _handle,
-    });
-    return Self.fromHandle(result);
-  }
-
-  @override
-  Future<Self> cancel(bool shouldProduceResumeData) async {
-    final result = await _channel.invoke<String>('DownloadRequest.cancel', {
-      '_handle': _handle,
-      'shouldProduceResumeData': shouldProduceResumeData,
-    });
-    return Self.fromHandle(result);
-  }
-
-  @override
-  Future<Self> cancel(dynamic completionHandler) async {
-    final result = await _channel.invoke<String>('DownloadRequest.cancel', {
-      '_handle': _handle,
-      'completionHandler': completionHandler,
     });
     return Self.fromHandle(result);
   }
@@ -2377,17 +2090,9 @@ abstract interface class WebSocketRequestInterface {
 
   Future<void> didClose();
 
-  Future<Self> close(dynamic closeCode, {Uint8List? reason});
-
-  Future<Self> cancel();
-
   Future<void> didConnect(String? protocol);
 
-  Future<void> sendPing(dynamic onResponse, {DispatchQueue? queue});
-
   Future<void> startAutomaticPing(double pingInterval);
-
-  Future<void> startAutomaticPing(Duration duration);
 
   Future<void> cancelAutomaticPing();
 
@@ -2403,89 +2108,13 @@ class WebSocketRequest implements WebSocketRequestInterface {
 
   WebSocketRequest._(this._handle);
 
-  static WebSocketRequest fromHandle(String handle) => WebSocketRequest._(handle);
+  static WebSocketRequest fromHandle(String handle) =>
+      WebSocketRequest._(handle);
 
   static Future<WebSocketRequest> create() async {
     final handle = await _channel.invoke<String>('WebSocketRequest._create');
     return WebSocketRequest._(handle);
   }
-  final WebSocketRequest? socket;
-  final Kind kind;
-  final Success? message;
-  /// Last `URLRequest` issued by the instance.
-  final URLRequest? request;
-  /// Last `HTTPURLResponse` received by the instance.
-  final HTTPURLResponse? response;
-  /// Last `URLSessionTaskMetrics` produced for the instance.
-  final URLSessionTaskMetrics? metrics;
-  /// `AFError` produced for the instance, if any.
-  final AFError? error;
-  final int maximumMessageSize;
-  final double? pingInterval;
-  final DateTime start;
-  final DateTime end;
-  final double latency;
-  final dynamic enqueuedSends;
-  final Map<dynamic, dynamic> handlers;
-  final DispatchWorkItem? pingTimerItem;
-  final URLSessionWebSocketTask? socket;
-  final dynamic convertible;
-  final Configuration configuration;
-  final URLSessionWebSocketTask task;
-  final dynamic event;
-  final dynamic event;
-
-  WebSocketRequest({this.socket, required this.kind, this.message, this.request, this.response, this.metrics, this.error, required this.maximumMessageSize, this.pingInterval, required this.start, required this.end, required this.latency, required this.enqueuedSends, required this.handlers, this.pingTimerItem, this.socket, required this.convertible, required this.configuration, required this.task, required this.event, required this.event});
-
-  factory WebSocketRequest.fromMap(Map<String, dynamic> map) {
-    return WebSocketRequest(
-      socket: map['socket'] != null ? WebSocketRequest.fromMap(map['socket'] as Map<String, dynamic>) : null,
-      kind: Kind.fromHandle(map['kind'] as String),
-      message: map['message'] != null ? Success.fromHandle(map['message'] as String) : null,
-      request: map['request'] != null ? URLRequest.fromHandle(map['request'] as String) : null,
-      response: map['response'] != null ? HTTPURLResponse.fromHandle(map['response'] as String) : null,
-      metrics: map['metrics'] != null ? URLSessionTaskMetrics.fromHandle(map['metrics'] as String) : null,
-      error: map['error'] != null ? AFError.fromMap(map['error'] as Map<String, dynamic>) : null,
-      maximumMessageSize: map['maximumMessageSize'] as int,
-      pingInterval: map['pingInterval'] as double?,
-      start: DateTime.parse(map['start'] as String),
-      end: DateTime.parse(map['end'] as String),
-      latency: map['latency'] as double,
-      enqueuedSends: map['enqueuedSends'] as dynamic,
-      handlers: (map['handlers'] as Map).cast<dynamic, dynamic>(),
-      pingTimerItem: map['pingTimerItem'] != null ? DispatchWorkItem.fromHandle(map['pingTimerItem'] as String) : null,
-      socket: map['socket'] != null ? URLSessionWebSocketTask.fromHandle(map['socket'] as String) : null,
-      convertible: map['convertible'] as dynamic,
-      configuration: Configuration.fromHandle(map['configuration'] as String),
-      task: URLSessionWebSocketTask.fromHandle(map['task'] as String),
-      event: map['event'] as dynamic,
-      event: map['event'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    if (socket != null) 'socket': socket?._handle,
-    'kind': kind._handle,
-    if (message != null) 'message': message?._handle,
-    if (request != null) 'request': request?._handle,
-    if (response != null) 'response': response?._handle,
-    if (metrics != null) 'metrics': metrics?._handle,
-    if (error != null) 'error': error?.toMap(),
-    'maximumMessageSize': maximumMessageSize,
-    if (pingInterval != null) 'pingInterval': pingInterval,
-    'start': start.toIso8601String(),
-    'end': end.toIso8601String(),
-    'latency': latency,
-    'enqueuedSends': enqueuedSends,
-    'handlers': handlers,
-    if (pingTimerItem != null) 'pingTimerItem': pingTimerItem?._handle,
-    if (socket != null) 'socket': socket?._handle,
-    'convertible': convertible,
-    'configuration': configuration._handle,
-    'task': task._handle,
-    'event': event,
-    'event': event,
-  };
 
   @override
   Future<void> close(dynamic closeCode, {Uint8List? reason}) async {
@@ -2513,14 +2142,16 @@ class WebSocketRequest implements WebSocketRequestInterface {
   }
 
   static Future<Self> maximumMessageSize(int maximumMessageSize) async {
-    final result = await _channel.invoke<String>('WebSocketRequest.maximumMessageSize', {
+    final result =
+        await _channel.invoke<String>('WebSocketRequest.maximumMessageSize', {
       'maximumMessageSize': maximumMessageSize,
     });
     return Self.fromHandle(result);
   }
 
   static Future<Self> pingInterval(double pingInterval) async {
-    final result = await _channel.invoke<String>('WebSocketRequest.pingInterval', {
+    final result =
+        await _channel.invoke<String>('WebSocketRequest.pingInterval', {
       'pingInterval': pingInterval,
     });
     return Self.fromHandle(result);
@@ -2552,24 +2183,6 @@ class WebSocketRequest implements WebSocketRequestInterface {
   }
 
   @override
-  Future<Self> close(dynamic closeCode, {Uint8List? reason}) async {
-    final result = await _channel.invoke<String>('WebSocketRequest.close', {
-      '_handle': _handle,
-      'closeCode': closeCode,
-      if (reason != null) 'reason': reason,
-    });
-    return Self.fromHandle(result);
-  }
-
-  @override
-  Future<Self> cancel() async {
-    final result = await _channel.invoke<String>('WebSocketRequest.cancel', {
-      '_handle': _handle,
-    });
-    return Self.fromHandle(result);
-  }
-
-  @override
   Future<void> didConnect(String? protocol) async {
     await _channel.invoke<void>('WebSocketRequest.didConnect', {
       '_handle': _handle,
@@ -2578,27 +2191,10 @@ class WebSocketRequest implements WebSocketRequestInterface {
   }
 
   @override
-  Future<void> sendPing(dynamic onResponse, {DispatchQueue? queue}) async {
-    await _channel.invoke<void>('WebSocketRequest.sendPing', {
-      '_handle': _handle,
-      'onResponse': onResponse,
-      if (queue != null) 'queue': queue._handle,
-    });
-  }
-
-  @override
   Future<void> startAutomaticPing(double pingInterval) async {
     await _channel.invoke<void>('WebSocketRequest.startAutomaticPing', {
       '_handle': _handle,
       'pingInterval': pingInterval,
-    });
-  }
-
-  @override
-  Future<void> startAutomaticPing(Duration duration) async {
-    await _channel.invoke<void>('WebSocketRequest.startAutomaticPing', {
-      '_handle': _handle,
-      'duration': duration,
     });
   }
 
@@ -2620,7 +2216,8 @@ class WebSocketRequest implements WebSocketRequestInterface {
 
   @override
   Future<Self> forIncomingEvent(DispatchQueue queue, dynamic handler) async {
-    final result = await _channel.invoke<String>('WebSocketRequest.forIncomingEvent', {
+    final result =
+        await _channel.invoke<String>('WebSocketRequest.forIncomingEvent', {
       '_handle': _handle,
       'queue': queue._handle,
       'handler': handler,
@@ -2667,6 +2264,11 @@ class URLRequest implements URLRequestInterface {
 }
 
 class Request {
+  final String _handle;
+
+  Request._(this._handle);
+
+  static Request fromHandle(String handle) => Request._(handle);
 }
 
 abstract interface class HTTPHeadersInterface {
@@ -2712,6 +2314,11 @@ class HTTPHeaders implements HTTPHeadersInterface {
 }
 
 class HTTPURLResponse {
+  final String _handle;
+
+  HTTPURLResponse._(this._handle);
+
+  static HTTPURLResponse fromHandle(String handle) => HTTPURLResponse._(handle);
 }
 
 /// `Request` subclass which handles in-memory `Data` download using `URLSessionDataTask`.
@@ -2721,7 +2328,8 @@ abstract interface class DataRequestInterface {
   /// Called when `Data` is received by this instance.  - Note: Also calls `updateDownloadProgress`.  - Parameter data: The `Data` received.
   Future<void> didReceive(Uint8List data);
 
-  Future<void> didReceiveResponse(HTTPURLResponse response, dynamic completionHandler);
+  Future<void> didReceiveResponse(
+      HTTPURLResponse response, dynamic completionHandler);
 
   Future<URLSessionTask> task(URLRequest request, URLSession session);
 
@@ -2747,36 +2355,6 @@ class DataRequest implements DataRequestInterface {
     final handle = await _channel.invoke<String>('DataRequest._create');
     return DataRequest._(handle);
   }
-  /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
-  final dynamic convertible;
-  /// `Data` read from the server so far.
-  final Uint8List? data;
-  final dynamic validator;
-  final dynamic result;
-  final dynamic? didComplete;
-  final dynamic result;
-
-  DataRequest({required this.convertible, this.data, required this.validator, required this.result, this.didComplete, required this.result});
-
-  factory DataRequest.fromMap(Map<String, dynamic> map) {
-    return DataRequest(
-      convertible: map['convertible'] as dynamic,
-      data: map['data'] as Uint8List?,
-      validator: map['validator'] as dynamic,
-      result: map['result'] as dynamic,
-      didComplete: map['didComplete'] as dynamic?,
-      result: map['result'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'convertible': convertible,
-    if (data != null) 'data': data,
-    'validator': validator,
-    'result': result,
-    if (didComplete != null) 'didComplete': didComplete,
-    'result': result,
-  };
 
   @override
   Future<void> reset() async {
@@ -2795,7 +2373,8 @@ class DataRequest implements DataRequestInterface {
   }
 
   @override
-  Future<void> didReceiveResponse(HTTPURLResponse response, dynamic completionHandler) async {
+  Future<void> didReceiveResponse(
+      HTTPURLResponse response, dynamic completionHandler) async {
     await _channel.invoke<void>('DataRequest.didReceiveResponse', {
       '_handle': _handle,
       'response': response._handle,
@@ -2831,7 +2410,8 @@ class DataRequest implements DataRequestInterface {
   }
 
   @override
-  Future<Self> response(dynamic completionHandler, {DispatchQueue? queue}) async {
+  Future<Self> response(dynamic completionHandler,
+      {DispatchQueue? queue}) async {
     final result = await _channel.invoke<String>('DataRequest.response', {
       '_handle': _handle,
       'completionHandler': completionHandler,
@@ -2879,28 +2459,6 @@ class UploadRequest implements UploadRequestInterface {
     final handle = await _channel.invoke<String>('UploadRequest._create');
     return UploadRequest._(handle);
   }
-  /// The `UploadableConvertible` value used to produce the `Uploadable` value for this instance.
-  final dynamic upload;
-  /// `FileManager` used to perform cleanup tasks, including the removal of multipart form encoded payloads written to disk.
-  final FileManager fileManager;
-  /// `Uploadable` value used by the instance.
-  final Uploadable? uploadable;
-
-  UploadRequest({required this.upload, required this.fileManager, this.uploadable});
-
-  factory UploadRequest.fromMap(Map<String, dynamic> map) {
-    return UploadRequest(
-      upload: map['upload'] as dynamic,
-      fileManager: FileManager.fromHandle(map['fileManager'] as String),
-      uploadable: map['uploadable'] != null ? Uploadable.fromHandle(map['uploadable'] as String) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'upload': upload,
-    'fileManager': fileManager._handle,
-    if (uploadable != null) 'uploadable': uploadable?._handle,
-  };
 
   /// Called when the `Uploadable` value has been created from the `UploadConvertible`.  - Parameter uploadable: The `Uploadable` that was created.
   @override
@@ -2916,7 +2474,7 @@ class UploadRequest implements UploadRequestInterface {
   Future<void> didFailToCreateUploadable(AFError error) async {
     await _channel.invoke<void>('UploadRequest.didFailToCreateUploadable', {
       '_handle': _handle,
-      'error': error.toMap(),
+      'error': error,
     });
   }
 
@@ -2955,7 +2513,8 @@ class UploadRequest implements UploadRequestInterface {
 
   @override
   Future<dynamic> createUploadable() async {
-    final result = await _channel.invoke<dynamic>('UploadRequest.createUploadable', {
+    final result =
+        await _channel.invoke<dynamic>('UploadRequest.createUploadable', {
       '_handle': _handle,
     });
     return result;
@@ -2971,21 +2530,8 @@ abstract interface class SessionDelegateInterface {
   Future<void> urlSession(URLSession session, dynamic error);
 
   /// Evaluates the server trust `URLAuthenticationChallenge` received.  - Parameter challenge: The `URLAuthenticationChallenge`.  - Returns:             The `ChallengeEvaluation`.
-  Future<ChallengeEvaluation> attemptServerTrustAuthentication(URLAuthenticationChallenge challenge);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task, URLSessionTaskMetrics metrics);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task, dynamic error);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task);
-
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, Uint8List data);
-
-  Future<void> urlSession(URLSession session, URLSessionWebSocketTask webSocketTask, String? protocol);
-
-  Future<void> urlSession(URLSession session, URLSessionWebSocketTask webSocketTask, dynamic closeCode, Uint8List? reason);
-
-  Future<void> urlSession(URLSession session, URLSessionDownloadTask downloadTask, Uri location);
+  Future<ChallengeEvaluation> attemptServerTrustAuthentication(
+      URLAuthenticationChallenge challenge);
 }
 
 /// Class which implements the various `URLSessionDelegate` methods to connect various Alamofire features.
@@ -3002,22 +2548,6 @@ class SessionDelegate implements SessionDelegateInterface {
     final handle = await _channel.invoke<String>('SessionDelegate._create');
     return SessionDelegate._(handle);
   }
-  final dynamic? stateProvider;
-  final dynamic? eventMonitor;
-
-  SessionDelegate({this.stateProvider, this.eventMonitor});
-
-  factory SessionDelegate.fromMap(Map<String, dynamic> map) {
-    return SessionDelegate(
-      stateProvider: map['stateProvider'] as dynamic?,
-      eventMonitor: map['eventMonitor'] as dynamic?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    if (stateProvider != null) 'stateProvider': stateProvider,
-    if (eventMonitor != null) 'eventMonitor': eventMonitor,
-  };
 
   @override
   Future<void> urlSession(URLSession session, dynamic error) async {
@@ -3030,82 +2560,14 @@ class SessionDelegate implements SessionDelegateInterface {
 
   /// Evaluates the server trust `URLAuthenticationChallenge` received.  - Parameter challenge: The `URLAuthenticationChallenge`.  - Returns:             The `ChallengeEvaluation`.
   @override
-  Future<ChallengeEvaluation> attemptServerTrustAuthentication(URLAuthenticationChallenge challenge) async {
-    final result = await _channel.invoke<String>('SessionDelegate.attemptServerTrustAuthentication', {
+  Future<ChallengeEvaluation> attemptServerTrustAuthentication(
+      URLAuthenticationChallenge challenge) async {
+    final result = await _channel
+        .invoke<String>('SessionDelegate.attemptServerTrustAuthentication', {
       '_handle': _handle,
       'challenge': challenge._handle,
     });
     return ChallengeEvaluation.fromHandle(result);
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task, URLSessionTaskMetrics metrics) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-      'metrics': metrics._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task, dynamic error) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-      'error': error,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, Uint8List data) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'dataTask': dataTask._handle,
-      'data': data,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionWebSocketTask webSocketTask, String? protocol) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'webSocketTask': webSocketTask._handle,
-      'protocol': protocol,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionWebSocketTask webSocketTask, dynamic closeCode, Uint8List? reason) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'webSocketTask': webSocketTask._handle,
-      'closeCode': closeCode,
-      'reason': reason,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionDownloadTask downloadTask, Uri location) async {
-    await _channel.invoke<void>('SessionDelegate.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'downloadTask': downloadTask._handle,
-      'location': location.toString(),
-    });
   }
 
   Future<void> dispose() async {
@@ -3114,6 +2576,11 @@ class SessionDelegate implements SessionDelegateInterface {
 }
 
 class DispatchQueue {
+  final String _handle;
+
+  DispatchQueue._(this._handle);
+
+  static DispatchQueue fromHandle(String handle) => DispatchQueue._(handle);
 }
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
@@ -3130,35 +2597,19 @@ class ServerTrustManager implements ServerTrustManagerInterface {
 
   ServerTrustManager._(this._handle);
 
-  static ServerTrustManager fromHandle(String handle) => ServerTrustManager._(handle);
+  static ServerTrustManager fromHandle(String handle) =>
+      ServerTrustManager._(handle);
 
   static Future<ServerTrustManager> create() async {
     final handle = await _channel.invoke<String>('ServerTrustManager._create');
     return ServerTrustManager._(handle);
   }
-  /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. `true` by default.
-  final bool allHostsMustBeEvaluated;
-  /// The dictionary of policies mapped to a particular host.
-  final Map<String, dynamic> evaluators;
-
-  ServerTrustManager({required this.allHostsMustBeEvaluated, required this.evaluators});
-
-  factory ServerTrustManager.fromMap(Map<String, dynamic> map) {
-    return ServerTrustManager(
-      allHostsMustBeEvaluated: map['allHostsMustBeEvaluated'] as bool,
-      evaluators: (map['evaluators'] as Map).cast<String, dynamic>(),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'allHostsMustBeEvaluated': allHostsMustBeEvaluated,
-    'evaluators': evaluators,
-  };
 
   /// Returns the `ServerTrustEvaluating` value for the given host, if one is set.  By default, this method will return the policy that perfectly matches the given host. Subclasses could override this method and implement more complex mapping implementations such as wildcards.  - Parameter host: The host to use when searching for a matching policy.  - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise. - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching evaluators are found.
   @override
   Future<dynamic> serverTrustEvaluator(String host) async {
-    final result = await _channel.invoke<dynamic>('ServerTrustManager.serverTrustEvaluator', {
+    final result = await _channel
+        .invoke<dynamic>('ServerTrustManager.serverTrustEvaluator', {
       '_handle': _handle,
       'host': host,
     });
@@ -3171,15 +2622,35 @@ class ServerTrustManager implements ServerTrustManagerInterface {
 }
 
 class SecTrust {
+  final String _handle;
+
+  SecTrust._(this._handle);
+
+  static SecTrust fromHandle(String handle) => SecTrust._(handle);
 }
 
 class SecPolicy {
+  final String _handle;
+
+  SecPolicy._(this._handle);
+
+  static SecPolicy fromHandle(String handle) => SecPolicy._(handle);
 }
 
 class SecCertificate {
+  final String _handle;
+
+  SecCertificate._(this._handle);
+
+  static SecCertificate fromHandle(String handle) => SecCertificate._(handle);
 }
 
 class OSStatus {
+  final String _handle;
+
+  OSStatus._(this._handle);
+
+  static OSStatus fromHandle(String handle) => OSStatus._(handle);
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -3188,35 +2659,7 @@ abstract interface class CompositeEventMonitorInterface {
 
   Future<void> urlSession(URLSession session, dynamic error);
 
-  Future<void> urlSession(URLSession session, URLSessionTask task);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task, URLSessionTaskMetrics metrics);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task, dynamic error);
-
-  Future<void> urlSession(URLSession session, URLSessionTask task);
-
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, URLResponse response);
-
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, Uint8List data);
-
   Future<void> request(Request request, URLRequest urlRequest);
-
-  Future<void> request(Request request, AFError error);
-
-  Future<void> request(Request request, URLRequest initialRequest, URLRequest adaptedRequest);
-
-  Future<void> request(Request request, URLRequest initialRequest, AFError error);
-
-  Future<void> request(Request request, URLRequest urlRequest);
-
-  Future<void> request(Request request, URLSessionTask task);
-
-  Future<void> request(Request request, URLSessionTaskMetrics metrics);
-
-  Future<void> request(Request request, URLSessionTask task, AFError error);
-
-  Future<void> request(Request request, URLSessionTask task, AFError? error);
 
   Future<void> requestIsRetrying(Request request);
 
@@ -3224,29 +2667,9 @@ abstract interface class CompositeEventMonitorInterface {
 
   Future<void> requestDidResume(Request request);
 
-  Future<void> request(Request request, URLSessionTask task);
-
   Future<void> requestDidSuspend(Request request);
 
-  Future<void> request(Request request, URLSessionTask task);
-
   Future<void> requestDidCancel(Request request);
-
-  Future<void> request(Request request, URLSessionTask task);
-
-  Future<void> request(DataRequest request, dynamic response);
-
-  Future<void> request(UploadRequest request, dynamic uploadable);
-
-  Future<void> request(UploadRequest request, AFError error);
-
-  Future<void> request(UploadRequest request, InputStream stream);
-
-  Future<void> request(DownloadRequest request, URLSessionTask task, Future<Uri> result);
-
-  Future<void> request(DownloadRequest request, Uri url);
-
-  Future<void> request(DownloadRequest request, dynamic response);
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -3257,32 +2680,14 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
 
   CompositeEventMonitor._(this._handle);
 
-  static CompositeEventMonitor fromHandle(String handle) => CompositeEventMonitor._(handle);
+  static CompositeEventMonitor fromHandle(String handle) =>
+      CompositeEventMonitor._(handle);
 
   static Future<CompositeEventMonitor> create() async {
-    final handle = await _channel.invoke<String>('CompositeEventMonitor._create');
+    final handle =
+        await _channel.invoke<String>('CompositeEventMonitor._create');
     return CompositeEventMonitor._(handle);
   }
-  final DispatchQueue queue;
-  /// Underlying `EventMonitor`s performed by the instance.
-  final List<dynamic> monitors;
-  final dynamic _monitors;
-
-  CompositeEventMonitor({required this.queue, required this.monitors, required this._monitors});
-
-  factory CompositeEventMonitor.fromMap(Map<String, dynamic> map) {
-    return CompositeEventMonitor(
-      queue: DispatchQueue.fromHandle(map['queue'] as String),
-      monitors: (map['monitors'] as List).cast<dynamic>(),
-      _monitors: map['_monitors'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'queue': queue._handle,
-    'monitors': monitors,
-    '_monitors': _monitors,
-  };
 
   @override
   Future<void> performEvent(dynamic event) async {
@@ -3302,145 +2707,11 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   }
 
   @override
-  Future<void> urlSession(URLSession session, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task, URLSessionTaskMetrics metrics) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-      'metrics': metrics._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task, dynamic error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-      'error': error,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'task': task._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, URLResponse response) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'dataTask': dataTask._handle,
-      'response': response._handle,
-    });
-  }
-
-  @override
-  Future<void> urlSession(URLSession session, URLSessionDataTask dataTask, Uint8List data) async {
-    await _channel.invoke<void>('CompositeEventMonitor.urlSession', {
-      '_handle': _handle,
-      'session': session._handle,
-      'dataTask': dataTask._handle,
-      'data': data,
-    });
-  }
-
-  @override
   Future<void> request(Request request, URLRequest urlRequest) async {
     await _channel.invoke<void>('CompositeEventMonitor.request', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
       'urlRequest': urlRequest._handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request, AFError error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'error': error.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLRequest initialRequest, URLRequest adaptedRequest) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'initialRequest': initialRequest._handle,
-      'adaptedRequest': adaptedRequest._handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLRequest initialRequest, AFError error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'initialRequest': initialRequest._handle,
-      'error': error.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLRequest urlRequest) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'urlRequest': urlRequest._handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTaskMetrics metrics) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'metrics': metrics._handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task, AFError error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
-      'error': error.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task, AFError? error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
-      'error': error.toMap(),
     });
   }
 
@@ -3448,7 +2719,7 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   Future<void> requestIsRetrying(Request request) async {
     await _channel.invoke<void>('CompositeEventMonitor.requestIsRetrying', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -3456,7 +2727,7 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   Future<void> requestDidFinish(Request request) async {
     await _channel.invoke<void>('CompositeEventMonitor.requestDidFinish', {
       '_handle': _handle,
-      'request': request.toMap(),
+      'request': request,
     });
   }
 
@@ -3464,16 +2735,7 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   Future<void> requestDidResume(Request request) async {
     await _channel.invoke<void>('CompositeEventMonitor.requestDidResume', {
       '_handle': _handle,
-      'request': request.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
+      'request': request,
     });
   }
 
@@ -3481,16 +2743,7 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   Future<void> requestDidSuspend(Request request) async {
     await _channel.invoke<void>('CompositeEventMonitor.requestDidSuspend', {
       '_handle': _handle,
-      'request': request.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
+      'request': request,
     });
   }
 
@@ -3498,80 +2751,7 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
   Future<void> requestDidCancel(Request request) async {
     await _channel.invoke<void>('CompositeEventMonitor.requestDidCancel', {
       '_handle': _handle,
-      'request': request.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(Request request, URLSessionTask task) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request.toMap(),
-      'task': task._handle,
-    });
-  }
-
-  @override
-  Future<void> request(DataRequest request, dynamic response) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'response': response,
-    });
-  }
-
-  @override
-  Future<void> request(UploadRequest request, dynamic uploadable) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'uploadable': uploadable,
-    });
-  }
-
-  @override
-  Future<void> request(UploadRequest request, AFError error) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'error': error.toMap(),
-    });
-  }
-
-  @override
-  Future<void> request(UploadRequest request, InputStream stream) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'stream': stream._handle,
-    });
-  }
-
-  @override
-  Future<void> request(DownloadRequest request, URLSessionTask task, Future<Uri> result) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'task': task._handle,
-      'result': result,
-    });
-  }
-
-  @override
-  Future<void> request(DownloadRequest request, Uri url) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'url': url.toString(),
-    });
-  }
-
-  @override
-  Future<void> request(DownloadRequest request, dynamic response) async {
-    await _channel.invoke<void>('CompositeEventMonitor.request', {
-      '_handle': _handle,
-      'request': request._handle,
-      'response': response,
+      'request': request,
     });
   }
 
@@ -3579,4 +2759,3 @@ class CompositeEventMonitor implements CompositeEventMonitorInterface {
     await _channel.invoke<void>('_dispose', {'_handle': _handle});
   }
 }
-

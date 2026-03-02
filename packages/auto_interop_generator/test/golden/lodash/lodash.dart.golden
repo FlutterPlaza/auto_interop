@@ -5,6 +5,8 @@
 // Source: npm
 // Platform availability: Web only (npm package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'package:auto_interop/auto_interop.dart';
 
 abstract interface class LodashInterface {
@@ -15,7 +17,7 @@ abstract interface class LodashInterface {
   Future<List<dynamic>> uniq(List<dynamic> array);
 
   /// Gets the value at path of object.
-  Future<dynamic> get(dynamic object, String path, {dynamic defaultValue});
+  Future<dynamic> get$(dynamic object, String path, {dynamic defaultValue});
 
   /// Checks if value is empty.
   Future<bool> isEmpty(dynamic value);
@@ -51,7 +53,7 @@ class Lodash implements LodashInterface {
 
   /// Gets the value at path of object.
   @override
-  Future<dynamic> get(dynamic object, String path, {dynamic defaultValue}) async {
+  Future<dynamic> get$(dynamic object, String path, {dynamic defaultValue}) async {
     final result = await _channel.invoke<dynamic>('get', {
       'object': object,
       'path': path,

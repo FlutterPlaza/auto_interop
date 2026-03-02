@@ -153,7 +153,7 @@ class _TestAstParser extends AstParserBase {
     ProcessResult? processResult,
     this.processDelay,
     this.prepareError,
-    Duration timeout = const Duration(seconds: 30),
+    super.timeout,
   }) : super(
           fallbackParser: NpmParser(),
           toolchainDetector: ToolchainDetector(
@@ -168,7 +168,6 @@ class _TestAstParser extends AstParserBase {
             }
             return processResult ?? _mockResult(0);
           },
-          timeout: timeout,
         );
 
   @override

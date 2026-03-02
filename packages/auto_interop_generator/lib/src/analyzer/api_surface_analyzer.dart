@@ -1,3 +1,4 @@
+import '../generators/dart_reserved.dart';
 import '../schema/unified_type_schema.dart';
 
 /// Severity level for analysis diagnostics.
@@ -284,73 +285,8 @@ class ApiSurfaceAnalyzer {
     }
 
     // Check for Dart reserved word collisions
-    const dartReserved = {
-      'abstract',
-      'as',
-      'assert',
-      'async',
-      'await',
-      'break',
-      'case',
-      'catch',
-      'class',
-      'const',
-      'continue',
-      'default',
-      'deferred',
-      'do',
-      'dynamic',
-      'else',
-      'enum',
-      'export',
-      'extends',
-      'extension',
-      'external',
-      'factory',
-      'false',
-      'final',
-      'finally',
-      'for',
-      'get',
-      'if',
-      'implements',
-      'import',
-      'in',
-      'interface',
-      'is',
-      'late',
-      'library',
-      'mixin',
-      'new',
-      'null',
-      'on',
-      'operator',
-      'part',
-      'required',
-      'rethrow',
-      'return',
-      'sealed',
-      'set',
-      'show',
-      'static',
-      'super',
-      'switch',
-      'sync',
-      'this',
-      'throw',
-      'true',
-      'try',
-      'type',
-      'typedef',
-      'var',
-      'void',
-      'while',
-      'with',
-      'yield',
-    };
-
     for (final name in names.keys) {
-      if (dartReserved.contains(name.toLowerCase())) {
+      if (dartReservedWords.contains(name.toLowerCase())) {
         diagnostics.add(AnalysisDiagnostic(
           severity: DiagnosticSeverity.warning,
           message: 'Name "$name" collides with Dart reserved word',

@@ -5,6 +5,8 @@
 // Source: cocoapods
 // Platform availability: iOS and macOS only (CocoaPods package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'dart:typed_data';
 
 import 'package:auto_interop/auto_interop.dart';
@@ -228,6 +230,7 @@ class SDImageCache implements SDImageCacheInterface {
 
 /// Represents the result of an image operation.
 sealed class SDImageResult {
+  SDImageResult();
   factory SDImageResult.fromMap(Map<String, dynamic> map) {
     switch (map['_type'] as String) {
       case 'success':

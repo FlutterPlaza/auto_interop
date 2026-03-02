@@ -1,3 +1,8 @@
+## 0.2.1
+
+- Fix dartdoc crash by adding missing category markdown files (`doc/categories/`).
+- Include `example/` in published package for pub.dev scoring.
+
 ## 0.2.0
 
 - No runtime changes. This release accompanies `auto_interop_generator` 0.2.0 which adds AST-based parsing for near-100% reliability.

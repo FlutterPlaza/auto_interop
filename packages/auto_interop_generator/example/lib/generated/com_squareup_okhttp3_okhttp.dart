@@ -5,6 +5,8 @@
 // Source: gradle
 // Platform availability: Android only (Gradle/Maven package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'dart:typed_data';
 
 import 'package:auto_interop/auto_interop.dart';
@@ -125,7 +127,8 @@ class File {
 class HostnameVerifier {
   final String _handle;
   HostnameVerifier._(this._handle);
-  static HostnameVerifier fromHandle(String handle) => HostnameVerifier._(handle);
+  static HostnameVerifier fromHandle(String handle) =>
+      HostnameVerifier._(handle);
 }
 
 /// Opaque handle to a native IOException object.
@@ -146,7 +149,8 @@ class InetAddress {
 class InetSocketAddress {
   final String _handle;
   InetSocketAddress._(this._handle);
-  static InetSocketAddress fromHandle(String handle) => InetSocketAddress._(handle);
+  static InetSocketAddress fromHandle(String handle) =>
+      InetSocketAddress._(handle);
 }
 
 /// Opaque handle to a native InputStream object.
@@ -223,7 +227,8 @@ class SSLSocket {
 class SSLSocketFactory {
   final String _handle;
   SSLSocketFactory._(this._handle);
-  static SSLSocketFactory fromHandle(String handle) => SSLSocketFactory._(handle);
+  static SSLSocketFactory fromHandle(String handle) =>
+      SSLSocketFactory._(handle);
 }
 
 /// Opaque handle to a native Sink object.
@@ -299,16 +304,13 @@ enum Protocol {
 
 /// HTTP header: the name is an ASCII string, but the value can be UTF-8.
 class Header {
-
   Header();
 
   factory Header.fromMap(Map<String, dynamic> map) {
-    return Header(
-    );
+    return Header();
   }
 
-  Map<String, dynamic> toMap() => {
-  };
+  Map<String, dynamic> toMap() => {};
 }
 
 /// Observes, modifies, and potentially short-circuits requests going out and the corresponding responses coming back in. Typically interceptors add, remove, or transform headers on the request or response. Implementations of this interface throw [IOException] to signal connectivity failures. This includes both natural exceptions such as unreachable servers, as well as synthetic exceptions when responses are of an unexpected type or cannot be decoded. Other exception types cancel the current call: * For synchronous calls made with [Call.execute], the exception is propagated to the caller. * For asynchronous calls made with [Call.enqueue], an [IOException] is propagated to the caller indicating that the call was canceled. The interceptor's exception is delivered to the current thread's [uncaught exception handler][Thread.UncaughtExceptionHandler]. By default this crashes the application on Android and prints a stacktrace on the JVM. (Crash reporting libraries may customize this behavior.) A good way to signal a failure is with a synthetic HTTP response: ``` override fun intercept(chain: Interceptor.Chain): Response { if (myConfig.isInvalid()) { return Response.Builder() .request(chain.request()) .protocol(Protocol.HTTP_1_1) .code(400) .message("client config invalid") .body("client config invalid".toResponseBody(null)) .build() } return chain.proceed(chain.request()) } ```
@@ -367,14 +369,16 @@ class Interceptor {
   }
 
   Future<int> connectTimeoutMillis() async {
-    final result = await _channel.invoke<int>('Interceptor.connectTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('Interceptor.connectTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
   }
 
   Future<Chain> withConnectTimeout(int timeout, TimeUnit unit) async {
-    final result = await _channel.invoke<String>('Interceptor.withConnectTimeout', {
+    final result =
+        await _channel.invoke<String>('Interceptor.withConnectTimeout', {
       '_handle': _handle,
       'timeout': timeout,
       'unit': unit._handle,
@@ -390,7 +394,8 @@ class Interceptor {
   }
 
   Future<Chain> withReadTimeout(int timeout, TimeUnit unit) async {
-    final result = await _channel.invoke<String>('Interceptor.withReadTimeout', {
+    final result =
+        await _channel.invoke<String>('Interceptor.withReadTimeout', {
       '_handle': _handle,
       'timeout': timeout,
       'unit': unit._handle,
@@ -399,14 +404,16 @@ class Interceptor {
   }
 
   Future<int> writeTimeoutMillis() async {
-    final result = await _channel.invoke<int>('Interceptor.writeTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('Interceptor.writeTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
   }
 
   Future<Chain> withWriteTimeout(int timeout, TimeUnit unit) async {
-    final result = await _channel.invoke<String>('Interceptor.withWriteTimeout', {
+    final result =
+        await _channel.invoke<String>('Interceptor.withWriteTimeout', {
       '_handle': _handle,
       'timeout': timeout,
       'unit': unit._handle,
@@ -426,7 +433,7 @@ abstract interface class MediaTypeInterface {
   /// Returns the parameter [name] of this media type, or null if this media type does not define such a parameter.
   Future<String?> parameter(String name);
 
-  Future<void> type();
+  Future<void> type$();
 
   Future<void> subtype();
 
@@ -468,7 +475,7 @@ class MediaType implements MediaTypeInterface {
   }
 
   @override
-  Future<void> type() async {
+  Future<void> type$() async {
     await _channel.invoke<void>('MediaType.type', {
       '_handle': _handle,
     });
@@ -489,7 +496,7 @@ class MediaType implements MediaTypeInterface {
     });
   }
 
-  static Future<MediaType> get(String mediaType) async {
+  static Future<MediaType> get$(String mediaType) async {
     final result = await _channel.invoke<String>('MediaType.get', {
       'mediaType': mediaType,
     });
@@ -634,102 +641,27 @@ abstract interface class OkHttpClientInterface {
 
   Future<int> pingIntervalMillis();
 
-  /// Sets the dispatcher used to set policy and execute asynchronous requests. Must not be null.
-  Future<void> dispatcher(Dispatcher dispatcher);
-
-  /// Sets the connection pool used to recycle HTTP and HTTPS connections. If unset, a new connection pool will be used.
-  Future<void> connectionPool(ConnectionPool connectionPool);
-
-  /// Returns a modifiable list of interceptors that observe the full span of each call: from before the connection is established (if any) until after the response source is selected (either the origin server, cache, or both).
-  Future<List<Interceptor>> interceptors();
-
   Future<void> addInterceptor(Interceptor interceptor);
 
-  Future<void> addInterceptor();
-
-  /// Returns a modifiable list of interceptors that observe a single network request and response. These interceptors must call [Interceptor.Chain.proceed] exactly once: it is an error for a network interceptor to short-circuit or repeat a network request.
-  Future<List<Interceptor>> networkInterceptors();
-
   Future<void> addNetworkInterceptor(Interceptor interceptor);
-
-  Future<void> addNetworkInterceptor();
 
   /// Configure a single client scoped listener that will receive all analytic events for this client.
   Future<void> eventListener(EventListener eventListener);
 
-  /// Configure a factory to provide per-call scoped listeners that will receive analytic events for this client.
-  Future<void> eventListenerFactory(dynamic eventListenerFactory);
-
-  /// Configure this client to retry or not when a connectivity problem is encountered. By default, this client silently recovers from the following problems: * **Unreachable IP addresses.** If the URL's host has multiple IP addresses, failure to reach any individual IP address doesn't fail the overall request. This can increase availability of multi-homed services. * **Stale pooled connections.** The [ConnectionPool] reuses sockets to decrease request latency, but these connections will occasionally time out. * **Unreachable proxy servers.** A [ProxySelector] can be used to attempt multiple proxy servers in sequence, eventually falling back to a direct connection. Set this to false to avoid retrying requests when doing so is destructive. In this case the calling application should do its own recovery of connectivity failures.
-  Future<void> retryOnConnectionFailure(bool retryOnConnectionFailure);
-
-  /// Sets the authenticator used to respond to challenges from origin servers. Use [proxyAuthenticator] to set the authenticator for proxy servers. If unset, the [no authentication will be attempted][Authenticator.NONE].
-  Future<void> authenticator(Authenticator authenticator);
-
-  /// Configure this client to follow redirects. If unset, redirects will be followed.
-  Future<void> followRedirects(bool followRedirects);
-
-  /// Configure this client to allow protocol redirects from HTTPS to HTTP and from HTTP to HTTPS. Redirects are still first restricted by [followRedirects].  Defaults to true.
-  Future<void> followSslRedirects(bool followProtocolRedirects);
-
-  /// Sets the handler that can accept cookies from incoming HTTP responses and provides cookies to outgoing HTTP requests. If unset, [no cookies][CookieJar.NO_COOKIES] will be accepted nor provided.
-  Future<void> cookieJar(CookieJar cookieJar);
-
-  /// Sets the response cache to be used to read and write cached responses.
-  Future<void> cache(Cache? cache);
-
-  /// Sets the DNS service used to lookup IP addresses for hostnames. If unset, the [system-wide default][Dns.SYSTEM] DNS will be used.
-  Future<void> dns(Dns dns);
-
-  /// Sets the HTTP proxy that will be used by connections created by this client. This takes precedence over [proxySelector], which is only honored when this proxy is null (which it is by default). To disable proxy use completely, call `proxy(Proxy.NO_PROXY)`.
-  Future<void> proxy(Proxy? proxy);
-
-  /// Sets the proxy selection policy to be used if no [proxy][proxy] is specified explicitly. The proxy selector may return multiple proxies; in that case they will be tried in sequence until a successful connection is established. If unset, the [system-wide default][ProxySelector.getDefault] proxy selector will be used.
-  Future<void> proxySelector(ProxySelector proxySelector);
-
-  /// Sets the authenticator used to respond to challenges from proxy servers. Use [authenticator] to set the authenticator for origin servers. If unset, the [no authentication will be attempted][Authenticator.NONE].
-  Future<void> proxyAuthenticator(Authenticator proxyAuthenticator);
-
-  /// Sets the socket factory used to create connections. OkHttp only uses the parameterless [SocketFactory.createSocket] method to create unconnected sockets. Overriding this method, e. g., allows the socket to be bound to a specific local address. If unset, the [system-wide default][SocketFactory.getDefault] socket factory will be used.
-  Future<void> socketFactory(SocketFactory socketFactory);
-
-  Future<void> sslSocketFactory(SSLSocketFactory sslSocketFactory);
-
-  Future<void> connectionSpecs(List<ConnectionSpec> connectionSpecs);
-
-  /// Configure the protocols used by this client to communicate with remote servers. By default this client will prefer the most efficient transport available, falling back to more ubiquitous protocols. Applications should only call this method to avoid specific compatibility problems, such as web servers that behave incorrectly when HTTP/2 is enabled. The following protocols are currently supported: * [http/1.1][rfc_2616] * [h2][rfc_7540] * [h2 with prior knowledge(cleartext only)][rfc_7540_34] **This is an evolving set.** Future releases include support for transitional protocols. The http/1.1 transport will never be dropped. If multiple protocols are specified, [ALPN][alpn] will be used to negotiate a transport. Protocol negotiation is only attempted for HTTPS URLs. [Protocol.HTTP_1_0] is not supported in this set. Requests are initiated with `HTTP/1.1`. If the server responds with `HTTP/1.0`, that will be exposed by [Response.protocol]. [alpn]: http://tools.ietf.org/html/draft-ietf-tls-applayerprotoneg [rfc_2616]: http://www.w3.org/Protocols/rfc2616/rfc2616.html [rfc_7540]: https://tools.ietf.org/html/rfc7540 [rfc_7540_34]: https://tools.ietf.org/html/rfc7540#section-3.4 [Protocol.H2_PRIOR_KNOWLEDGE] then that must be the only protocol and HTTPS URLs will not be supported. Otherwise the list must contain [Protocol.HTTP_1_1]. The list must not contain null or [Protocol.HTTP_1_0].
-  Future<void> protocols(List<Protocol> protocols);
-
-  /// Sets the verifier used to confirm that response certificates apply to requested hostnames for HTTPS connections. If unset, a default hostname verifier will be used.
-  Future<void> hostnameVerifier(HostnameVerifier hostnameVerifier);
-
-  /// Sets the certificate pinner that constrains which certificates are trusted. By default HTTPS connections rely on only the [SSL socket factory][sslSocketFactory] to establish trust. Pinning certificates avoids the need to trust certificate authorities.
-  Future<void> certificatePinner(CertificatePinner certificatePinner);
-
   /// Sets the default timeout for complete calls. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The call timeout spans the entire call: resolving DNS, connecting, writing the request body, server processing, and reading the response body. If the call requires redirects or retries all must complete within one timeout period. The default value is 0 which imposes no timeout.
   Future<void> callTimeout(int timeout, TimeUnit unit);
-
-  Future<void> callTimeout(Duration duration);
 
   /// Sets the default connect timeout for new connections. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The connect timeout is applied when connecting a TCP socket to the target host. The default value is 10 seconds.
   Future<void> connectTimeout(int timeout, TimeUnit unit);
 
-  Future<void> connectTimeout(Duration duration);
-
   /// Sets the default read timeout for new connections. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The read timeout is applied to both the TCP socket and for individual read IO operations including on [Source] of the [Response]. The default value is 10 seconds.
   Future<void> readTimeout(int timeout, TimeUnit unit);
-
-  Future<void> readTimeout(Duration duration);
 
   /// Sets the default write timeout for new connections. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The write timeout is applied for individual write IO operations. The default value is 10 seconds.
   Future<void> writeTimeout(int timeout, TimeUnit unit);
 
-  Future<void> writeTimeout(Duration duration);
-
   /// Sets the interval between HTTP/2 and web socket pings initiated by this client. Use this to automatically send ping frames until either the connection fails or it is closed. This keeps the connection alive and may detect connectivity failures. If the server does not respond to each ping with a pong within `interval`, this client will assume that connectivity has been lost. When this happens on a web socket the connection is canceled and its listener is [notified][WebSocketListener.onFailure]. When it happens on an HTTP/2 connection the connection is closed and any calls it is carrying [will fail with an IOException][java.io.IOException]. The default value of 0 disables client-initiated pings.
   Future<void> pingInterval(int interval, TimeUnit unit);
-
-  Future<void> pingInterval(Duration duration);
 
   /// Sets minimum outbound web socket message size (in bytes) that will be compressed. Set to 0 to enable compression for all outbound messages. 1024 by default.
   Future<void> minWebSocketMessageToCompress(int bytes);
@@ -751,22 +683,6 @@ class OkHttpClient implements OkHttpClientInterface {
     final handle = await _channel.invoke<String>('OkHttpClient._create');
     return OkHttpClient._(handle);
   }
-  final int minWebSocketMessageToCompress;
-  final RouteDatabase routeDatabase;
-
-  OkHttpClient({required this.minWebSocketMessageToCompress, required this.routeDatabase});
-
-  factory OkHttpClient.fromMap(Map<String, dynamic> map) {
-    return OkHttpClient(
-      minWebSocketMessageToCompress: map['minWebSocketMessageToCompress'] as int,
-      routeDatabase: RouteDatabase.fromMap(map['routeDatabase'] as Map<String, dynamic>),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'minWebSocketMessageToCompress': minWebSocketMessageToCompress,
-    'routeDatabase': routeDatabase._handle,
-  };
 
   /// Prepares the [request] to be executed at some point in the future.
   @override
@@ -780,7 +696,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   /// Uses [request] to connect a new web socket.
   @override
-  Future<WebSocket> newWebSocket(Request request, WebSocketListener listener) async {
+  Future<WebSocket> newWebSocket(
+      Request request, WebSocketListener listener) async {
     final result = await _channel.invoke<String>('OkHttpClient.newWebSocket', {
       '_handle': _handle,
       'request': request._handle,
@@ -807,7 +724,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<ConnectionPool> connectionPool() async {
-    final result = await _channel.invoke<String>('OkHttpClient.connectionPool', {
+    final result =
+        await _channel.invoke<String>('OkHttpClient.connectionPool', {
       '_handle': _handle,
     });
     return ConnectionPool.fromHandle(result);
@@ -815,23 +733,26 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<List<Interceptor>> interceptors() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.interceptors', {
+    final result =
+        await _channel.invoke<List<dynamic>>('OkHttpClient.interceptors', {
       '_handle': _handle,
     });
-    return result.map((e) => Interceptor.fromHandle(e as String)).toList();
+    return result.map((e0) => Interceptor.fromHandle(e0 as String)).toList();
   }
 
   @override
   Future<List<Interceptor>> networkInterceptors() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.networkInterceptors', {
+    final result = await _channel
+        .invoke<List<dynamic>>('OkHttpClient.networkInterceptors', {
       '_handle': _handle,
     });
-    return result.map((e) => Interceptor.fromHandle(e as String)).toList();
+    return result.map((e0) => Interceptor.fromHandle(e0 as String)).toList();
   }
 
   @override
   Future<dynamic> eventListenerFactory() async {
-    final result = await _channel.invoke<dynamic>('OkHttpClient.eventListenerFactory', {
+    final result =
+        await _channel.invoke<dynamic>('OkHttpClient.eventListenerFactory', {
       '_handle': _handle,
     });
     return result;
@@ -839,7 +760,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<bool> retryOnConnectionFailure() async {
-    final result = await _channel.invoke<bool>('OkHttpClient.retryOnConnectionFailure', {
+    final result =
+        await _channel.invoke<bool>('OkHttpClient.retryOnConnectionFailure', {
       '_handle': _handle,
     });
     return result;
@@ -863,7 +785,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<bool> followSslRedirects() async {
-    final result = await _channel.invoke<bool>('OkHttpClient.followSslRedirects', {
+    final result =
+        await _channel.invoke<bool>('OkHttpClient.followSslRedirects', {
       '_handle': _handle,
     });
     return result;
@@ -911,7 +834,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<Authenticator> proxyAuthenticator() async {
-    final result = await _channel.invoke<String>('OkHttpClient.proxyAuthenticator', {
+    final result =
+        await _channel.invoke<String>('OkHttpClient.proxyAuthenticator', {
       '_handle': _handle,
     });
     return Authenticator.fromHandle(result);
@@ -927,7 +851,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<SSLSocketFactory> sslSocketFactory() async {
-    final result = await _channel.invoke<String>('OkHttpClient.sslSocketFactory', {
+    final result =
+        await _channel.invoke<String>('OkHttpClient.sslSocketFactory', {
       '_handle': _handle,
     });
     return SSLSocketFactory.fromHandle(result);
@@ -935,23 +860,26 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<List<ConnectionSpec>> connectionSpecs() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.connectionSpecs', {
+    final result =
+        await _channel.invoke<List<dynamic>>('OkHttpClient.connectionSpecs', {
       '_handle': _handle,
     });
-    return result.map((e) => ConnectionSpec.fromHandle(e as String)).toList();
+    return result.map((e0) => ConnectionSpec.fromHandle(e0 as String)).toList();
   }
 
   @override
   Future<List<Protocol>> protocols() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.protocols', {
+    final result =
+        await _channel.invoke<List<dynamic>>('OkHttpClient.protocols', {
       '_handle': _handle,
     });
-    return result.map((e) => Protocol.fromMap(e as Map<String, dynamic>)).toList();
+    return result.map((e0) => e0 as Protocol).toList();
   }
 
   @override
   Future<HostnameVerifier> hostnameVerifier() async {
-    final result = await _channel.invoke<String>('OkHttpClient.hostnameVerifier', {
+    final result =
+        await _channel.invoke<String>('OkHttpClient.hostnameVerifier', {
       '_handle': _handle,
     });
     return HostnameVerifier.fromHandle(result);
@@ -959,7 +887,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<CertificatePinner> certificatePinner() async {
-    final result = await _channel.invoke<String>('OkHttpClient.certificatePinner', {
+    final result =
+        await _channel.invoke<String>('OkHttpClient.certificatePinner', {
       '_handle': _handle,
     });
     return CertificatePinner.fromHandle(result);
@@ -967,7 +896,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<int> callTimeoutMillis() async {
-    final result = await _channel.invoke<int>('OkHttpClient.callTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('OkHttpClient.callTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
@@ -975,7 +905,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<int> connectTimeoutMillis() async {
-    final result = await _channel.invoke<int>('OkHttpClient.connectTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('OkHttpClient.connectTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
@@ -983,7 +914,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<int> readTimeoutMillis() async {
-    final result = await _channel.invoke<int>('OkHttpClient.readTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('OkHttpClient.readTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
@@ -991,7 +923,8 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<int> writeTimeoutMillis() async {
-    final result = await _channel.invoke<int>('OkHttpClient.writeTimeoutMillis', {
+    final result =
+        await _channel.invoke<int>('OkHttpClient.writeTimeoutMillis', {
       '_handle': _handle,
     });
     return result;
@@ -999,37 +932,11 @@ class OkHttpClient implements OkHttpClientInterface {
 
   @override
   Future<int> pingIntervalMillis() async {
-    final result = await _channel.invoke<int>('OkHttpClient.pingIntervalMillis', {
+    final result =
+        await _channel.invoke<int>('OkHttpClient.pingIntervalMillis', {
       '_handle': _handle,
     });
     return result;
-  }
-
-  /// Sets the dispatcher used to set policy and execute asynchronous requests. Must not be null.
-  @override
-  Future<void> dispatcher(Dispatcher dispatcher) async {
-    await _channel.invoke<void>('OkHttpClient.dispatcher', {
-      '_handle': _handle,
-      'dispatcher': dispatcher._handle,
-    });
-  }
-
-  /// Sets the connection pool used to recycle HTTP and HTTPS connections. If unset, a new connection pool will be used.
-  @override
-  Future<void> connectionPool(ConnectionPool connectionPool) async {
-    await _channel.invoke<void>('OkHttpClient.connectionPool', {
-      '_handle': _handle,
-      'connectionPool': connectionPool._handle,
-    });
-  }
-
-  /// Returns a modifiable list of interceptors that observe the full span of each call: from before the connection is established (if any) until after the response source is selected (either the origin server, cache, or both).
-  @override
-  Future<List<Interceptor>> interceptors() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.interceptors', {
-      '_handle': _handle,
-    });
-    return result.map((e) => Interceptor.fromHandle(e as String)).toList();
   }
 
   @override
@@ -1041,33 +948,10 @@ class OkHttpClient implements OkHttpClientInterface {
   }
 
   @override
-  Future<void> addInterceptor() async {
-    await _channel.invoke<void>('OkHttpClient.addInterceptor', {
-      '_handle': _handle,
-    });
-  }
-
-  /// Returns a modifiable list of interceptors that observe a single network request and response. These interceptors must call [Interceptor.Chain.proceed] exactly once: it is an error for a network interceptor to short-circuit or repeat a network request.
-  @override
-  Future<List<Interceptor>> networkInterceptors() async {
-    final result = await _channel.invoke<List<dynamic>>('OkHttpClient.networkInterceptors', {
-      '_handle': _handle,
-    });
-    return result.map((e) => Interceptor.fromHandle(e as String)).toList();
-  }
-
-  @override
   Future<void> addNetworkInterceptor(Interceptor interceptor) async {
     await _channel.invoke<void>('OkHttpClient.addNetworkInterceptor', {
       '_handle': _handle,
       'interceptor': interceptor._handle,
-    });
-  }
-
-  @override
-  Future<void> addNetworkInterceptor() async {
-    await _channel.invoke<void>('OkHttpClient.addNetworkInterceptor', {
-      '_handle': _handle,
     });
   }
 
@@ -1077,157 +961,6 @@ class OkHttpClient implements OkHttpClientInterface {
     await _channel.invoke<void>('OkHttpClient.eventListener', {
       '_handle': _handle,
       'eventListener': eventListener._handle,
-    });
-  }
-
-  /// Configure a factory to provide per-call scoped listeners that will receive analytic events for this client.
-  @override
-  Future<void> eventListenerFactory(dynamic eventListenerFactory) async {
-    await _channel.invoke<void>('OkHttpClient.eventListenerFactory', {
-      '_handle': _handle,
-      'eventListenerFactory': eventListenerFactory,
-    });
-  }
-
-  /// Configure this client to retry or not when a connectivity problem is encountered. By default, this client silently recovers from the following problems: * **Unreachable IP addresses.** If the URL's host has multiple IP addresses, failure to reach any individual IP address doesn't fail the overall request. This can increase availability of multi-homed services. * **Stale pooled connections.** The [ConnectionPool] reuses sockets to decrease request latency, but these connections will occasionally time out. * **Unreachable proxy servers.** A [ProxySelector] can be used to attempt multiple proxy servers in sequence, eventually falling back to a direct connection. Set this to false to avoid retrying requests when doing so is destructive. In this case the calling application should do its own recovery of connectivity failures.
-  @override
-  Future<void> retryOnConnectionFailure(bool retryOnConnectionFailure) async {
-    await _channel.invoke<void>('OkHttpClient.retryOnConnectionFailure', {
-      '_handle': _handle,
-      'retryOnConnectionFailure': retryOnConnectionFailure,
-    });
-  }
-
-  /// Sets the authenticator used to respond to challenges from origin servers. Use [proxyAuthenticator] to set the authenticator for proxy servers. If unset, the [no authentication will be attempted][Authenticator.NONE].
-  @override
-  Future<void> authenticator(Authenticator authenticator) async {
-    await _channel.invoke<void>('OkHttpClient.authenticator', {
-      '_handle': _handle,
-      'authenticator': authenticator._handle,
-    });
-  }
-
-  /// Configure this client to follow redirects. If unset, redirects will be followed.
-  @override
-  Future<void> followRedirects(bool followRedirects) async {
-    await _channel.invoke<void>('OkHttpClient.followRedirects', {
-      '_handle': _handle,
-      'followRedirects': followRedirects,
-    });
-  }
-
-  /// Configure this client to allow protocol redirects from HTTPS to HTTP and from HTTP to HTTPS. Redirects are still first restricted by [followRedirects].  Defaults to true.
-  @override
-  Future<void> followSslRedirects(bool followProtocolRedirects) async {
-    await _channel.invoke<void>('OkHttpClient.followSslRedirects', {
-      '_handle': _handle,
-      'followProtocolRedirects': followProtocolRedirects,
-    });
-  }
-
-  /// Sets the handler that can accept cookies from incoming HTTP responses and provides cookies to outgoing HTTP requests. If unset, [no cookies][CookieJar.NO_COOKIES] will be accepted nor provided.
-  @override
-  Future<void> cookieJar(CookieJar cookieJar) async {
-    await _channel.invoke<void>('OkHttpClient.cookieJar', {
-      '_handle': _handle,
-      'cookieJar': cookieJar._handle,
-    });
-  }
-
-  /// Sets the response cache to be used to read and write cached responses.
-  @override
-  Future<void> cache(Cache? cache) async {
-    await _channel.invoke<void>('OkHttpClient.cache', {
-      '_handle': _handle,
-      'cache': cache._handle,
-    });
-  }
-
-  /// Sets the DNS service used to lookup IP addresses for hostnames. If unset, the [system-wide default][Dns.SYSTEM] DNS will be used.
-  @override
-  Future<void> dns(Dns dns) async {
-    await _channel.invoke<void>('OkHttpClient.dns', {
-      '_handle': _handle,
-      'dns': dns._handle,
-    });
-  }
-
-  /// Sets the HTTP proxy that will be used by connections created by this client. This takes precedence over [proxySelector], which is only honored when this proxy is null (which it is by default). To disable proxy use completely, call `proxy(Proxy.NO_PROXY)`.
-  @override
-  Future<void> proxy(Proxy? proxy) async {
-    await _channel.invoke<void>('OkHttpClient.proxy', {
-      '_handle': _handle,
-      'proxy': proxy._handle,
-    });
-  }
-
-  /// Sets the proxy selection policy to be used if no [proxy][proxy] is specified explicitly. The proxy selector may return multiple proxies; in that case they will be tried in sequence until a successful connection is established. If unset, the [system-wide default][ProxySelector.getDefault] proxy selector will be used.
-  @override
-  Future<void> proxySelector(ProxySelector proxySelector) async {
-    await _channel.invoke<void>('OkHttpClient.proxySelector', {
-      '_handle': _handle,
-      'proxySelector': proxySelector._handle,
-    });
-  }
-
-  /// Sets the authenticator used to respond to challenges from proxy servers. Use [authenticator] to set the authenticator for origin servers. If unset, the [no authentication will be attempted][Authenticator.NONE].
-  @override
-  Future<void> proxyAuthenticator(Authenticator proxyAuthenticator) async {
-    await _channel.invoke<void>('OkHttpClient.proxyAuthenticator', {
-      '_handle': _handle,
-      'proxyAuthenticator': proxyAuthenticator._handle,
-    });
-  }
-
-  /// Sets the socket factory used to create connections. OkHttp only uses the parameterless [SocketFactory.createSocket] method to create unconnected sockets. Overriding this method, e. g., allows the socket to be bound to a specific local address. If unset, the [system-wide default][SocketFactory.getDefault] socket factory will be used.
-  @override
-  Future<void> socketFactory(SocketFactory socketFactory) async {
-    await _channel.invoke<void>('OkHttpClient.socketFactory', {
-      '_handle': _handle,
-      'socketFactory': socketFactory._handle,
-    });
-  }
-
-  @override
-  Future<void> sslSocketFactory(SSLSocketFactory sslSocketFactory) async {
-    await _channel.invoke<void>('OkHttpClient.sslSocketFactory', {
-      '_handle': _handle,
-      'sslSocketFactory': sslSocketFactory._handle,
-    });
-  }
-
-  @override
-  Future<void> connectionSpecs(List<ConnectionSpec> connectionSpecs) async {
-    await _channel.invoke<void>('OkHttpClient.connectionSpecs', {
-      '_handle': _handle,
-      'connectionSpecs': connectionSpecs.map((e) => e._handle).toList(),
-    });
-  }
-
-  /// Configure the protocols used by this client to communicate with remote servers. By default this client will prefer the most efficient transport available, falling back to more ubiquitous protocols. Applications should only call this method to avoid specific compatibility problems, such as web servers that behave incorrectly when HTTP/2 is enabled. The following protocols are currently supported: * [http/1.1][rfc_2616] * [h2][rfc_7540] * [h2 with prior knowledge(cleartext only)][rfc_7540_34] **This is an evolving set.** Future releases include support for transitional protocols. The http/1.1 transport will never be dropped. If multiple protocols are specified, [ALPN][alpn] will be used to negotiate a transport. Protocol negotiation is only attempted for HTTPS URLs. [Protocol.HTTP_1_0] is not supported in this set. Requests are initiated with `HTTP/1.1`. If the server responds with `HTTP/1.0`, that will be exposed by [Response.protocol]. [alpn]: http://tools.ietf.org/html/draft-ietf-tls-applayerprotoneg [rfc_2616]: http://www.w3.org/Protocols/rfc2616/rfc2616.html [rfc_7540]: https://tools.ietf.org/html/rfc7540 [rfc_7540_34]: https://tools.ietf.org/html/rfc7540#section-3.4 [Protocol.H2_PRIOR_KNOWLEDGE] then that must be the only protocol and HTTPS URLs will not be supported. Otherwise the list must contain [Protocol.HTTP_1_1]. The list must not contain null or [Protocol.HTTP_1_0].
-  @override
-  Future<void> protocols(List<Protocol> protocols) async {
-    await _channel.invoke<void>('OkHttpClient.protocols', {
-      '_handle': _handle,
-      'protocols': protocols.map((e) => e.toMap()).toList(),
-    });
-  }
-
-  /// Sets the verifier used to confirm that response certificates apply to requested hostnames for HTTPS connections. If unset, a default hostname verifier will be used.
-  @override
-  Future<void> hostnameVerifier(HostnameVerifier hostnameVerifier) async {
-    await _channel.invoke<void>('OkHttpClient.hostnameVerifier', {
-      '_handle': _handle,
-      'hostnameVerifier': hostnameVerifier._handle,
-    });
-  }
-
-  /// Sets the certificate pinner that constrains which certificates are trusted. By default HTTPS connections rely on only the [SSL socket factory][sslSocketFactory] to establish trust. Pinning certificates avoids the need to trust certificate authorities.
-  @override
-  Future<void> certificatePinner(CertificatePinner certificatePinner) async {
-    await _channel.invoke<void>('OkHttpClient.certificatePinner', {
-      '_handle': _handle,
-      'certificatePinner': certificatePinner._handle,
     });
   }
 
@@ -1241,14 +974,6 @@ class OkHttpClient implements OkHttpClientInterface {
     });
   }
 
-  @override
-  Future<void> callTimeout(Duration duration) async {
-    await _channel.invoke<void>('OkHttpClient.callTimeout', {
-      '_handle': _handle,
-      'duration': duration,
-    });
-  }
-
   /// Sets the default connect timeout for new connections. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The connect timeout is applied when connecting a TCP socket to the target host. The default value is 10 seconds.
   @override
   Future<void> connectTimeout(int timeout, TimeUnit unit) async {
@@ -1256,14 +981,6 @@ class OkHttpClient implements OkHttpClientInterface {
       '_handle': _handle,
       'timeout': timeout,
       'unit': unit._handle,
-    });
-  }
-
-  @override
-  Future<void> connectTimeout(Duration duration) async {
-    await _channel.invoke<void>('OkHttpClient.connectTimeout', {
-      '_handle': _handle,
-      'duration': duration,
     });
   }
 
@@ -1277,14 +994,6 @@ class OkHttpClient implements OkHttpClientInterface {
     });
   }
 
-  @override
-  Future<void> readTimeout(Duration duration) async {
-    await _channel.invoke<void>('OkHttpClient.readTimeout', {
-      '_handle': _handle,
-      'duration': duration,
-    });
-  }
-
   /// Sets the default write timeout for new connections. A value of 0 means no timeout, otherwise values must be between 1 and [Integer.MAX_VALUE] when converted to milliseconds. The write timeout is applied for individual write IO operations. The default value is 10 seconds.
   @override
   Future<void> writeTimeout(int timeout, TimeUnit unit) async {
@@ -1295,14 +1004,6 @@ class OkHttpClient implements OkHttpClientInterface {
     });
   }
 
-  @override
-  Future<void> writeTimeout(Duration duration) async {
-    await _channel.invoke<void>('OkHttpClient.writeTimeout', {
-      '_handle': _handle,
-      'duration': duration,
-    });
-  }
-
   /// Sets the interval between HTTP/2 and web socket pings initiated by this client. Use this to automatically send ping frames until either the connection fails or it is closed. This keeps the connection alive and may detect connectivity failures. If the server does not respond to each ping with a pong within `interval`, this client will assume that connectivity has been lost. When this happens on a web socket the connection is canceled and its listener is [notified][WebSocketListener.onFailure]. When it happens on an HTTP/2 connection the connection is closed and any calls it is carrying [will fail with an IOException][java.io.IOException]. The default value of 0 disables client-initiated pings.
   @override
   Future<void> pingInterval(int interval, TimeUnit unit) async {
@@ -1310,14 +1011,6 @@ class OkHttpClient implements OkHttpClientInterface {
       '_handle': _handle,
       'interval': interval,
       'unit': unit._handle,
-    });
-  }
-
-  @override
-  Future<void> pingInterval(Duration duration) async {
-    await _channel.invoke<void>('OkHttpClient.pingInterval', {
-      '_handle': _handle,
-      'duration': duration,
     });
   }
 
@@ -1379,10 +1072,11 @@ class Connection {
 
   /// Returns the protocol negotiated by this connection, or [Protocol.HTTP_1_1] if no protocol has been negotiated. This method returns [Protocol.HTTP_1_1] even if the remote peer is using [Protocol.HTTP_1_0].
   Future<Protocol> protocol() async {
-    final result = await _channel.invoke<Map<String, dynamic>>('Connection.protocol', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>>('Connection.protocol', {
       '_handle': _handle,
     });
-    return Protocol.fromMap(result);
+    return result as Protocol;
   }
 
   Future<void> dispose() async {
@@ -1414,23 +1108,8 @@ abstract interface class CookieInterface {
 
   Future<bool> secure();
 
-  Future<void> name(String name);
-
-  Future<void> value(String value);
-
-  Future<void> expiresAt(int expiresAt);
-
-  /// Set the domain pattern for this cookie. The cookie will match [domain] and all of its subdomains.
-  Future<Builder> domain(String domain);
-
   /// Set the host-only domain for this cookie. The cookie will match [domain] but none of its subdomains.
   Future<Builder> hostOnlyDomain(String domain);
-
-  Future<void> path(String path);
-
-  Future<void> secure();
-
-  Future<void> httpOnly();
 
   Future<Cookie> build();
 }
@@ -1540,40 +1219,6 @@ class Cookie implements CookieInterface {
     return result;
   }
 
-  @override
-  Future<void> name(String name) async {
-    await _channel.invoke<void>('Cookie.name', {
-      '_handle': _handle,
-      'name': name,
-    });
-  }
-
-  @override
-  Future<void> value(String value) async {
-    await _channel.invoke<void>('Cookie.value', {
-      '_handle': _handle,
-      'value': value,
-    });
-  }
-
-  @override
-  Future<void> expiresAt(int expiresAt) async {
-    await _channel.invoke<void>('Cookie.expiresAt', {
-      '_handle': _handle,
-      'expiresAt': expiresAt,
-    });
-  }
-
-  /// Set the domain pattern for this cookie. The cookie will match [domain] and all of its subdomains.
-  @override
-  Future<Builder> domain(String domain) async {
-    final result = await _channel.invoke<String>('Cookie.domain', {
-      '_handle': _handle,
-      'domain': domain,
-    });
-    return Builder.fromHandle(result);
-  }
-
   /// Set the host-only domain for this cookie. The cookie will match [domain] but none of its subdomains.
   @override
   Future<Builder> hostOnlyDomain(String domain) async {
@@ -1582,28 +1227,6 @@ class Cookie implements CookieInterface {
       'domain': domain,
     });
     return Builder.fromHandle(result);
-  }
-
-  @override
-  Future<void> path(String path) async {
-    await _channel.invoke<void>('Cookie.path', {
-      '_handle': _handle,
-      'path': path,
-    });
-  }
-
-  @override
-  Future<void> secure() async {
-    await _channel.invoke<void>('Cookie.secure', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<void> httpOnly() async {
-    await _channel.invoke<void>('Cookie.httpOnly', {
-      '_handle': _handle,
-    });
   }
 
   @override
@@ -1638,15 +1261,6 @@ class Cookie implements CookieInterface {
     return result != null ? Cookie.fromHandle(result) : null;
   }
 
-  static Future<Cookie?> parse(int currentTimeMillis, HttpUrl url, String setCookie) async {
-    final result = await _channel.invoke<String?>('Cookie.parse', {
-      'currentTimeMillis': currentTimeMillis,
-      'url': url._handle,
-      'setCookie': setCookie,
-    });
-    return result != null ? Cookie.fromHandle(result) : null;
-  }
-
   /// Parse a date as specified in RFC 6265, section 5.1.1.
   static Future<int> parseExpires(String s, int pos, int limit) async {
     final result = await _channel.invoke<int>('Cookie.parseExpires', {
@@ -1658,7 +1272,8 @@ class Cookie implements CookieInterface {
   }
 
   /// Returns the index of the next date character in `input`, or if `invert` the index of the next non-date character in `input`.
-  static Future<int> dateCharacterOffset(String input, int pos, int limit, bool invert) async {
+  static Future<int> dateCharacterOffset(
+      String input, int pos, int limit, bool invert) async {
     final result = await _channel.invoke<int>('Cookie.dateCharacterOffset', {
       'input': input,
       'pos': pos,
@@ -1689,7 +1304,7 @@ class Cookie implements CookieInterface {
       'url': url._handle,
       'headers': headers._handle,
     });
-    return result.map((e) => Cookie.fromHandle(e as String)).toList();
+    return result.map((e0) => Cookie.fromHandle(e0 as String)).toList();
   }
 
   Future<void> dispose() async {
@@ -1779,42 +1394,10 @@ class ResponseBody {
     return result;
   }
 
-  Future<void> close() async {
-    await _channel.invoke<void>('ResponseBody.close', {
-      '_handle': _handle,
-    });
-  }
-
-  static Future<void> contentType() async {
-    await _channel.invoke<void>('ResponseBody.contentType');
-  }
-
-  static Future<void> contentLength() async {
-    await _channel.invoke<void>('ResponseBody.contentLength');
-  }
-
-  static Future<void> source() async {
-    await _channel.invoke<void>('ResponseBody.source');
-  }
-
   static Future<void> create(MediaType? contentType, String content) async {
     await _channel.invoke<void>('ResponseBody.create', {
-      'contentType': contentType._handle,
+      'contentType': contentType?._handle,
       'content': content,
-    });
-  }
-
-  static Future<void> create(MediaType? contentType, Uint8List content) async {
-    await _channel.invoke<void>('ResponseBody.create', {
-      'contentType': contentType._handle,
-      'content': content,
-    });
-  }
-
-  static Future<void> create(MediaType? contentType, ByteString content) async {
-    await _channel.invoke<void>('ResponseBody.create', {
-      'contentType': contentType._handle,
-      'content': content._handle,
     });
   }
 
@@ -2011,15 +1594,6 @@ class WebSocket {
     return result;
   }
 
-  /// Attempts to enqueue `bytes` to be sent as a the data of a binary (type `0x2`) message. This method returns true if the message was enqueued. Messages that would overflow the outgoing message buffer (16 MiB) will be rejected and trigger a [graceful shutdown][close] of this web socket. This method returns false in that case, and in any other case where this web socket is closing, closed, or canceled. This method returns immediately.
-  Future<bool> send(ByteString bytes) async {
-    final result = await _channel.invoke<bool>('WebSocket.send', {
-      '_handle': _handle,
-      'bytes': bytes._handle,
-    });
-    return result;
-  }
-
   /// Attempts to initiate a graceful shutdown of this web socket. Any already-enqueued messages will be transmitted before the close message is sent but subsequent calls to [send] will return false and their messages will not be enqueued. This returns true if a graceful shutdown was initiated by this call. It returns false if a graceful shutdown was already underway or if the web socket is already closed or canceled. [Section 7.4 of RFC 6455](http://tools.ietf.org/html/rfc6455#section-7.4).
   Future<bool> close(int code, String? reason) async {
     final result = await _channel.invoke<bool>('WebSocket.close', {
@@ -2038,7 +1612,8 @@ class WebSocket {
   }
 
   /// Creates a new web socket and immediately returns it. Creating a web socket initiates an asynchronous process to connect the socket. Once that succeeds or fails, `listener` will be notified. The caller must either close or cancel the returned web socket when it is no longer in use.
-  Future<WebSocket> newWebSocket(Request request, WebSocketListener listener) async {
+  Future<WebSocket> newWebSocket(
+      Request request, WebSocketListener listener) async {
     final result = await _channel.invoke<String>('WebSocket.newWebSocket', {
       '_handle': _handle,
       'request': request._handle,
@@ -2059,7 +1634,8 @@ class WebSocketListener {
 
   WebSocketListener._(this._handle);
 
-  static WebSocketListener fromHandle(String handle) => WebSocketListener._(handle);
+  static WebSocketListener fromHandle(String handle) =>
+      WebSocketListener._(handle);
 
   /// Invoked when a web socket has been accepted by the remote peer and may begin transmitting messages.
   Future<void> onOpen(WebSocket webSocket, Response response) async {
@@ -2076,15 +1652,6 @@ class WebSocketListener {
       '_handle': _handle,
       'webSocket': webSocket._handle,
       'text': text,
-    });
-  }
-
-  /// Invoked when a binary (type `0x2`) message has been received.
-  Future<void> onMessage(WebSocket webSocket, ByteString bytes) async {
-    await _channel.invoke<void>('WebSocketListener.onMessage', {
-      '_handle': _handle,
-      'webSocket': webSocket._handle,
-      'bytes': bytes._handle,
     });
   }
 
@@ -2109,12 +1676,13 @@ class WebSocketListener {
   }
 
   /// Invoked when a web socket has been closed due to an error reading from or writing to the network. Both outgoing and incoming messages may have been lost. No further calls to this listener will be made.
-  Future<void> onFailure(WebSocket webSocket, Throwable t, Response? response) async {
+  Future<void> onFailure(
+      WebSocket webSocket, Throwable t, Response? response) async {
     await _channel.invoke<void>('WebSocketListener.onFailure', {
       '_handle': _handle,
       'webSocket': webSocket._handle,
       't': t._handle,
-      'response': response._handle,
+      'response': response?._handle,
     });
   }
 
@@ -2138,33 +1706,18 @@ class CookieJar {
     await _channel.invoke<void>('CookieJar.saveFromResponse', {
       '_handle': _handle,
       'url': url._handle,
-      'cookies': cookies.map((e) => e._handle).toList(),
+      'cookies': cookies.map((e0) => e0._handle).toList(),
     });
   }
 
   /// Load cookies from the jar for an HTTP request to [url]. This method returns a possibly empty list of cookies for the network request. Simple implementations will return the accepted cookies that have not yet expired and that [match][Cookie.matches] [url].
   Future<List<Cookie>> loadForRequest(HttpUrl url) async {
-    final result = await _channel.invoke<List<dynamic>>('CookieJar.loadForRequest', {
+    final result =
+        await _channel.invoke<List<dynamic>>('CookieJar.loadForRequest', {
       '_handle': _handle,
       'url': url._handle,
     });
-    return result.map((e) => Cookie.fromHandle(e as String)).toList();
-  }
-
-  Future<void> saveFromResponse(HttpUrl url, List<Cookie> cookies) async {
-    await _channel.invoke<void>('CookieJar.saveFromResponse', {
-      '_handle': _handle,
-      'url': url._handle,
-      'cookies': cookies.map((e) => e._handle).toList(),
-    });
-  }
-
-  Future<List<Cookie>> loadForRequest(HttpUrl url) async {
-    final result = await _channel.invoke<List<dynamic>>('CookieJar.loadForRequest', {
-      '_handle': _handle,
-      'url': url._handle,
-    });
-    return result.map((e) => Cookie.fromHandle(e as String)).toList();
+    return result.map((e0) => Cookie.fromHandle(e0 as String)).toList();
   }
 
   Future<void> dispose() async {
@@ -2202,7 +1755,8 @@ class ConnectionPool implements ConnectionPoolInterface {
   /// Returns the number of idle connections in the pool.
   @override
   Future<int> idleConnectionCount() async {
-    final result = await _channel.invoke<int>('ConnectionPool.idleConnectionCount', {
+    final result =
+        await _channel.invoke<int>('ConnectionPool.idleConnectionCount', {
       '_handle': _handle,
     });
     return result;
@@ -2211,7 +1765,8 @@ class ConnectionPool implements ConnectionPoolInterface {
   /// Returns total number of connections in the pool.
   @override
   Future<int> connectionCount() async {
-    final result = await _channel.invoke<int>('ConnectionPool.connectionCount', {
+    final result =
+        await _channel.invoke<int>('ConnectionPool.connectionCount', {
       '_handle': _handle,
     });
     return result;
@@ -2250,36 +1805,6 @@ class CacheStrategy implements CacheStrategyInterface {
     final handle = await _channel.invoke<String>('CacheStrategy._create');
     return CacheStrategy._(handle);
   }
-  /// The request to send on the network, or null if this call doesn't use the network.
-  final dynamic networkRequest;
-  /// The cached response to return or validate; or null if this call doesn't use a cache.
-  final Response? cacheResponse;
-  final int minFreshMillis;
-  final int maxStaleMillis;
-  final String conditionName;
-  final String? conditionValue;
-
-  CacheStrategy({required this.networkRequest, this.cacheResponse, required this.minFreshMillis, required this.maxStaleMillis, required this.conditionName, this.conditionValue});
-
-  factory CacheStrategy.fromMap(Map<String, dynamic> map) {
-    return CacheStrategy(
-      networkRequest: map['networkRequest'] as dynamic,
-      cacheResponse: map['cacheResponse'] != null ? Response.fromMap(map['cacheResponse'] as Map<String, dynamic>) : null,
-      minFreshMillis: map['minFreshMillis'] as int,
-      maxStaleMillis: map['maxStaleMillis'] as int,
-      conditionName: map['conditionName'] as String,
-      conditionValue: map['conditionValue'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'networkRequest': networkRequest,
-    if (cacheResponse != null) 'cacheResponse': cacheResponse?._handle,
-    'minFreshMillis': minFreshMillis,
-    'maxStaleMillis': maxStaleMillis,
-    'conditionName': conditionName,
-    if (conditionValue != null) 'conditionValue': conditionValue,
-  };
 
   /// Returns a strategy to satisfy [request] using [cacheResponse].
   @override
@@ -2386,7 +1911,8 @@ abstract interface class RealCallInterface {
   Future<bool> isExecuted();
 
   /// Prepare for a potential trip through all of this call's network interceptors. This prepares to find an exchange to carry the request. Note that an exchange will not be needed if the request is satisfied by the cache.
-  Future<void> enterNetworkInterceptorExchange(Request request, bool newExchangeFinder);
+  Future<void> enterNetworkInterceptorExchange(
+      Request request, bool newExchangeFinder);
 
   Future<void> acquireConnectionNoEvents(RealConnection connection);
 
@@ -2417,51 +1943,6 @@ class RealCall implements RealCallInterface {
     final handle = await _channel.invoke<String>('RealCall._create');
     return RealCall._(handle);
   }
-  final dynamic client;
-  /// The application's original request unadulterated by redirects or auth headers.
-  final dynamic originalRequest;
-  final bool forWebSocket;
-  final RealConnection? connection;
-  final SSLSocketFactory? sslSocketFactory;
-  final HostnameVerifier? hostnameVerifier;
-  final CertificatePinner? certificatePinner;
-  final String host;
-  final Request request;
-  final RealCall call;
-  /// Captures the stack trace at the time the Call is executed or enqueued. This is helpful for identifying the origin of connection leaks.
-  final dynamic? callStackTrace;
-
-  RealCall({required this.client, required this.originalRequest, required this.forWebSocket, this.connection, this.sslSocketFactory, this.hostnameVerifier, this.certificatePinner, required this.host, required this.request, required this.call, this.callStackTrace});
-
-  factory RealCall.fromMap(Map<String, dynamic> map) {
-    return RealCall(
-      client: map['client'] as dynamic,
-      originalRequest: map['originalRequest'] as dynamic,
-      forWebSocket: map['forWebSocket'] as bool,
-      connection: map['connection'] != null ? RealConnection.fromMap(map['connection'] as Map<String, dynamic>) : null,
-      sslSocketFactory: map['sslSocketFactory'] != null ? SSLSocketFactory.fromHandle(map['sslSocketFactory'] as String) : null,
-      hostnameVerifier: map['hostnameVerifier'] != null ? HostnameVerifier.fromHandle(map['hostnameVerifier'] as String) : null,
-      certificatePinner: map['certificatePinner'] != null ? CertificatePinner.fromMap(map['certificatePinner'] as Map<String, dynamic>) : null,
-      host: map['host'] as String,
-      request: Request.fromMap(map['request'] as Map<String, dynamic>),
-      call: RealCall.fromMap(map['call'] as Map<String, dynamic>),
-      callStackTrace: map['callStackTrace'] as dynamic?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'client': client,
-    'originalRequest': originalRequest,
-    'forWebSocket': forWebSocket,
-    if (connection != null) 'connection': connection?._handle,
-    if (sslSocketFactory != null) 'sslSocketFactory': sslSocketFactory?._handle,
-    if (hostnameVerifier != null) 'hostnameVerifier': hostnameVerifier?._handle,
-    if (certificatePinner != null) 'certificatePinner': certificatePinner?._handle,
-    'host': host,
-    'request': request._handle,
-    'call': call._handle,
-    if (callStackTrace != null) 'callStackTrace': callStackTrace,
-  };
 
   @override
   Future<void> timedOut() async {
@@ -2533,7 +2014,8 @@ class RealCall implements RealCallInterface {
 
   /// Prepare for a potential trip through all of this call's network interceptors. This prepares to find an exchange to carry the request. Note that an exchange will not be needed if the request is satisfied by the cache.
   @override
-  Future<void> enterNetworkInterceptorExchange(Request request, bool newExchangeFinder) async {
+  Future<void> enterNetworkInterceptorExchange(
+      Request request, bool newExchangeFinder) async {
     await _channel.invoke<void>('RealCall.enterNetworkInterceptorExchange', {
       '_handle': _handle,
       'request': request._handle,
@@ -2612,19 +2094,6 @@ class RouteException implements RouteExceptionInterface {
     final handle = await _channel.invoke<String>('RouteException._create');
     return RouteException._(handle);
   }
-  final IOException lastConnectException;
-
-  RouteException({required this.lastConnectException});
-
-  factory RouteException.fromMap(Map<String, dynamic> map) {
-    return RouteException(
-      lastConnectException: IOException.fromHandle(map['lastConnectException'] as String),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'lastConnectException': lastConnectException._handle,
-  };
 
   @override
   Future<void> addConnectException(IOException e) async {
@@ -2687,28 +2156,6 @@ class RealConnection implements RealConnectionInterface {
     final handle = await _channel.invoke<String>('RealConnection._create');
     return RealConnection._(handle);
   }
-  final dynamic connectionPool;
-  final RouteException? routeException;
-  final Request tunnelRequest;
-  final SSLSocket? sslSocket;
-
-  RealConnection({required this.connectionPool, this.routeException, required this.tunnelRequest, this.sslSocket});
-
-  factory RealConnection.fromMap(Map<String, dynamic> map) {
-    return RealConnection(
-      connectionPool: map['connectionPool'] as dynamic,
-      routeException: map['routeException'] != null ? RouteException.fromMap(map['routeException'] as Map<String, dynamic>) : null,
-      tunnelRequest: Request.fromMap(map['tunnelRequest'] as Map<String, dynamic>),
-      sslSocket: map['sslSocket'] != null ? SSLSocket.fromHandle(map['sslSocket'] as String) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'connectionPool': connectionPool,
-    if (routeException != null) 'routeException': routeException?._handle,
-    'tunnelRequest': tunnelRequest._handle,
-    if (sslSocket != null) 'sslSocket': sslSocket?._handle,
-  };
 
   /// Prevent further exchanges from being created on this connection.
   @override
@@ -2805,16 +2252,17 @@ class RealConnection implements RealConnectionInterface {
     await _channel.invoke<void>('RealConnection.trackFailure', {
       '_handle': _handle,
       'call': call._handle,
-      'e': e._handle,
+      'e': e?._handle,
     });
   }
 
   @override
   Future<Protocol> protocol() async {
-    final result = await _channel.invoke<Map<String, dynamic>>('RealConnection.protocol', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>>('RealConnection.protocol', {
       '_handle': _handle,
     });
-    return Protocol.fromMap(result);
+    return result as Protocol;
   }
 
   Future<void> dispose() async {
@@ -2826,13 +2274,13 @@ class RealConnection implements RealConnectionInterface {
 abstract interface class SettingsInterface {
   Future<void> clear();
 
-  Future<Settings> set(int id, int value);
+  Future<Settings> set$(int id, int value);
 
   /// Returns true if a value has been assigned for the setting `id`.
   Future<bool> isSet(int id);
 
   /// Returns the value for the setting `id`, or 0 if unset.
-  Future<int> get(int id);
+  Future<int> get$(int id);
 
   /// Returns the number of settings that have values assigned.
   Future<int> size();
@@ -2863,23 +2311,6 @@ class Settings implements SettingsInterface {
     final handle = await _channel.invoke<String>('Settings._create');
     return Settings._(handle);
   }
-  /// Returns -1 if unset.
-  final int headerTableSize;
-  final int initialWindowSize;
-
-  Settings({required this.headerTableSize, required this.initialWindowSize});
-
-  factory Settings.fromMap(Map<String, dynamic> map) {
-    return Settings(
-      headerTableSize: map['headerTableSize'] as int,
-      initialWindowSize: map['initialWindowSize'] as int,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'headerTableSize': headerTableSize,
-    'initialWindowSize': initialWindowSize,
-  };
 
   @override
   Future<void> clear() async {
@@ -2889,7 +2320,7 @@ class Settings implements SettingsInterface {
   }
 
   @override
-  Future<Settings> set(int id, int value) async {
+  Future<Settings> set$(int id, int value) async {
     final result = await _channel.invoke<String>('Settings.set', {
       '_handle': _handle,
       'id': id,
@@ -2910,7 +2341,7 @@ class Settings implements SettingsInterface {
 
   /// Returns the value for the setting `id`, or 0 if unset.
   @override
-  Future<int> get(int id) async {
+  Future<int> get$(int id) async {
     final result = await _channel.invoke<int>('Settings.get', {
       '_handle': _handle,
       'id': id,
@@ -2938,7 +2369,8 @@ class Settings implements SettingsInterface {
 
   @override
   Future<int> getMaxConcurrentStreams() async {
-    final result = await _channel.invoke<int>('Settings.getMaxConcurrentStreams', {
+    final result =
+        await _channel.invoke<int>('Settings.getMaxConcurrentStreams', {
       '_handle': _handle,
     });
     return result;
@@ -2991,23 +2423,25 @@ class PushObserver {
     final result = await _channel.invoke<bool>('PushObserver.onRequest', {
       '_handle': _handle,
       'streamId': streamId,
-      'requestHeaders': requestHeaders.map((e) => e.toMap()).toList(),
+      'requestHeaders': requestHeaders.map((e0) => e0.toMap()).toList(),
     });
     return result;
   }
 
   /// The response headers corresponding to a pushed request.  When [last] is true, there are no data frames to follow.
-  Future<bool> onHeaders(int streamId, List<Header> responseHeaders, bool last) async {
+  Future<bool> onHeaders(
+      int streamId, List<Header> responseHeaders, bool last) async {
     final result = await _channel.invoke<bool>('PushObserver.onHeaders', {
       '_handle': _handle,
       'streamId': streamId,
-      'responseHeaders': responseHeaders.map((e) => e.toMap()).toList(),
+      'responseHeaders': responseHeaders.map((e0) => e0.toMap()).toList(),
       'last': last,
     });
     return result;
   }
 
-  Future<bool> onData(int streamId, BufferedSource source, int byteCount, bool last) async {
+  Future<bool> onData(
+      int streamId, BufferedSource source, int byteCount, bool last) async {
     final result = await _channel.invoke<bool>('PushObserver.onData', {
       '_handle': _handle,
       'streamId': streamId,
@@ -3023,45 +2457,7 @@ class PushObserver {
     await _channel.invoke<void>('PushObserver.onReset', {
       '_handle': _handle,
       'streamId': streamId,
-      'errorCode': errorCode.toMap(),
-    });
-  }
-
-  Future<bool> onRequest(int streamId, List<Header> requestHeaders) async {
-    final result = await _channel.invoke<bool>('PushObserver.onRequest', {
-      '_handle': _handle,
-      'streamId': streamId,
-      'requestHeaders': requestHeaders.map((e) => e.toMap()).toList(),
-    });
-    return result;
-  }
-
-  Future<bool> onHeaders(int streamId, List<Header> responseHeaders, bool last) async {
-    final result = await _channel.invoke<bool>('PushObserver.onHeaders', {
-      '_handle': _handle,
-      'streamId': streamId,
-      'responseHeaders': responseHeaders.map((e) => e.toMap()).toList(),
-      'last': last,
-    });
-    return result;
-  }
-
-  Future<bool> onData(int streamId, BufferedSource source, int byteCount, bool last) async {
-    final result = await _channel.invoke<bool>('PushObserver.onData', {
-      '_handle': _handle,
-      'streamId': streamId,
-      'source': source._handle,
-      'byteCount': byteCount,
-      'last': last,
-    });
-    return result;
-  }
-
-  Future<void> onReset(int streamId, ErrorCode errorCode) async {
-    await _channel.invoke<void>('PushObserver.onReset', {
-      '_handle': _handle,
-      'streamId': streamId,
-      'errorCode': errorCode.toMap(),
+      'errorCode': errorCode,
     });
   }
 
@@ -3139,61 +2535,12 @@ class Http2Connection implements Http2ConnectionInterface {
     final handle = await _channel.invoke<String>('Http2Connection._create');
     return Http2Connection._(handle);
   }
-  /// The total number of bytes permitted to be produced according to `WINDOW_UPDATE` frames.
-  final int writeBytesMaximum;
-  final bool flushHeaders;
-  final Http2Stream stream;
-  final int streamId;
-  final int toWrite;
-  final int lastGoodStreamId;
-  final dynamic? streamsToClose;
-  final IOException? errorException;
-  final Http2Stream? stream;
-  final int delta;
-  final dynamic? streamsToNotify;
-  final Settings newPeerSettings;
-  final dynamic streamsCopy;
-
-  Http2Connection({required this.writeBytesMaximum, required this.flushHeaders, required this.stream, required this.streamId, required this.toWrite, required this.lastGoodStreamId, this.streamsToClose, this.errorException, this.stream, required this.delta, this.streamsToNotify, required this.newPeerSettings, required this.streamsCopy});
-
-  factory Http2Connection.fromMap(Map<String, dynamic> map) {
-    return Http2Connection(
-      writeBytesMaximum: map['writeBytesMaximum'] as int,
-      flushHeaders: map['flushHeaders'] as bool,
-      stream: Http2Stream.fromMap(map['stream'] as Map<String, dynamic>),
-      streamId: map['streamId'] as int,
-      toWrite: map['toWrite'] as int,
-      lastGoodStreamId: map['lastGoodStreamId'] as int,
-      streamsToClose: map['streamsToClose'] as dynamic?,
-      errorException: map['errorException'] != null ? IOException.fromHandle(map['errorException'] as String) : null,
-      stream: map['stream'] != null ? Http2Stream.fromMap(map['stream'] as Map<String, dynamic>) : null,
-      delta: map['delta'] as int,
-      streamsToNotify: map['streamsToNotify'] as dynamic?,
-      newPeerSettings: Settings.fromMap(map['newPeerSettings'] as Map<String, dynamic>),
-      streamsCopy: map['streamsCopy'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'writeBytesMaximum': writeBytesMaximum,
-    'flushHeaders': flushHeaders,
-    'stream': stream._handle,
-    'streamId': streamId,
-    'toWrite': toWrite,
-    'lastGoodStreamId': lastGoodStreamId,
-    if (streamsToClose != null) 'streamsToClose': streamsToClose,
-    if (errorException != null) 'errorException': errorException?._handle,
-    if (stream != null) 'stream': stream?._handle,
-    'delta': delta,
-    if (streamsToNotify != null) 'streamsToNotify': streamsToNotify,
-    'newPeerSettings': newPeerSettings._handle,
-    'streamsCopy': streamsCopy,
-  };
 
   /// Returns the number of [open streams][Http2Stream.isOpen] on this connection.
   @override
   Future<int> openStreamCount() async {
-    final result = await _channel.invoke<int>('Http2Connection.openStreamCount', {
+    final result =
+        await _channel.invoke<int>('Http2Connection.openStreamCount', {
       '_handle': _handle,
     });
     return result;
@@ -3210,7 +2557,8 @@ class Http2Connection implements Http2ConnectionInterface {
 
   @override
   Future<Http2Stream?> removeStream(int streamId) async {
-    final result = await _channel.invoke<String?>('Http2Connection.removeStream', {
+    final result =
+        await _channel.invoke<String?>('Http2Connection.removeStream', {
       '_handle': _handle,
       'streamId': streamId,
     });
@@ -3257,7 +2605,7 @@ class Http2Connection implements Http2ConnectionInterface {
   Future<void> shutdown(ErrorCode statusCode) async {
     await _channel.invoke<void>('Http2Connection.shutdown', {
       '_handle': _handle,
-      'statusCode': statusCode.toMap(),
+      'statusCode': statusCode,
     });
   }
 
@@ -3270,10 +2618,12 @@ class Http2Connection implements Http2ConnectionInterface {
   }
 
   @override
-  Future<void> start({bool? sendConnectionPreface, TaskRunner? taskRunner}) async {
+  Future<void> start(
+      {bool? sendConnectionPreface, TaskRunner? taskRunner}) async {
     await _channel.invoke<void>('Http2Connection.start', {
       '_handle': _handle,
-      if (sendConnectionPreface != null) 'sendConnectionPreface': sendConnectionPreface,
+      if (sendConnectionPreface != null)
+        'sendConnectionPreface': sendConnectionPreface,
       if (taskRunner != null) 'taskRunner': taskRunner._handle,
     });
   }
@@ -3339,7 +2689,7 @@ class Http2Connection implements Http2ConnectionInterface {
     await _channel.invoke<void>('Http2Connection.rstStream', {
       '_handle': _handle,
       'streamId': streamId,
-      'errorCode': errorCode.toMap(),
+      'errorCode': errorCode,
     });
   }
 
@@ -3354,7 +2704,8 @@ class Http2Connection implements Http2ConnectionInterface {
 
   /// Apply inbound settings and send an acknowledgement to the peer that provided them. We need to apply the settings and ack them atomically. This is because some HTTP/2 implementations (nghttp2) forbid peers from taking advantage of settings before they have acknowledged! In particular, we shouldn't send frames that assume a new `initialWindowSize` until we send the frame that acknowledges this new size. Since we can't ACK settings on the current reader thread (the reader thread can't write) we execute all peer settings logic on the writer thread. This relies on the fact that the writer task queue won't reorder tasks; otherwise settings could be applied in the opposite order than received.
   @override
-  Future<void> applyAndAckSettings(bool clearPrevious, Settings settings) async {
+  Future<void> applyAndAckSettings(
+      bool clearPrevious, Settings settings) async {
     await _channel.invoke<void>('Http2Connection.applyAndAckSettings', {
       '_handle': _handle,
       'clearPrevious': clearPrevious,
@@ -3396,12 +2747,6 @@ class Http2Connection implements Http2ConnectionInterface {
     });
   }
 
-  static Future<void> onStream(Http2Stream stream) async {
-    await _channel.invoke<void>('Http2Connection.onStream', {
-      'stream': stream._handle,
-    });
-  }
-
   Future<void> dispose() async {
     await _channel.invoke<void>('_dispose', {'_handle': _handle});
   }
@@ -3435,15 +2780,19 @@ class Reader implements ReaderInterface {
 
   @override
   Future<List<Header>> getAndResetHeaderList() async {
-    final result = await _channel.invoke<List<dynamic>>('Reader.getAndResetHeaderList', {
+    final result =
+        await _channel.invoke<List<dynamic>>('Reader.getAndResetHeaderList', {
       '_handle': _handle,
     });
-    return result.map((e) => Header.fromMap(e as Map<String, dynamic>)).toList();
+    return result
+        .map((e0) => Header.fromMap(e0 as Map<String, dynamic>))
+        .toList();
   }
 
   @override
   Future<int> maxDynamicTableByteCount() async {
-    final result = await _channel.invoke<int>('Reader.maxDynamicTableByteCount', {
+    final result =
+        await _channel.invoke<int>('Reader.maxDynamicTableByteCount', {
       '_handle': _handle,
     });
     return result;
@@ -3484,7 +2833,8 @@ abstract interface class Http2StreamInterface {
 
   Future<Headers> trailers();
 
-  Future<void> writeHeaders(List<Header> responseHeaders, bool outFinished, bool flushHeaders);
+  Future<void> writeHeaders(
+      List<Header> responseHeaders, bool outFinished, bool flushHeaders);
 
   Future<void> enqueueTrailers(Headers trailers);
 
@@ -3514,15 +2864,9 @@ abstract interface class Http2StreamInterface {
 
   Future<Timeout> timeout();
 
-  Future<void> close();
-
   Future<void> write(Buffer source, int byteCount);
 
   Future<void> flush();
-
-  Future<Timeout> timeout();
-
-  Future<void> close();
 
   /// [delta] will be negative if a settings frame initial window is smaller than the last.
   Future<void> addBytesToWriteWindow(int delta);
@@ -3547,79 +2891,6 @@ class Http2Stream implements Http2StreamInterface {
     final handle = await _channel.invoke<String>('Http2Stream._create');
     return Http2Stream._(handle);
   }
-  final dynamic id;
-  final dynamic connection;
-  /// The total number of bytes permitted to be produced by incoming `WINDOW_UPDATE` frame.
-  final int writeBytesMaximum;
-  /// Returns true if this stream is open. A stream is open until either: * A `SYN_RESET` frame abnormally terminates the stream. * Both input and output streams have transmitted all data and headers. Note that the input stream may continue to yield data even after a stream reports itself as not open. This is because input data is buffered.
-  final bool isOpen;
-  /// Returns true if this stream was created by this peer.
-  final bool isLocallyInitiated;
-  final bool open;
-  /// Received trailers. Null unless the server has provided trailers. Undefined until the stream is exhausted. Guarded by Http2Stream.this.
-  final Headers? trailers;
-  final IOException? errorExceptionToDeliver;
-  final bool finished;
-  final bool flowControlError;
-  final int bytesDiscarded;
-  final bool open;
-  final bool cancel;
-  /// True if either side has cleanly shut down this stream. We shall send no more bytes.
-  final bool finished;
-  /// Trailers to send at the end of the stream.
-  final Headers? trailers;
-  final bool closed;
-  final int toWrite;
-  final bool outFinished;
-  final bool outFinished;
-
-  Http2Stream({required this.id, required this.connection, required this.writeBytesMaximum, required this.isOpen, required this.isLocallyInitiated, required this.open, this.trailers, this.errorExceptionToDeliver, required this.finished, required this.flowControlError, required this.bytesDiscarded, required this.open, required this.cancel, required this.finished, this.trailers, required this.closed, required this.toWrite, required this.outFinished, required this.outFinished});
-
-  factory Http2Stream.fromMap(Map<String, dynamic> map) {
-    return Http2Stream(
-      id: map['id'] as dynamic,
-      connection: map['connection'] as dynamic,
-      writeBytesMaximum: map['writeBytesMaximum'] as int,
-      isOpen: map['isOpen'] as bool,
-      isLocallyInitiated: map['isLocallyInitiated'] as bool,
-      open: map['open'] as bool,
-      trailers: map['trailers'] != null ? Headers.fromMap(map['trailers'] as Map<String, dynamic>) : null,
-      errorExceptionToDeliver: map['errorExceptionToDeliver'] != null ? IOException.fromHandle(map['errorExceptionToDeliver'] as String) : null,
-      finished: map['finished'] as bool,
-      flowControlError: map['flowControlError'] as bool,
-      bytesDiscarded: map['bytesDiscarded'] as int,
-      open: map['open'] as bool,
-      cancel: map['cancel'] as bool,
-      finished: map['finished'] as bool,
-      trailers: map['trailers'] != null ? Headers.fromMap(map['trailers'] as Map<String, dynamic>) : null,
-      closed: map['closed'] as bool,
-      toWrite: map['toWrite'] as int,
-      outFinished: map['outFinished'] as bool,
-      outFinished: map['outFinished'] as bool,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'connection': connection,
-    'writeBytesMaximum': writeBytesMaximum,
-    'isOpen': isOpen,
-    'isLocallyInitiated': isLocallyInitiated,
-    'open': open,
-    if (trailers != null) 'trailers': trailers?._handle,
-    if (errorExceptionToDeliver != null) 'errorExceptionToDeliver': errorExceptionToDeliver?._handle,
-    'finished': finished,
-    'flowControlError': flowControlError,
-    'bytesDiscarded': bytesDiscarded,
-    'open': open,
-    'cancel': cancel,
-    'finished': finished,
-    if (trailers != null) 'trailers': trailers?._handle,
-    'closed': closed,
-    'toWrite': toWrite,
-    'outFinished': outFinished,
-    'outFinished': outFinished,
-  };
 
   @override
   Future<Headers> takeHeaders() async {
@@ -3638,10 +2909,11 @@ class Http2Stream implements Http2StreamInterface {
   }
 
   @override
-  Future<void> writeHeaders(List<Header> responseHeaders, bool outFinished, bool flushHeaders) async {
+  Future<void> writeHeaders(
+      List<Header> responseHeaders, bool outFinished, bool flushHeaders) async {
     await _channel.invoke<void>('Http2Stream.writeHeaders', {
       '_handle': _handle,
-      'responseHeaders': responseHeaders.map((e) => e.toMap()).toList(),
+      'responseHeaders': responseHeaders.map((e0) => e0.toMap()).toList(),
       'outFinished': outFinished,
       'flushHeaders': flushHeaders,
     });
@@ -3690,11 +2962,12 @@ class Http2Stream implements Http2StreamInterface {
   }
 
   @override
-  Future<void> close(ErrorCode rstStatusCode, IOException? errorException) async {
+  Future<void> close(
+      ErrorCode rstStatusCode, IOException? errorException) async {
     await _channel.invoke<void>('Http2Stream.close', {
       '_handle': _handle,
-      'rstStatusCode': rstStatusCode.toMap(),
-      'errorException': errorException._handle,
+      'rstStatusCode': rstStatusCode,
+      'errorException': errorException?._handle,
     });
   }
 
@@ -3703,7 +2976,7 @@ class Http2Stream implements Http2StreamInterface {
   Future<void> closeLater(ErrorCode errorCode) async {
     await _channel.invoke<void>('Http2Stream.closeLater', {
       '_handle': _handle,
-      'errorCode': errorCode.toMap(),
+      'errorCode': errorCode,
     });
   }
 
@@ -3730,7 +3003,7 @@ class Http2Stream implements Http2StreamInterface {
   Future<void> receiveRstStream(ErrorCode errorCode) async {
     await _channel.invoke<void>('Http2Stream.receiveRstStream', {
       '_handle': _handle,
-      'errorCode': errorCode.toMap(),
+      'errorCode': errorCode,
     });
   }
 
@@ -3753,13 +3026,6 @@ class Http2Stream implements Http2StreamInterface {
   }
 
   @override
-  Future<void> close() async {
-    await _channel.invoke<void>('Http2Stream.close', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
   Future<void> write(Buffer source, int byteCount) async {
     await _channel.invoke<void>('Http2Stream.write', {
       '_handle': _handle,
@@ -3771,21 +3037,6 @@ class Http2Stream implements Http2StreamInterface {
   @override
   Future<void> flush() async {
     await _channel.invoke<void>('Http2Stream.flush', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<Timeout> timeout() async {
-    final result = await _channel.invoke<String>('Http2Stream.timeout', {
-      '_handle': _handle,
-    });
-    return Timeout.fromHandle(result);
-  }
-
-  @override
-  Future<void> close() async {
-    await _channel.invoke<void>('Http2Stream.close', {
       '_handle': _handle,
     });
   }
@@ -3808,9 +3059,10 @@ class Http2Stream implements Http2StreamInterface {
 
   @override
   Future<IOException> newTimeoutException(IOException? cause) async {
-    final result = await _channel.invoke<String>('Http2Stream.newTimeoutException', {
+    final result =
+        await _channel.invoke<String>('Http2Stream.newTimeoutException', {
       '_handle': _handle,
-      'cause': cause._handle,
+      'cause': cause?._handle,
     });
     return IOException.fromHandle(result);
   }
@@ -3834,12 +3086,8 @@ abstract interface class TaskQueueInterface {
 
   Future<void> runOnce();
 
-  Future<int> runOnce();
-
   /// Returns a latch that reaches 0 when the queue is next idle.
   Future<CountDownLatch> idleLatch();
-
-  Future<int> runOnce();
 
   /// Schedules immediate execution of [Task.tryCancel] on all currently-enqueued tasks. These calls will not be made until any currently-executing task has completed. Tasks that return true will be removed from the execution schedule.
   Future<void> cancelAll();
@@ -3861,20 +3109,6 @@ class TaskQueue implements TaskQueueInterface {
     final handle = await _channel.invoke<String>('TaskQueue._create');
     return TaskQueue._(handle);
   }
-  /// Returns a snapshot of tasks currently scheduled for execution. Does not include the currently-executing task unless it is also scheduled for future execution.
-  final List<Task> scheduledTasks;
-
-  TaskQueue({required this.scheduledTasks});
-
-  factory TaskQueue.fromMap(Map<String, dynamic> map) {
-    return TaskQueue(
-      scheduledTasks: (map['scheduledTasks'] as List).map((e) => Task.fromHandle(e as String)).toList(),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'scheduledTasks': scheduledTasks.map((e) => e._handle).toList(),
-  };
 
   /// Schedules [task] for execution in [delayNanos]. A task may only have one future execution scheduled. If the task is already in the queue, the earliest execution time is used. The target execution time is implemented on a best-effort basis. If another task in this queue is running when that time is reached, that task is allowed to complete before this task is started. Similarly the task will be delayed if the host lacks compute resources.
   @override
@@ -3893,14 +3127,6 @@ class TaskQueue implements TaskQueueInterface {
     });
   }
 
-  @override
-  Future<int> runOnce() async {
-    final result = await _channel.invoke<int>('TaskQueue.runOnce', {
-      '_handle': _handle,
-    });
-    return result;
-  }
-
   /// Returns a latch that reaches 0 when the queue is next idle.
   @override
   Future<CountDownLatch> idleLatch() async {
@@ -3908,14 +3134,6 @@ class TaskQueue implements TaskQueueInterface {
       '_handle': _handle,
     });
     return CountDownLatch.fromHandle(result);
-  }
-
-  @override
-  Future<int> runOnce() async {
-    final result = await _channel.invoke<int>('TaskQueue.runOnce', {
-      '_handle': _handle,
-    });
-    return result;
   }
 
   /// Schedules immediate execution of [Task.tryCancel] on all currently-enqueued tasks. These calls will not be made until any currently-executing task has completed. Tasks that return true will be removed from the execution schedule.
@@ -3947,22 +3165,6 @@ class Task {
   Task._(this._handle);
 
   static Task fromHandle(String handle) => Task._(handle);
-  final dynamic name;
-  final bool cancelable;
-
-  Task({required this.name, required this.cancelable});
-
-  factory Task.fromMap(Map<String, dynamic> map) {
-    return Task(
-      name: map['name'] as dynamic,
-      cancelable: map['cancelable'] as bool,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'name': name,
-    'cancelable': cancelable,
-  };
 
   /// Returns the delay in nanoseconds until the next execution, or -1L to not reschedule.
   Future<int> runOnce() async {
@@ -4001,16 +3203,6 @@ abstract interface class TaskRunnerInterface {
 
   Future<void> execute(Runnable runnable);
 
-  Future<void> beforeTask(TaskRunner taskRunner);
-
-  Future<void> nanoTime();
-
-  Future<void> coordinatorNotify(TaskRunner taskRunner);
-
-  Future<void> coordinatorWait(TaskRunner taskRunner, int nanos);
-
-  Future<void> execute(Runnable runnable);
-
   Future<void> shutdown();
 }
 
@@ -4028,22 +3220,6 @@ class TaskRunner implements TaskRunnerInterface {
     final handle = await _channel.invoke<String>('TaskRunner._create');
     return TaskRunner._(handle);
   }
-  final Backend backend;
-  final Task? readyTask;
-
-  TaskRunner({required this.backend, this.readyTask});
-
-  factory TaskRunner.fromMap(Map<String, dynamic> map) {
-    return TaskRunner(
-      backend: Backend.fromHandle(map['backend'] as String),
-      readyTask: map['readyTask'] != null ? Task.fromMap(map['readyTask'] as Map<String, dynamic>) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'backend': backend._handle,
-    if (readyTask != null) 'readyTask': readyTask?._handle,
-  };
 
   @override
   Future<void> run() async {
@@ -4072,10 +3248,11 @@ class TaskRunner implements TaskRunnerInterface {
   /// Returns a snapshot of queues that currently have tasks scheduled. The task runner does not necessarily track queues that have no tasks scheduled.
   @override
   Future<List<TaskQueue>> activeQueues() async {
-    final result = await _channel.invoke<List<dynamic>>('TaskRunner.activeQueues', {
+    final result =
+        await _channel.invoke<List<dynamic>>('TaskRunner.activeQueues', {
       '_handle': _handle,
     });
-    return result.map((e) => TaskQueue.fromHandle(e as String)).toList();
+    return result.map((e0) => TaskQueue.fromHandle(e0 as String)).toList();
   }
 
   @override
@@ -4127,46 +3304,6 @@ class TaskRunner implements TaskRunnerInterface {
   }
 
   @override
-  Future<void> beforeTask(TaskRunner taskRunner) async {
-    await _channel.invoke<void>('TaskRunner.beforeTask', {
-      '_handle': _handle,
-      'taskRunner': taskRunner._handle,
-    });
-  }
-
-  @override
-  Future<void> nanoTime() async {
-    await _channel.invoke<void>('TaskRunner.nanoTime', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<void> coordinatorNotify(TaskRunner taskRunner) async {
-    await _channel.invoke<void>('TaskRunner.coordinatorNotify', {
-      '_handle': _handle,
-      'taskRunner': taskRunner._handle,
-    });
-  }
-
-  @override
-  Future<void> coordinatorWait(TaskRunner taskRunner, int nanos) async {
-    await _channel.invoke<void>('TaskRunner.coordinatorWait', {
-      '_handle': _handle,
-      'taskRunner': taskRunner._handle,
-      'nanos': nanos,
-    });
-  }
-
-  @override
-  Future<void> execute(Runnable runnable) async {
-    await _channel.invoke<void>('TaskRunner.execute', {
-      '_handle': _handle,
-      'runnable': runnable._handle,
-    });
-  }
-
-  @override
   Future<void> shutdown() async {
     await _channel.invoke<void>('TaskRunner.shutdown', {
       '_handle': _handle,
@@ -4180,7 +3317,7 @@ class TaskRunner implements TaskRunnerInterface {
 
 abstract interface class HeadersInterface {
   /// Returns the last value corresponding to the specified field, or null.
-  Future<String?> get(String name);
+  Future<String?> get$(String name);
 
   /// Returns the last value corresponding to the specified field parsed as an HTTP date, or null if either the field is absent or cannot be parsed as a date.
   Future<Date?> getDate(String name);
@@ -4216,32 +3353,16 @@ abstract interface class HeadersInterface {
   /// Add an header line containing a field name, a literal colon, and a value.
   Future<void> add(String line);
 
-  /// Add a header with the specified name and value. Does validation of header names and values.
-  Future<void> add(String name, String value);
-
   /// Add a header with the specified name and value. Does validation of header names, allowing non-ASCII values.
   Future<void> addUnsafeNonAscii(String name, String value);
 
   /// Adds all headers from an existing collection.
   Future<void> addAll(Headers headers);
 
-  /// Add a header with the specified name and formatted date. Does validation of header names and value.
-  Future<void> add(String name, Date value);
-
-  Future<void> add(String name, Instant value);
-
   /// Set a field with the specified date. If the field is not found, it is added. If the field is found, the existing values are replaced.
-  Future<void> set(String name, Date value);
-
-  Future<void> set(String name, Instant value);
+  Future<void> set$(String name, Date value);
 
   Future<void> removeAll(String name);
-
-  /// Set a field with the specified value. If the field is not found, it is added. If the field is found, the existing values are replaced.
-  Future<void> set(String name, String value);
-
-  /// Equivalent to `build().get(name)`, but potentially faster.
-  Future<String?> get(String name);
 
   Future<Headers> build();
 }
@@ -4259,26 +3380,10 @@ class Headers implements HeadersInterface {
     final handle = await _channel.invoke<String>('Headers._create');
     return Headers._(handle);
   }
-  final List<String>? result;
-  final List<String>? values;
-
-  Headers({this.result, this.values});
-
-  factory Headers.fromMap(Map<String, dynamic> map) {
-    return Headers(
-      result: map['result'] != null ? (map['result'] as List).cast<String>() : null,
-      values: map['values'] != null ? (map['values'] as List).cast<String>() : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    if (result != null) 'result': result,
-    if (values != null) 'values': values,
-  };
 
   /// Returns the last value corresponding to the specified field, or null.
   @override
-  Future<String?> get(String name) async {
+  Future<String?> get$(String name) async {
     final result = await _channel.invoke<String?>('Headers.get', {
       '_handle': _handle,
       'name': name,
@@ -4404,16 +3509,6 @@ class Headers implements HeadersInterface {
     });
   }
 
-  /// Add a header with the specified name and value. Does validation of header names and values.
-  @override
-  Future<void> add(String name, String value) async {
-    await _channel.invoke<void>('Headers.add', {
-      '_handle': _handle,
-      'name': name,
-      'value': value,
-    });
-  }
-
   /// Add a header with the specified name and value. Does validation of header names, allowing non-ASCII values.
   @override
   Future<void> addUnsafeNonAscii(String name, String value) async {
@@ -4433,37 +3528,9 @@ class Headers implements HeadersInterface {
     });
   }
 
-  /// Add a header with the specified name and formatted date. Does validation of header names and value.
-  @override
-  Future<void> add(String name, Date value) async {
-    await _channel.invoke<void>('Headers.add', {
-      '_handle': _handle,
-      'name': name,
-      'value': value._handle,
-    });
-  }
-
-  @override
-  Future<void> add(String name, Instant value) async {
-    await _channel.invoke<void>('Headers.add', {
-      '_handle': _handle,
-      'name': name,
-      'value': value._handle,
-    });
-  }
-
   /// Set a field with the specified date. If the field is not found, it is added. If the field is found, the existing values are replaced.
   @override
-  Future<void> set(String name, Date value) async {
-    await _channel.invoke<void>('Headers.set', {
-      '_handle': _handle,
-      'name': name,
-      'value': value._handle,
-    });
-  }
-
-  @override
-  Future<void> set(String name, Instant value) async {
+  Future<void> set$(String name, Date value) async {
     await _channel.invoke<void>('Headers.set', {
       '_handle': _handle,
       'name': name,
@@ -4479,40 +3546,12 @@ class Headers implements HeadersInterface {
     });
   }
 
-  /// Set a field with the specified value. If the field is not found, it is added. If the field is found, the existing values are replaced.
-  @override
-  Future<void> set(String name, String value) async {
-    await _channel.invoke<void>('Headers.set', {
-      '_handle': _handle,
-      'name': name,
-      'value': value,
-    });
-  }
-
-  /// Equivalent to `build().get(name)`, but potentially faster.
-  @override
-  Future<String?> get(String name) async {
-    final result = await _channel.invoke<String?>('Headers.get', {
-      '_handle': _handle,
-      'name': name,
-    });
-    return result;
-  }
-
   @override
   Future<Headers> build() async {
     final result = await _channel.invoke<String>('Headers.build', {
       '_handle': _handle,
     });
     return Headers.fromHandle(result);
-  }
-
-  static Future<String?> get(dynamic namesAndValues, String name) async {
-    final result = await _channel.invoke<String?>('Headers.get', {
-      'namesAndValues': namesAndValues,
-      'name': name,
-    });
-    return result;
   }
 
   static Future<Headers> headersOf() async {
@@ -4522,13 +3561,6 @@ class Headers implements HeadersInterface {
 
   static Future<Headers> of() async {
     final result = await _channel.invoke<String>('Headers.of');
-    return Headers.fromHandle(result);
-  }
-
-  static Future<Headers> of(Map<String, String> headers) async {
-    final result = await _channel.invoke<String>('Headers.of', {
-      'headers': headers,
-    });
     return Headers.fromHandle(result);
   }
 
@@ -4645,18 +3677,10 @@ class Authenticator {
   static Authenticator fromHandle(String handle) => Authenticator._(handle);
 
   Future<Request?> authenticate(Route? route, Response response) async {
-    final result = await _channel.invoke<String?>('Authenticator.authenticate', {
+    final result =
+        await _channel.invoke<String?>('Authenticator.authenticate', {
       '_handle': _handle,
-      'route': route._handle,
-      'response': response._handle,
-    });
-    return result != null ? Request.fromHandle(result) : null;
-  }
-
-  Future<Request?> authenticate(Route? route, Response response) async {
-    final result = await _channel.invoke<String?>('Authenticator.authenticate', {
-      '_handle': _handle,
-      'route': route._handle,
+      'route': route?._handle,
       'response': response._handle,
     });
     return result != null ? Request.fromHandle(result) : null;
@@ -4670,8 +3694,6 @@ class Authenticator {
 abstract interface class CertificatePinnerInterface {
   Future<void> check(String hostname, List<Certificate> peerCertificates);
 
-  Future<void> check(String hostname);
-
   /// Returns list of matching certificates' pins for the hostname. Returns an empty list if the hostname does not have pinned certificates.
   Future<List<Pin>> findMatchingPins(String hostname);
 
@@ -4680,8 +3702,6 @@ abstract interface class CertificatePinnerInterface {
   Future<bool> matchesHostname(String hostname);
 
   Future<bool> matchesCertificate(X509Certificate certificate);
-
-  Future<bool> equals(dynamic other);
 
   /// Pins certificates for `pattern`. Info, base64-encoded and prefixed with either `sha256/` or `sha1/`.
   Future<void> add(String pattern);
@@ -4696,69 +3716,33 @@ class CertificatePinner implements CertificatePinnerInterface {
 
   CertificatePinner._(this._handle);
 
-  static CertificatePinner fromHandle(String handle) => CertificatePinner._(handle);
+  static CertificatePinner fromHandle(String handle) =>
+      CertificatePinner._(handle);
 
   static Future<CertificatePinner> create() async {
     final handle = await _channel.invoke<String>('CertificatePinner._create');
     return CertificatePinner._(handle);
   }
-  final dynamic pins;
-  final ByteString? sha1;
-  final ByteString? sha256;
-  /// A hostname like `example.com` or a pattern like `*.example.com` (canonical form).
-  final String pattern;
-  /// Either `sha1` or `sha256`.
-  final String hashAlgorithm;
-  /// The hash of the pinned certificate using [hashAlgorithm].
-  final ByteString hash;
-
-  CertificatePinner({required this.pins, this.sha1, this.sha256, required this.pattern, required this.hashAlgorithm, required this.hash});
-
-  factory CertificatePinner.fromMap(Map<String, dynamic> map) {
-    return CertificatePinner(
-      pins: map['pins'] as dynamic,
-      sha1: map['sha1'] != null ? ByteString.fromHandle(map['sha1'] as String) : null,
-      sha256: map['sha256'] != null ? ByteString.fromHandle(map['sha256'] as String) : null,
-      pattern: map['pattern'] as String,
-      hashAlgorithm: map['hashAlgorithm'] as String,
-      hash: ByteString.fromHandle(map['hash'] as String),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'pins': pins,
-    if (sha1 != null) 'sha1': sha1?._handle,
-    if (sha256 != null) 'sha256': sha256?._handle,
-    'pattern': pattern,
-    'hashAlgorithm': hashAlgorithm,
-    'hash': hash._handle,
-  };
 
   @override
-  Future<void> check(String hostname, List<Certificate> peerCertificates) async {
+  Future<void> check(
+      String hostname, List<Certificate> peerCertificates) async {
     await _channel.invoke<void>('CertificatePinner.check', {
       '_handle': _handle,
       'hostname': hostname,
-      'peerCertificates': peerCertificates.map((e) => e._handle).toList(),
-    });
-  }
-
-  @override
-  Future<void> check(String hostname) async {
-    await _channel.invoke<void>('CertificatePinner.check', {
-      '_handle': _handle,
-      'hostname': hostname,
+      'peerCertificates': peerCertificates.map((e0) => e0._handle).toList(),
     });
   }
 
   /// Returns list of matching certificates' pins for the hostname. Returns an empty list if the hostname does not have pinned certificates.
   @override
   Future<List<Pin>> findMatchingPins(String hostname) async {
-    final result = await _channel.invoke<List<dynamic>>('CertificatePinner.findMatchingPins', {
+    final result = await _channel
+        .invoke<List<dynamic>>('CertificatePinner.findMatchingPins', {
       '_handle': _handle,
       'hostname': hostname,
     });
-    return result.map((e) => Pin.fromHandle(e as String)).toList();
+    return result.map((e0) => Pin.fromHandle(e0 as String)).toList();
   }
 
   @override
@@ -4772,7 +3756,8 @@ class CertificatePinner implements CertificatePinnerInterface {
 
   @override
   Future<bool> matchesHostname(String hostname) async {
-    final result = await _channel.invoke<bool>('CertificatePinner.matchesHostname', {
+    final result =
+        await _channel.invoke<bool>('CertificatePinner.matchesHostname', {
       '_handle': _handle,
       'hostname': hostname,
     });
@@ -4781,18 +3766,10 @@ class CertificatePinner implements CertificatePinnerInterface {
 
   @override
   Future<bool> matchesCertificate(X509Certificate certificate) async {
-    final result = await _channel.invoke<bool>('CertificatePinner.matchesCertificate', {
+    final result =
+        await _channel.invoke<bool>('CertificatePinner.matchesCertificate', {
       '_handle': _handle,
       'certificate': certificate._handle,
-    });
-    return result;
-  }
-
-  @override
-  Future<bool> equals(dynamic other) async {
-    final result = await _channel.invoke<bool>('CertificatePinner.equals', {
-      '_handle': _handle,
-      'other': other,
     });
     return result;
   }
@@ -4848,12 +3825,6 @@ abstract interface class CacheControlInterface {
 
   Future<void> immutable();
 
-  /// Don't accept an unvalidated cached response.
-  Future<void> noCache();
-
-  /// Don't store the server's response in any cache.
-  Future<void> noStore();
-
   /// Sets the maximum age of a cached response. If the cache response's age exceeds [maxAge], it will not be used and a network request will be made. precision; finer precision will be lost.
   Future<void> maxAge(int maxAge, TimeUnit timeUnit);
 
@@ -4862,14 +3833,6 @@ abstract interface class CacheControlInterface {
 
   /// Sets the minimum number of seconds that a response will continue to be fresh for. If the response will be stale when [minFresh] have elapsed, the cached response will not be used and a network request will be made. [TimeUnit.SECONDS] precision; finer precision will be lost.
   Future<void> minFresh(int minFresh, TimeUnit timeUnit);
-
-  /// Only accept the response if it is in the cache. If the response isn't cached, a `504 Unsatisfiable Request` response will be returned.
-  Future<void> onlyIfCached();
-
-  /// Don't accept a transformed response.
-  Future<void> noTransform();
-
-  Future<void> immutable();
 
   Future<CacheControl> build();
 }
@@ -4888,22 +3851,6 @@ class CacheControl implements CacheControlInterface {
     final handle = await _channel.invoke<String>('CacheControl._create');
     return CacheControl._(handle);
   }
-  final dynamic isPrivate;
-  final dynamic isPublic;
-
-  CacheControl({required this.isPrivate, required this.isPublic});
-
-  factory CacheControl.fromMap(Map<String, dynamic> map) {
-    return CacheControl(
-      isPrivate: map['isPrivate'] as dynamic,
-      isPublic: map['isPublic'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'isPrivate': isPrivate,
-    'isPublic': isPublic,
-  };
 
   @override
   Future<void> noCache() async {
@@ -4975,22 +3922,6 @@ class CacheControl implements CacheControlInterface {
     });
   }
 
-  /// Don't accept an unvalidated cached response.
-  @override
-  Future<void> noCache() async {
-    await _channel.invoke<void>('CacheControl.noCache', {
-      '_handle': _handle,
-    });
-  }
-
-  /// Don't store the server's response in any cache.
-  @override
-  Future<void> noStore() async {
-    await _channel.invoke<void>('CacheControl.noStore', {
-      '_handle': _handle,
-    });
-  }
-
   /// Sets the maximum age of a cached response. If the cache response's age exceeds [maxAge], it will not be used and a network request will be made. precision; finer precision will be lost.
   @override
   Future<void> maxAge(int maxAge, TimeUnit timeUnit) async {
@@ -5018,29 +3949,6 @@ class CacheControl implements CacheControlInterface {
       '_handle': _handle,
       'minFresh': minFresh,
       'timeUnit': timeUnit._handle,
-    });
-  }
-
-  /// Only accept the response if it is in the cache. If the response isn't cached, a `504 Unsatisfiable Request` response will be returned.
-  @override
-  Future<void> onlyIfCached() async {
-    await _channel.invoke<void>('CacheControl.onlyIfCached', {
-      '_handle': _handle,
-    });
-  }
-
-  /// Don't accept a transformed response.
-  @override
-  Future<void> noTransform() async {
-    await _channel.invoke<void>('CacheControl.noTransform', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<void> immutable() async {
-    await _channel.invoke<void>('CacheControl.immutable', {
-      '_handle': _handle,
     });
   }
 
@@ -5079,15 +3987,7 @@ class Dns {
       '_handle': _handle,
       'hostname': hostname,
     });
-    return result.map((e) => InetAddress.fromHandle(e as String)).toList();
-  }
-
-  Future<List<InetAddress>> lookup(String hostname) async {
-    final result = await _channel.invoke<List<dynamic>>('Dns.lookup', {
-      '_handle': _handle,
-      'hostname': hostname,
-    });
-    return result.map((e) => InetAddress.fromHandle(e as String)).toList();
+    return result.map((e0) => InetAddress.fromHandle(e0 as String)).toList();
   }
 
   Future<void> dispose() async {
@@ -5142,59 +4042,10 @@ class RequestBody {
     return result;
   }
 
-  static Future<void> contentType() async {
-    await _channel.invoke<void>('RequestBody.contentType');
-  }
-
-  static Future<void> contentLength() async {
-    await _channel.invoke<void>('RequestBody.contentLength');
-  }
-
-  static Future<void> writeTo(BufferedSink sink) async {
-    await _channel.invoke<void>('RequestBody.writeTo', {
-      'sink': sink._handle,
-    });
-  }
-
-  static Future<void> contentType() async {
-    await _channel.invoke<void>('RequestBody.contentType');
-  }
-
-  static Future<void> contentLength() async {
-    await _channel.invoke<void>('RequestBody.contentLength');
-  }
-
-  static Future<void> writeTo(BufferedSink sink) async {
-    await _channel.invoke<void>('RequestBody.writeTo', {
-      'sink': sink._handle,
-    });
-  }
-
-  static Future<void> contentType() async {
-    await _channel.invoke<void>('RequestBody.contentType');
-  }
-
-  static Future<void> contentLength() async {
-    await _channel.invoke<void>('RequestBody.contentLength');
-  }
-
-  static Future<void> writeTo(BufferedSink sink) async {
-    await _channel.invoke<void>('RequestBody.writeTo', {
-      'sink': sink._handle,
-    });
-  }
-
   static Future<void> create(MediaType? contentType, String content) async {
     await _channel.invoke<void>('RequestBody.create', {
-      'contentType': contentType._handle,
+      'contentType': contentType?._handle,
       'content': content,
-    });
-  }
-
-  static Future<void> create(MediaType? contentType, File file) async {
-    await _channel.invoke<void>('RequestBody.create', {
-      'contentType': contentType._handle,
-      'file': file._handle,
     });
   }
 
@@ -5234,22 +4085,6 @@ class Handshake implements HandshakeInterface {
     final handle = await _channel.invoke<String>('Handshake._create');
     return Handshake._(handle);
   }
-  final Principal? peerPrincipal;
-  final Principal? localPrincipal;
-
-  Handshake({this.peerPrincipal, this.localPrincipal});
-
-  factory Handshake.fromMap(Map<String, dynamic> map) {
-    return Handshake(
-      peerPrincipal: map['peerPrincipal'] != null ? Principal.fromHandle(map['peerPrincipal'] as String) : null,
-      localPrincipal: map['localPrincipal'] != null ? Principal.fromHandle(map['localPrincipal'] as String) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    if (peerPrincipal != null) 'peerPrincipal': peerPrincipal?._handle,
-    if (localPrincipal != null) 'localPrincipal': localPrincipal?._handle,
-  };
 
   @override
   Future<void> tlsVersion() async {
@@ -5302,7 +4137,7 @@ class Handshake implements HandshakeInterface {
     return result;
   }
 
-  static Future<void> get(SSLSession sslSession) async {
+  static Future<void> get$(SSLSession sslSession) async {
     await _channel.invoke<void>('Handshake.get', {
       'sslSession': sslSession._handle,
     });
@@ -5315,6 +4150,11 @@ class Handshake implements HandshakeInterface {
 
 /// A specification for a connection to an origin server. For simple connections, this is the server's hostname and port. If an explicit proxy is requested (or [no proxy][Proxy.NO_PROXY] is explicitly requested), this also includes that proxy information. For secure connections the address also includes the SSL socket factory, hostname verifier, and certificate pinner. HTTP requests that share the same [Address] may also share the same [Connection].
 class Address {
+  final String _handle;
+
+  Address._(this._handle);
+
+  static Address fromHandle(String handle) => Address._(handle);
 }
 
 class Callback {
@@ -5383,25 +4223,6 @@ class Dispatcher implements DispatcherInterface {
     final handle = await _channel.invoke<String>('Dispatcher._create');
     return Dispatcher._(handle);
   }
-  final Runnable? idleCallback;
-  final bool isRunning;
-  final Runnable? idleCallback;
-
-  Dispatcher({this.idleCallback, required this.isRunning, this.idleCallback});
-
-  factory Dispatcher.fromMap(Map<String, dynamic> map) {
-    return Dispatcher(
-      idleCallback: map['idleCallback'] != null ? Runnable.fromHandle(map['idleCallback'] as String) : null,
-      isRunning: map['isRunning'] as bool,
-      idleCallback: map['idleCallback'] != null ? Runnable.fromHandle(map['idleCallback'] as String) : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    if (idleCallback != null) 'idleCallback': idleCallback?._handle,
-    'isRunning': isRunning,
-    if (idleCallback != null) 'idleCallback': idleCallback?._handle,
-  };
 
   /// Cancel all calls currently enqueued or executing. Includes calls executed both [synchronously][Call.execute] and [asynchronously][Call.enqueue].
   @override
@@ -5423,19 +4244,21 @@ class Dispatcher implements DispatcherInterface {
   /// Returns a snapshot of the calls currently awaiting execution.
   @override
   Future<List<Call>> queuedCalls() async {
-    final result = await _channel.invoke<List<dynamic>>('Dispatcher.queuedCalls', {
+    final result =
+        await _channel.invoke<List<dynamic>>('Dispatcher.queuedCalls', {
       '_handle': _handle,
     });
-    return result.map((e) => Call.fromHandle(e as String)).toList();
+    return result.map((e0) => Call.fromHandle(e0 as String)).toList();
   }
 
   /// Returns a snapshot of the calls currently being executed.
   @override
   Future<List<Call>> runningCalls() async {
-    final result = await _channel.invoke<List<dynamic>>('Dispatcher.runningCalls', {
+    final result =
+        await _channel.invoke<List<dynamic>>('Dispatcher.runningCalls', {
       '_handle': _handle,
     });
-    return result.map((e) => Call.fromHandle(e as String)).toList();
+    return result.map((e0) => Call.fromHandle(e0 as String)).toList();
   }
 
   @override
@@ -5483,8 +4306,6 @@ abstract interface class ResponseInterface {
 
   Future<String?> header(String name, {String? defaultValue});
 
-  Future<Headers> headers();
-
   Future<Headers> trailers();
 
   Future<ResponseBody> peekBody(int byteCount);
@@ -5511,39 +4332,11 @@ abstract interface class ResponseInterface {
   /// Closes the response body. Equivalent to `body().close()`. It is an error to close a response that is not eligible for a body. This includes the responses returned from [cacheResponse], [networkResponse], and [priorResponse].
   Future<void> close();
 
-  Future<void> request(Request request);
-
-  Future<void> protocol(Protocol protocol);
-
-  Future<void> code(int code);
-
-  Future<void> message(String message);
-
-  Future<void> handshake(Handshake? handshake);
-
-  /// Sets the header named [name] to [value]. If this request already has any headers with that name, they are all replaced.
-  Future<void> header(String name, String value);
-
   /// Adds a header with [name] to [value]. Prefer this method for multiply-valued headers like "Set-Cookie".
   Future<void> addHeader(String name, String value);
 
   /// Removes all headers named [name] on this builder.
   Future<void> removeHeader(String name);
-
-  /// Removes all headers on this builder and adds [headers].
-  Future<void> headers(Headers headers);
-
-  Future<void> body(ResponseBody? body);
-
-  Future<void> networkResponse(Response? networkResponse);
-
-  Future<void> cacheResponse(Response? cacheResponse);
-
-  Future<void> priorResponse(Response? priorResponse);
-
-  Future<void> sentRequestAtMillis(int sentRequestAtMillis);
-
-  Future<void> receivedResponseAtMillis(int receivedResponseAtMillis);
 
   Future<Response> build();
 }
@@ -5562,24 +4355,6 @@ class Response implements ResponseInterface {
     final handle = await _channel.invoke<String>('Response._create');
     return Response._(handle);
   }
-  /// Returns true if the code is in [200..300), which means the request was successfully received, understood, and accepted.
-  final bool isSuccessful;
-  /// Returns true if this response redirects to another resource.
-  final bool isRedirect;
-
-  Response({required this.isSuccessful, required this.isRedirect});
-
-  factory Response.fromMap(Map<String, dynamic> map) {
-    return Response(
-      isSuccessful: map['isSuccessful'] as bool,
-      isRedirect: map['isRedirect'] as bool,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'isSuccessful': isSuccessful,
-    'isRedirect': isRedirect,
-  };
 
   @override
   Future<Request> request() async {
@@ -5591,10 +4366,11 @@ class Response implements ResponseInterface {
 
   @override
   Future<Protocol> protocol() async {
-    final result = await _channel.invoke<Map<String, dynamic>>('Response.protocol', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>>('Response.protocol', {
       '_handle': _handle,
     });
-    return Protocol.fromMap(result);
+    return result as Protocol;
   }
 
   @override
@@ -5638,14 +4414,6 @@ class Response implements ResponseInterface {
       if (defaultValue != null) 'defaultValue': defaultValue,
     });
     return result;
-  }
-
-  @override
-  Future<Headers> headers() async {
-    final result = await _channel.invoke<String>('Response.headers', {
-      '_handle': _handle,
-    });
-    return Headers.fromHandle(result);
   }
 
   @override
@@ -5711,7 +4479,7 @@ class Response implements ResponseInterface {
     final result = await _channel.invoke<List<dynamic>>('Response.challenges', {
       '_handle': _handle,
     });
-    return result.map((e) => Challenge.fromHandle(e as String)).toList();
+    return result.map((e0) => Challenge.fromHandle(e0 as String)).toList();
   }
 
   @override
@@ -5732,7 +4500,8 @@ class Response implements ResponseInterface {
 
   @override
   Future<int> receivedResponseAtMillis() async {
-    final result = await _channel.invoke<int>('Response.receivedResponseAtMillis', {
+    final result =
+        await _channel.invoke<int>('Response.receivedResponseAtMillis', {
       '_handle': _handle,
     });
     return result;
@@ -5743,56 +4512,6 @@ class Response implements ResponseInterface {
   Future<void> close() async {
     await _channel.invoke<void>('Response.close', {
       '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<void> request(Request request) async {
-    await _channel.invoke<void>('Response.request', {
-      '_handle': _handle,
-      'request': request._handle,
-    });
-  }
-
-  @override
-  Future<void> protocol(Protocol protocol) async {
-    await _channel.invoke<void>('Response.protocol', {
-      '_handle': _handle,
-      'protocol': protocol.toMap(),
-    });
-  }
-
-  @override
-  Future<void> code(int code) async {
-    await _channel.invoke<void>('Response.code', {
-      '_handle': _handle,
-      'code': code,
-    });
-  }
-
-  @override
-  Future<void> message(String message) async {
-    await _channel.invoke<void>('Response.message', {
-      '_handle': _handle,
-      'message': message,
-    });
-  }
-
-  @override
-  Future<void> handshake(Handshake? handshake) async {
-    await _channel.invoke<void>('Response.handshake', {
-      '_handle': _handle,
-      'handshake': handshake._handle,
-    });
-  }
-
-  /// Sets the header named [name] to [value]. If this request already has any headers with that name, they are all replaced.
-  @override
-  Future<void> header(String name, String value) async {
-    await _channel.invoke<void>('Response.header', {
-      '_handle': _handle,
-      'name': name,
-      'value': value,
     });
   }
 
@@ -5812,63 +4531,6 @@ class Response implements ResponseInterface {
     await _channel.invoke<void>('Response.removeHeader', {
       '_handle': _handle,
       'name': name,
-    });
-  }
-
-  /// Removes all headers on this builder and adds [headers].
-  @override
-  Future<void> headers(Headers headers) async {
-    await _channel.invoke<void>('Response.headers', {
-      '_handle': _handle,
-      'headers': headers._handle,
-    });
-  }
-
-  @override
-  Future<void> body(ResponseBody? body) async {
-    await _channel.invoke<void>('Response.body', {
-      '_handle': _handle,
-      'body': body._handle,
-    });
-  }
-
-  @override
-  Future<void> networkResponse(Response? networkResponse) async {
-    await _channel.invoke<void>('Response.networkResponse', {
-      '_handle': _handle,
-      'networkResponse': networkResponse._handle,
-    });
-  }
-
-  @override
-  Future<void> cacheResponse(Response? cacheResponse) async {
-    await _channel.invoke<void>('Response.cacheResponse', {
-      '_handle': _handle,
-      'cacheResponse': cacheResponse._handle,
-    });
-  }
-
-  @override
-  Future<void> priorResponse(Response? priorResponse) async {
-    await _channel.invoke<void>('Response.priorResponse', {
-      '_handle': _handle,
-      'priorResponse': priorResponse._handle,
-    });
-  }
-
-  @override
-  Future<void> sentRequestAtMillis(int sentRequestAtMillis) async {
-    await _channel.invoke<void>('Response.sentRequestAtMillis', {
-      '_handle': _handle,
-      'sentRequestAtMillis': sentRequestAtMillis,
-    });
-  }
-
-  @override
-  Future<void> receivedResponseAtMillis(int receivedResponseAtMillis) async {
-    await _channel.invoke<void>('Response.receivedResponseAtMillis', {
-      '_handle': _handle,
-      'receivedResponseAtMillis': receivedResponseAtMillis,
     });
   }
 
@@ -5900,22 +4562,9 @@ abstract interface class RequestInterface {
 
   Future<String> method();
 
-  Future<Headers> headers();
-
   Future<RequestBody?> body();
 
   Future<CacheControl> cacheControl();
-
-  Future<Builder> url(HttpUrl url);
-
-  /// Sets the URL target of this request. exception by calling [HttpUrl.parse]; it returns null for invalid URLs.
-  Future<Builder> url(String url);
-
-  /// Sets the URL target of this request.
-  Future<void> url(Uri url);
-
-  /// Sets the header named [name] to [value]. If this request already has any headers with that name, they are all replaced.
-  Future<void> header(String name, String value);
 
   /// Adds a header with [name] and [value]. Prefer this method for multiply-valued headers like "Cookie". Note that for some headers including `Content-Length` and `Content-Encoding`, OkHttp may replace [value] with a header derived from the request body.
   Future<void> addHeader(String name, String value);
@@ -5923,13 +4572,7 @@ abstract interface class RequestInterface {
   /// Removes all headers named [name] on this builder.
   Future<void> removeHeader(String name);
 
-  /// Removes all headers on this builder and adds [headers].
-  Future<void> headers(Headers headers);
-
-  /// Sets this request's `Cache-Control` header, replacing any cache control headers already present. If [cacheControl] doesn't define any directives, this clears this request's cache-control headers.
-  Future<Builder> cacheControl(CacheControl cacheControl);
-
-  Future<void> get();
+  Future<void> get$();
 
   Future<void> head();
 
@@ -5940,11 +4583,6 @@ abstract interface class RequestInterface {
   Future<void> put(RequestBody body);
 
   Future<void> patch(RequestBody body);
-
-  Future<Builder> method(String method, RequestBody? body);
-
-  /// Attaches [tag] to the request using `Object.class` as a key.
-  Future<Builder> tag(dynamic tag);
 
   Future<Request> build();
 }
@@ -5963,22 +4601,6 @@ class Request implements RequestInterface {
     final handle = await _channel.invoke<String>('Request._create');
     return Request._(handle);
   }
-  final bool isHttps;
-  final String finalUrl;
-
-  Request({required this.isHttps, required this.finalUrl});
-
-  factory Request.fromMap(Map<String, dynamic> map) {
-    return Request(
-      isHttps: map['isHttps'] as bool,
-      finalUrl: map['finalUrl'] as String,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'isHttps': isHttps,
-    'finalUrl': finalUrl,
-  };
 
   @override
   Future<String?> header(String name) async {
@@ -6032,14 +4654,6 @@ class Request implements RequestInterface {
   }
 
   @override
-  Future<Headers> headers() async {
-    final result = await _channel.invoke<String>('Request.headers', {
-      '_handle': _handle,
-    });
-    return Headers.fromHandle(result);
-  }
-
-  @override
   Future<RequestBody?> body() async {
     final result = await _channel.invoke<String?>('Request.body', {
       '_handle': _handle,
@@ -6053,44 +4667,6 @@ class Request implements RequestInterface {
       '_handle': _handle,
     });
     return CacheControl.fromHandle(result);
-  }
-
-  @override
-  Future<Builder> url(HttpUrl url) async {
-    final result = await _channel.invoke<String>('Request.url', {
-      '_handle': _handle,
-      'url': url._handle,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  /// Sets the URL target of this request. exception by calling [HttpUrl.parse]; it returns null for invalid URLs.
-  @override
-  Future<Builder> url(String url) async {
-    final result = await _channel.invoke<String>('Request.url', {
-      '_handle': _handle,
-      'url': url,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  /// Sets the URL target of this request.
-  @override
-  Future<void> url(Uri url) async {
-    await _channel.invoke<void>('Request.url', {
-      '_handle': _handle,
-      'url': url.toString(),
-    });
-  }
-
-  /// Sets the header named [name] to [value]. If this request already has any headers with that name, they are all replaced.
-  @override
-  Future<void> header(String name, String value) async {
-    await _channel.invoke<void>('Request.header', {
-      '_handle': _handle,
-      'name': name,
-      'value': value,
-    });
   }
 
   /// Adds a header with [name] and [value]. Prefer this method for multiply-valued headers like "Cookie". Note that for some headers including `Content-Length` and `Content-Encoding`, OkHttp may replace [value] with a header derived from the request body.
@@ -6112,27 +4688,8 @@ class Request implements RequestInterface {
     });
   }
 
-  /// Removes all headers on this builder and adds [headers].
   @override
-  Future<void> headers(Headers headers) async {
-    await _channel.invoke<void>('Request.headers', {
-      '_handle': _handle,
-      'headers': headers._handle,
-    });
-  }
-
-  /// Sets this request's `Cache-Control` header, replacing any cache control headers already present. If [cacheControl] doesn't define any directives, this clears this request's cache-control headers.
-  @override
-  Future<Builder> cacheControl(CacheControl cacheControl) async {
-    final result = await _channel.invoke<String>('Request.cacheControl', {
-      '_handle': _handle,
-      'cacheControl': cacheControl._handle,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  @override
-  Future<void> get() async {
+  Future<void> get$() async {
     await _channel.invoke<void>('Request.get', {
       '_handle': _handle,
     });
@@ -6175,26 +4732,6 @@ class Request implements RequestInterface {
       '_handle': _handle,
       'body': body._handle,
     });
-  }
-
-  @override
-  Future<Builder> method(String method, RequestBody? body) async {
-    final result = await _channel.invoke<String>('Request.method', {
-      '_handle': _handle,
-      'method': method,
-      'body': body._handle,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  /// Attaches [tag] to the request using `Object.class` as a key.
-  @override
-  Future<Builder> tag(dynamic tag) async {
-    final result = await _channel.invoke<String>('Request.tag', {
-      '_handle': _handle,
-      'tag': tag,
-    });
-    return Builder.fromHandle(result);
   }
 
   @override
@@ -6251,8 +4788,6 @@ abstract interface class CacheInterface {
 
   Future<int> requestCount();
 
-  Future<void> close();
-
   Future<void> abort();
 
   Future<Sink> body();
@@ -6262,8 +4797,6 @@ abstract interface class CacheInterface {
   Future<bool> matches(Request request, Response response);
 
   Future<Response> response(dynamic snapshot);
-
-  Future<void> close();
 
   Future<MediaType?> contentType();
 
@@ -6286,34 +4819,6 @@ class Cache implements CacheInterface {
     final handle = await _channel.invoke<String>('Cache._create');
     return Cache._(handle);
   }
-  final bool isClosed;
-  final dynamic snapshot;
-  final Entry entry;
-  final dynamic? editor;
-  final dynamic? editor;
-  final dynamic snapshot;
-
-  Cache({required this.isClosed, required this.snapshot, required this.entry, this.editor, this.editor, required this.snapshot});
-
-  factory Cache.fromMap(Map<String, dynamic> map) {
-    return Cache(
-      isClosed: map['isClosed'] as bool,
-      snapshot: map['snapshot'] as dynamic,
-      entry: Entry.fromHandle(map['entry'] as String),
-      editor: map['editor'] as dynamic?,
-      editor: map['editor'] as dynamic?,
-      snapshot: map['snapshot'] as dynamic,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'isClosed': isClosed,
-    'snapshot': snapshot,
-    'entry': entry._handle,
-    if (editor != null) 'editor': editor,
-    if (editor != null) 'editor': editor,
-    'snapshot': snapshot,
-  };
 
   @override
   Future<void> initialize() async {
@@ -6462,13 +4967,6 @@ class Cache implements CacheInterface {
   }
 
   @override
-  Future<void> close() async {
-    await _channel.invoke<void>('Cache.close', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
   Future<void> abort() async {
     await _channel.invoke<void>('Cache.abort', {
       '_handle': _handle,
@@ -6511,13 +5009,6 @@ class Cache implements CacheInterface {
   }
 
   @override
-  Future<void> close() async {
-    await _channel.invoke<void>('Cache.close', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
   Future<MediaType?> contentType() async {
     final result = await _channel.invoke<String?>('Cache.contentType', {
       '_handle': _handle,
@@ -6556,7 +5047,8 @@ class Cache implements CacheInterface {
   }
 
   /// Returns the subset of the headers in [requestHeaders] that impact the content of the response's body.
-  static Future<Headers> varyHeaders(Headers requestHeaders, Headers responseHeaders) async {
+  static Future<Headers> varyHeaders(
+      Headers requestHeaders, Headers responseHeaders) async {
     final result = await _channel.invoke<String>('Cache.varyHeaders', {
       'requestHeaders': requestHeaders._handle,
       'responseHeaders': responseHeaders._handle,
@@ -6597,9 +5089,6 @@ abstract interface class HttpUrlInterface {
 
   /// Returns a builder based on this URL.
   Future<Builder> newBuilder();
-
-  /// Returns a builder for the URL that would be retrieved by following `link` from this URL, or null if the resulting URL is not well-formed.
-  Future<Builder?> newBuilder(String link);
 
   Future<bool> equals(dynamic other);
 
@@ -6644,21 +5133,6 @@ abstract interface class HttpUrlInterface {
 
   Future<String?> fragment();
 
-  Future<void> scheme(String scheme);
-
-  Future<void> username(String username);
-
-  Future<void> encodedUsername(String encodedUsername);
-
-  Future<void> password(String password);
-
-  Future<void> encodedPassword(String encodedPassword);
-
-  /// address.
-  Future<void> host(String host);
-
-  Future<void> port(int port);
-
   Future<void> addPathSegment(String pathSegment);
 
   /// Adds a set of path segments separated by a slash (either `\` or `/`). If `pathSegments` starts with a slash, the resulting URL will have empty path segment.
@@ -6675,29 +5149,21 @@ abstract interface class HttpUrlInterface {
 
   Future<void> removePathSegment(int index);
 
-  Future<void> encodedPath(String encodedPath);
-
-  Future<void> query(String? query);
-
-  Future<void> encodedQuery(String? encodedQuery);
-
   /// Encodes the query parameter using UTF-8 and adds it to this URL's query string.
   Future<void> addQueryParameter(String name, String? value);
 
   /// Adds the pre-encoded query parameter to this URL's query string.
-  Future<void> addEncodedQueryParameter(String encodedName, String? encodedValue);
+  Future<void> addEncodedQueryParameter(
+      String encodedName, String? encodedValue);
 
   Future<void> setQueryParameter(String name, String? value);
 
-  Future<void> setEncodedQueryParameter(String encodedName, String? encodedValue);
+  Future<void> setEncodedQueryParameter(
+      String encodedName, String? encodedValue);
 
   Future<void> removeAllQueryParameters(String name);
 
   Future<void> removeAllEncodedQueryParameters(String encodedName);
-
-  Future<void> fragment(String? fragment);
-
-  Future<void> encodedFragment(String? encodedFragment);
 
   Future<HttpUrl> build();
 }
@@ -6716,19 +5182,6 @@ class HttpUrl implements HttpUrlInterface {
     final handle = await _channel.invoke<String>('HttpUrl._create');
     return HttpUrl._(handle);
   }
-  final bool isHttps;
-
-  HttpUrl({required this.isHttps});
-
-  factory HttpUrl.fromMap(Map<String, dynamic> map) {
-    return HttpUrl(
-      isHttps: map['isHttps'] as bool,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'isHttps': isHttps,
-  };
 
   /// Returns this URL as a [java.net.URL][URL].
   @override
@@ -6761,7 +5214,8 @@ class HttpUrl implements HttpUrlInterface {
   /// Returns all values for the query parameter `name` ordered by their appearance in this URL. For example this returns `["banana"]` for `queryParameterValue("b")` on `http://host/?a=apple&b=banana`. | URL                               | `queryParameterValues("a")` | `queryParameterValues("b")` | | :-------------------------------- | :-------------------------- | :-------------------------- | | `http://host/`                    | `[]`                        | `[]`                        | | `http://host/?`                   | `[]`                        | `[]`                        | | `http://host/?a=apple&k=key+lime` | `["apple"]`                 | `[]`                        | | `http://host/?a=apple&a=apricot`  | `["apple", "apricot"]`      | `[]`                        | | `http://host/?a=apple&b`          | `["apple"]`                 | `[null]`                    |
   @override
   Future<List<String?>> queryParameterValues(String name) async {
-    final result = await _channel.invoke<List<String?>>('HttpUrl.queryParameterValues', {
+    final result =
+        await _channel.invoke<List<String?>>('HttpUrl.queryParameterValues', {
       '_handle': _handle,
       'name': name,
     });
@@ -6781,7 +5235,8 @@ class HttpUrl implements HttpUrlInterface {
   /// Returns the value of the query parameter at `index`. For example this returns `"apple"` for `queryParameterName(0)` on `http://host/?a=apple&b=banana`. This throws if `index` is not less than the [query size][querySize]. | URL                               | `queryParameterValue(0)` | `queryParameterValue(1)` | | :-------------------------------- | :----------------------- | :----------------------- | | `http://host/`                    | exception                | exception                | | `http://host/?`                   | null                     | exception                | | `http://host/?a=apple&k=key+lime` | `"apple"`                | `"key lime"`             | | `http://host/?a=apple&a=apricot`  | `"apple"`                | `"apricot"`              | | `http://host/?a=apple&b`          | `"apple"`                | null                     |
   @override
   Future<String?> queryParameterValue(int index) async {
-    final result = await _channel.invoke<String?>('HttpUrl.queryParameterValue', {
+    final result =
+        await _channel.invoke<String?>('HttpUrl.queryParameterValue', {
       '_handle': _handle,
       'index': index,
     });
@@ -6814,16 +5269,6 @@ class HttpUrl implements HttpUrlInterface {
       '_handle': _handle,
     });
     return Builder.fromHandle(result);
-  }
-
-  /// Returns a builder for the URL that would be retrieved by following `link` from this URL, or null if the resulting URL is not well-formed.
-  @override
-  Future<Builder?> newBuilder(String link) async {
-    final result = await _channel.invoke<String?>('HttpUrl.newBuilder', {
-      '_handle': _handle,
-      'link': link,
-    });
-    return result != null ? Builder.fromHandle(result) : null;
   }
 
   @override
@@ -6932,7 +5377,8 @@ class HttpUrl implements HttpUrlInterface {
 
   @override
   Future<List<String>> encodedPathSegments() async {
-    final result = await _channel.invoke<List<String>>('HttpUrl.encodedPathSegments', {
+    final result =
+        await _channel.invoke<List<String>>('HttpUrl.encodedPathSegments', {
       '_handle': _handle,
     });
     return result;
@@ -6972,7 +5418,8 @@ class HttpUrl implements HttpUrlInterface {
 
   @override
   Future<List<String>> queryParameterNames() async {
-    final result = await _channel.invoke<List<String>>('HttpUrl.queryParameterNames', {
+    final result =
+        await _channel.invoke<List<String>>('HttpUrl.queryParameterNames', {
       '_handle': _handle,
     });
     return result;
@@ -6992,63 +5439,6 @@ class HttpUrl implements HttpUrlInterface {
       '_handle': _handle,
     });
     return result;
-  }
-
-  @override
-  Future<void> scheme(String scheme) async {
-    await _channel.invoke<void>('HttpUrl.scheme', {
-      '_handle': _handle,
-      'scheme': scheme,
-    });
-  }
-
-  @override
-  Future<void> username(String username) async {
-    await _channel.invoke<void>('HttpUrl.username', {
-      '_handle': _handle,
-      'username': username,
-    });
-  }
-
-  @override
-  Future<void> encodedUsername(String encodedUsername) async {
-    await _channel.invoke<void>('HttpUrl.encodedUsername', {
-      '_handle': _handle,
-      'encodedUsername': encodedUsername,
-    });
-  }
-
-  @override
-  Future<void> password(String password) async {
-    await _channel.invoke<void>('HttpUrl.password', {
-      '_handle': _handle,
-      'password': password,
-    });
-  }
-
-  @override
-  Future<void> encodedPassword(String encodedPassword) async {
-    await _channel.invoke<void>('HttpUrl.encodedPassword', {
-      '_handle': _handle,
-      'encodedPassword': encodedPassword,
-    });
-  }
-
-  /// address.
-  @override
-  Future<void> host(String host) async {
-    await _channel.invoke<void>('HttpUrl.host', {
-      '_handle': _handle,
-      'host': host,
-    });
-  }
-
-  @override
-  Future<void> port(int port) async {
-    await _channel.invoke<void>('HttpUrl.port', {
-      '_handle': _handle,
-      'port': port,
-    });
   }
 
   @override
@@ -7080,7 +5470,8 @@ class HttpUrl implements HttpUrlInterface {
   /// Adds a set of encoded path segments separated by a slash (either `\` or `/`). If `encodedPathSegments` starts with a slash, the resulting URL will have empty path segment.
   @override
   Future<Builder> addEncodedPathSegments(String encodedPathSegments) async {
-    final result = await _channel.invoke<String>('HttpUrl.addEncodedPathSegments', {
+    final result =
+        await _channel.invoke<String>('HttpUrl.addEncodedPathSegments', {
       '_handle': _handle,
       'encodedPathSegments': encodedPathSegments,
     });
@@ -7097,7 +5488,8 @@ class HttpUrl implements HttpUrlInterface {
   }
 
   @override
-  Future<void> setEncodedPathSegment(int index, String encodedPathSegment) async {
+  Future<void> setEncodedPathSegment(
+      int index, String encodedPathSegment) async {
     await _channel.invoke<void>('HttpUrl.setEncodedPathSegment', {
       '_handle': _handle,
       'index': index,
@@ -7113,30 +5505,6 @@ class HttpUrl implements HttpUrlInterface {
     });
   }
 
-  @override
-  Future<void> encodedPath(String encodedPath) async {
-    await _channel.invoke<void>('HttpUrl.encodedPath', {
-      '_handle': _handle,
-      'encodedPath': encodedPath,
-    });
-  }
-
-  @override
-  Future<void> query(String? query) async {
-    await _channel.invoke<void>('HttpUrl.query', {
-      '_handle': _handle,
-      'query': query,
-    });
-  }
-
-  @override
-  Future<void> encodedQuery(String? encodedQuery) async {
-    await _channel.invoke<void>('HttpUrl.encodedQuery', {
-      '_handle': _handle,
-      'encodedQuery': encodedQuery,
-    });
-  }
-
   /// Encodes the query parameter using UTF-8 and adds it to this URL's query string.
   @override
   Future<void> addQueryParameter(String name, String? value) async {
@@ -7149,7 +5517,8 @@ class HttpUrl implements HttpUrlInterface {
 
   /// Adds the pre-encoded query parameter to this URL's query string.
   @override
-  Future<void> addEncodedQueryParameter(String encodedName, String? encodedValue) async {
+  Future<void> addEncodedQueryParameter(
+      String encodedName, String? encodedValue) async {
     await _channel.invoke<void>('HttpUrl.addEncodedQueryParameter', {
       '_handle': _handle,
       'encodedName': encodedName,
@@ -7167,7 +5536,8 @@ class HttpUrl implements HttpUrlInterface {
   }
 
   @override
-  Future<void> setEncodedQueryParameter(String encodedName, String? encodedValue) async {
+  Future<void> setEncodedQueryParameter(
+      String encodedName, String? encodedValue) async {
     await _channel.invoke<void>('HttpUrl.setEncodedQueryParameter', {
       '_handle': _handle,
       'encodedName': encodedName,
@@ -7192,22 +5562,6 @@ class HttpUrl implements HttpUrlInterface {
   }
 
   @override
-  Future<void> fragment(String? fragment) async {
-    await _channel.invoke<void>('HttpUrl.fragment', {
-      '_handle': _handle,
-      'fragment': fragment,
-    });
-  }
-
-  @override
-  Future<void> encodedFragment(String? encodedFragment) async {
-    await _channel.invoke<void>('HttpUrl.encodedFragment', {
-      '_handle': _handle,
-      'encodedFragment': encodedFragment,
-    });
-  }
-
-  @override
   Future<HttpUrl> build() async {
     final result = await _channel.invoke<String>('HttpUrl.build', {
       '_handle': _handle,
@@ -7216,7 +5570,8 @@ class HttpUrl implements HttpUrlInterface {
   }
 
   /// Returns the index of the ':' in `input` that is after scheme characters. Returns -1 if `input` does not have a scheme that starts at `pos`.
-  static Future<int> schemeDelimiterOffset(String input, int pos, int limit) async {
+  static Future<int> schemeDelimiterOffset(
+      String input, int pos, int limit) async {
     final result = await _channel.invoke<int>('HttpUrl.schemeDelimiterOffset', {
       'input': input,
       'pos': pos,
@@ -7251,7 +5606,7 @@ class HttpUrl implements HttpUrlInterface {
     return result;
   }
 
-  static Future<HttpUrl> get(String url) async {
+  static Future<HttpUrl> get$(String url) async {
     final result = await _channel.invoke<String>('HttpUrl.get', {
       'url': url,
     });
@@ -7261,20 +5616,6 @@ class HttpUrl implements HttpUrlInterface {
   static Future<HttpUrl?> parse(String url) async {
     final result = await _channel.invoke<String?>('HttpUrl.parse', {
       'url': url,
-    });
-    return result != null ? HttpUrl.fromHandle(result) : null;
-  }
-
-  static Future<HttpUrl?> get(Uri url) async {
-    final result = await _channel.invoke<String?>('HttpUrl.get', {
-      'url': url.toString(),
-    });
-    return result != null ? HttpUrl.fromHandle(result) : null;
-  }
-
-  static Future<HttpUrl?> get(Uri uri) async {
-    final result = await _channel.invoke<String?>('HttpUrl.get', {
-      'uri': uri.toString(),
     });
     return result != null ? HttpUrl.fromHandle(result) : null;
   }
@@ -7299,17 +5640,7 @@ abstract interface class ConnectionSpecInterface {
 
   Future<void> allEnabledCipherSuites();
 
-  Future<Builder> cipherSuites();
-
-  Future<void> cipherSuites();
-
   Future<void> allEnabledTlsVersions();
-
-  Future<Builder> tlsVersions();
-
-  Future<void> tlsVersions();
-
-  Future<void> supportsTlsExtensions(bool supportsTlsExtensions);
 
   Future<ConnectionSpec> build();
 }
@@ -7331,23 +5662,30 @@ class ConnectionSpec implements ConnectionSpecInterface {
 
   @override
   Future<List<CipherSuite>?> cipherSuites() async {
-    final result = await _channel.invoke<List<dynamic>?>('ConnectionSpec.cipherSuites', {
+    final result =
+        await _channel.invoke<List<dynamic>?>('ConnectionSpec.cipherSuites', {
       '_handle': _handle,
     });
-    return result != null ? result.map((e) => CipherSuite.fromHandle(e as String)).toList() : null;
+    return result != null
+        ? result.map((e0) => CipherSuite.fromHandle(e0 as String)).toList()
+        : null;
   }
 
   @override
   Future<List<TlsVersion>?> tlsVersions() async {
-    final result = await _channel.invoke<List<dynamic>?>('ConnectionSpec.tlsVersions', {
+    final result =
+        await _channel.invoke<List<dynamic>?>('ConnectionSpec.tlsVersions', {
       '_handle': _handle,
     });
-    return result != null ? result.map((e) => TlsVersion.fromMap(e as Map<String, dynamic>)).toList() : null;
+    return result != null
+        ? result.map((e0) => e0 as TlsVersion).toList()
+        : null;
   }
 
   @override
   Future<bool> supportsTlsExtensions() async {
-    final result = await _channel.invoke<bool>('ConnectionSpec.supportsTlsExtensions', {
+    final result =
+        await _channel.invoke<bool>('ConnectionSpec.supportsTlsExtensions', {
       '_handle': _handle,
     });
     return result;
@@ -7380,47 +5718,9 @@ class ConnectionSpec implements ConnectionSpecInterface {
   }
 
   @override
-  Future<Builder> cipherSuites() async {
-    final result = await _channel.invoke<String>('ConnectionSpec.cipherSuites', {
-      '_handle': _handle,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  @override
-  Future<void> cipherSuites() async {
-    await _channel.invoke<void>('ConnectionSpec.cipherSuites', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
   Future<void> allEnabledTlsVersions() async {
     await _channel.invoke<void>('ConnectionSpec.allEnabledTlsVersions', {
       '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<Builder> tlsVersions() async {
-    final result = await _channel.invoke<String>('ConnectionSpec.tlsVersions', {
-      '_handle': _handle,
-    });
-    return Builder.fromHandle(result);
-  }
-
-  @override
-  Future<void> tlsVersions() async {
-    await _channel.invoke<void>('ConnectionSpec.tlsVersions', {
-      '_handle': _handle,
-    });
-  }
-
-  @override
-  Future<void> supportsTlsExtensions(bool supportsTlsExtensions) async {
-    await _channel.invoke<void>('ConnectionSpec.supportsTlsExtensions', {
-      '_handle': _handle,
-      'supportsTlsExtensions': supportsTlsExtensions,
     });
   }
 
@@ -7468,10 +5768,11 @@ class Route implements RouteInterface {
 
   @override
   Future<Address> address() async {
-    final result = await _channel.invoke<Map<String, dynamic>>('Route.address', {
+    final result =
+        await _channel.invoke<Map<String, dynamic>>('Route.address', {
       '_handle': _handle,
     });
-    return Address.fromMap(result);
+    return result as Address;
   }
 
   @override
@@ -7511,4 +5812,3 @@ class Route implements RouteInterface {
     await _channel.invoke<void>('_dispose', {'_handle': _handle});
   }
 }
-

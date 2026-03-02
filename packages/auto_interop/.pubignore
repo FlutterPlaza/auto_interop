@@ -1,6 +1,5 @@
 # Test files (not needed by consumers)
 test/
-example/
 
 # Development files
 .dart_tool/

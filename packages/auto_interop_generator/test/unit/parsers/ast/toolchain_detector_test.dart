@@ -51,8 +51,9 @@ void main() {
     test('hasSwift returns true when swift is available', () async {
       final detector = ToolchainDetector(
         processRunner: (exec, args, {workingDirectory}) async {
-          if (exec == 'swift')
+          if (exec == 'swift') {
             return _mockResult(0, stdout: 'swift-driver version: 1.90.11.1');
+          }
           return _mockResult(1);
         },
       );
@@ -71,8 +72,9 @@ void main() {
     test('hasKotlinc returns true when kotlinc is available', () async {
       final detector = ToolchainDetector(
         processRunner: (exec, args, {workingDirectory}) async {
-          if (exec == 'kotlinc')
+          if (exec == 'kotlinc') {
             return _mockResult(0, stdout: 'info: kotlinc-jvm 1.9.22');
+          }
           return _mockResult(1);
         },
       );

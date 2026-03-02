@@ -5,6 +5,8 @@
 // Source: npm
 // Platform availability: Web only (npm package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'package:auto_interop/auto_interop.dart';
 
 class FormatOptions {

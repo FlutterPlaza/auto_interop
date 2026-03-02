@@ -1,4 +1,5 @@
 import '../schema/unified_type_schema.dart';
+import 'dart_reserved.dart';
 import 'generator_base.dart';
 
 /// Generates Dart binding classes from a [UnifiedTypeSchema].
@@ -8,6 +9,9 @@ import 'generator_base.dart';
 /// - Data classes with toMap/fromMap for custom types
 /// - Enum classes for enum definitions
 class DartGenerator extends GeneratorBase {
+  /// Escapes a name that is a Dart reserved word by appending `$`.
+  static String _esc(String name) => escapeDartName(name);
+
   /// Method names inherited from Object that must not appear in generated
   /// interfaces or @override implementations (they conflict with dart:core).
   static const _objectReservedNames = {
@@ -17,6 +21,32 @@ class DartGenerator extends GeneratorBase {
     'runtimeType',
     '==',
   };
+
+  /// Removes duplicate methods by name, preferring instance over static.
+  static List<UtsMethod> _deduplicateMethods(List<UtsMethod> methods) {
+    final byName = <String, UtsMethod>{};
+    for (final m in methods) {
+      final existing = byName[m.name];
+      if (existing == null) {
+        byName[m.name] = m;
+      } else if (existing.isStatic && !m.isStatic) {
+        // Prefer instance methods over static ones
+        byName[m.name] = m;
+      }
+    }
+    // Preserve original order based on first occurrence of each name
+    final seen = <String>{};
+    return methods
+        .where((m) => seen.add(m.name))
+        .map((m) => byName[m.name]!)
+        .toList();
+  }
+
+  /// Removes duplicate fields by name, keeping the first occurrence.
+  static List<UtsField> _deduplicateFields(List<UtsField> fields) {
+    final seen = <String>{};
+    return fields.where((f) => seen.add(f.name)).toList();
+  }
 
   @override
   Map<String, String> generate(UnifiedTypeSchema schema,
@@ -39,6 +69,9 @@ class DartGenerator extends GeneratorBase {
     buffer.writeln('// Source: ${schema.source.name}');
     buffer.writeln(
         '// Platform availability: ${_platformAvailability(schema.source)}');
+    buffer.writeln();
+    buffer.writeln(
+        '// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators');
     buffer.writeln();
     if (_needsTypedDataImport(schema)) {
       buffer.writeln("import 'dart:typed_data';");
@@ -153,7 +186,7 @@ class DartGenerator extends GeneratorBase {
     }
 
     buffer.writeln('abstract interface class ${classDef.name}Interface {');
-    final instanceMethods = classDef.methods
+    final instanceMethods = _deduplicateMethods(classDef.methods)
         .where((m) => !m.isStatic && !_objectReservedNames.contains(m.name))
         .toList();
     for (var i = 0; i < instanceMethods.length; i++) {
@@ -191,6 +224,8 @@ class DartGenerator extends GeneratorBase {
       }
     } else if (classDef.kind == UtsClassKind.sealedClass) {
       buffer.writeln('sealed class ${classDef.name} {');
+      // Generative constructor so subtypes can extend this class
+      buffer.writeln('  ${classDef.name}();');
       // Polymorphic fromMap factory for sealed classes
       if (classDef.sealedSubclasses.isNotEmpty) {
         buffer.writeln(
@@ -227,7 +262,12 @@ class DartGenerator extends GeneratorBase {
     }
 
     // Handle field for reference types (classes with instance methods)
-    if (isReferenceType) {
+    // or empty opaque classes (no fields, no methods — act as handle wrappers)
+    final isOpaqueHandleType = !isReferenceType &&
+        classDef.fields.isEmpty &&
+        classDef.methods.isEmpty &&
+        classDef.kind != UtsClassKind.sealedClass;
+    if (isReferenceType || isOpaqueHandleType) {
       buffer.writeln('  final String _handle;');
       buffer.writeln();
       buffer.writeln('  ${classDef.name}._(this._handle);');
@@ -245,9 +285,9 @@ class DartGenerator extends GeneratorBase {
           final dartType = p.type.toDartType();
           if (p.isOptional || p.type.nullable) {
             final suffix = dartType == 'dynamic' ? '' : '?';
-            return '$dartType$suffix ${p.name}';
+            return '$dartType$suffix ${_esc(p.name)}';
           }
-          return 'required $dartType ${p.name}';
+          return 'required $dartType ${_esc(p.name)}';
         }).join(', ');
         buffer.writeln(
             '  static Future<${classDef.name}> create({$params}) async {');
@@ -256,10 +296,10 @@ class DartGenerator extends GeneratorBase {
         for (final p in classDef.constructorParameters) {
           if (p.isOptional || p.type.nullable) {
             buffer.writeln(
-                "      if (${p.name} != null) '${p.name}': ${_serializeExpr(schema, p.type, p.name)},");
+                "      if (${_esc(p.name)} != null) '${p.name}': ${_serializeExpr(schema, p.type, _esc(p.name), nullChecked: true)},");
           } else {
             buffer.writeln(
-                "      '${p.name}': ${_serializeExpr(schema, p.type, p.name)},");
+                "      '${p.name}': ${_serializeExpr(schema, p.type, _esc(p.name))},");
           }
         }
         buffer.writeln('    });');
@@ -272,34 +312,41 @@ class DartGenerator extends GeneratorBase {
       buffer.writeln('  }');
     }
 
-    // Fields
-    for (final field in classDef.fields) {
-      if (field.documentation != null) {
-        buffer.writeln('  /// ${field.documentation}');
+    // Fields (only for non-reference types; reference types access state via handle)
+    if (!isReferenceType) {
+      for (final field in classDef.fields) {
+        if (field.documentation != null) {
+          buffer.writeln('  /// ${field.documentation}');
+        }
+        final nullable = field.nullable ? '?' : '';
+        buffer.writeln(
+            '  final ${field.type.toDartType()}$nullable ${_esc(field.name)};');
       }
-      final nullable = field.nullable ? '?' : '';
-      buffer.writeln(
-          '  final ${field.type.toDartType()}$nullable ${field.name};');
-    }
 
-    if (classDef.fields.isNotEmpty) {
-      buffer.writeln();
-      // Constructor
-      _generateConstructor(buffer, classDef);
-      buffer.writeln();
-      // fromMap factory
-      _generateFromMap(buffer, schema, classDef);
-      buffer.writeln();
-      // toMap method
-      _generateToMap(buffer, schema, classDef);
+      if (classDef.fields.isNotEmpty) {
+        buffer.writeln();
+        // Constructor
+        _generateConstructor(buffer, classDef);
+        buffer.writeln();
+        // fromMap factory
+        _generateFromMap(buffer, schema, classDef);
+        buffer.writeln();
+        // toMap method
+        _generateToMap(buffer, schema, classDef);
+      }
     }
 
     // Methods — add @override for instance methods of concrete classes with interfaces
     final addOverrideToInstanceMethods =
         classDef.kind == UtsClassKind.concreteClass && hasInstanceMethods;
-    for (final method in classDef.methods) {
+    final dedupedMethods = _deduplicateMethods(classDef.methods);
+    final instanceNames =
+        dedupedMethods.where((m) => !m.isStatic).map((m) => m.name).toSet();
+    for (final method in dedupedMethods) {
       // Skip methods that conflict with Object members
       if (_objectReservedNames.contains(method.name)) continue;
+      // Skip static methods whose name conflicts with an instance method
+      if (method.isStatic && instanceNames.contains(method.name)) continue;
       buffer.writeln();
       _generateMethod(buffer, schema, method,
           indent: '  ',
@@ -333,12 +380,13 @@ class DartGenerator extends GeneratorBase {
     if (method.returnType.kind == UtsTypeKind.stream) {
       final elementType =
           method.returnType.typeArguments?.first.toDartType() ?? 'dynamic';
-      buffer.writeln('${indent}Stream<$elementType> ${method.name}($params);');
+      buffer.writeln(
+          '${indent}Stream<$elementType> ${_esc(method.name)}($params);');
     } else {
       final dartType = _userFacingDartType(schema, effectiveReturnType);
       final asyncReturnType =
           dartType == 'void' ? 'Future<void>' : 'Future<$dartType>';
-      buffer.writeln('$indent$asyncReturnType ${method.name}($params);');
+      buffer.writeln('$indent$asyncReturnType ${_esc(method.name)}($params);');
     }
   }
 
@@ -388,7 +436,7 @@ class DartGenerator extends GeneratorBase {
           ? _streamChannelType(schema, elementUtsType)
           : elementType;
       buffer.writeln(
-          '$indent${staticMod}Stream<$elementType> ${method.name}($params) {');
+          '$indent${staticMod}Stream<$elementType> ${_esc(method.name)}($params) {');
 
       if (method.parameters.isNotEmpty || isInstanceMethod) {
         buffer.writeln(
@@ -408,7 +456,7 @@ class DartGenerator extends GeneratorBase {
         for (final param in namedParams) {
           if (param.isOptional) {
             buffer.writeln(
-                '$indent      if (${param.name} != null) \'${param.name}\': ${_serializeParam(schema, param)},');
+                '$indent      if (${_esc(param.name)} != null) \'${param.name}\': ${_serializeParam(schema, param, nullChecked: true)},');
           } else {
             buffer.writeln(
                 '$indent      \'${param.name}\': ${_serializeParam(schema, param)},');
@@ -430,7 +478,7 @@ class DartGenerator extends GeneratorBase {
         dartReturnType == 'void' ? 'Future<void>' : 'Future<$dartReturnType>';
 
     buffer.writeln(
-        '$indent$staticMod$asyncReturnType ${method.name}($params) async {');
+        '$indent$staticMod$asyncReturnType ${_esc(method.name)}($params) async {');
 
     // Determine channel invoke type and deserialization
     final channelType = _channelInvokeType(schema, effectiveReturnType);
@@ -441,7 +489,7 @@ class DartGenerator extends GeneratorBase {
     for (final param in method.parameters) {
       if (_callbackNeedsWrapping(schema, param.type)) {
         _generateCallbackWrapper(
-            buffer, schema, param.name, param.type, indent);
+            buffer, schema, _esc(param.name), param.type, indent);
         wrappedCallbacks.add(param.name);
       }
     }
@@ -465,18 +513,21 @@ class DartGenerator extends GeneratorBase {
       }
       for (final param in positionalParams) {
         final serExpr = wrappedCallbacks.contains(param.name)
-            ? '_${param.name}Id'
+            ? '_${_esc(param.name)}Id'
             : _serializeParam(schema, param);
         buffer.writeln('$indent    \'${param.name}\': $serExpr,');
       }
       for (final param in namedParams) {
-        final serExpr = wrappedCallbacks.contains(param.name)
-            ? '_${param.name}Id'
-            : _serializeParam(schema, param);
         if (param.isOptional) {
+          final serExpr = wrappedCallbacks.contains(param.name)
+              ? '_${_esc(param.name)}Id'
+              : _serializeParam(schema, param, nullChecked: true);
           buffer.writeln(
-              '$indent    if (${param.name} != null) \'${param.name}\': $serExpr,');
+              '$indent    if (${_esc(param.name)} != null) \'${param.name}\': $serExpr,');
         } else {
+          final serExpr = wrappedCallbacks.contains(param.name)
+              ? '_${_esc(param.name)}Id'
+              : _serializeParam(schema, param);
           buffer.writeln('$indent    \'${param.name}\': $serExpr,');
         }
       }
@@ -631,7 +682,10 @@ class DartGenerator extends GeneratorBase {
         if (_isReferenceTypeClass(schema, type.name)) {
           return '${type.name}.fromHandle($varName)';
         }
-        return '${type.name}.fromMap($varName)';
+        if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+          return '${type.name}.fromMap($varName)';
+        }
+        return '$varName as ${type.name}';
       case UtsTypeKind.nativeObject:
         return '${type.name}.fromHandle($varName)';
       case UtsTypeKind.enumType:
@@ -697,7 +751,10 @@ class DartGenerator extends GeneratorBase {
         if (_isReferenceTypeClass(schema, type.name)) {
           return '${type.name}.fromHandle($varName as String)';
         }
-        return '${type.name}.fromMap($varName as Map<String, dynamic>)';
+        if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+          return '${type.name}.fromMap($varName as Map<String, dynamic>)';
+        }
+        return '$varName as ${type.name}';
       case UtsTypeKind.nativeObject:
         return '${type.name}.fromHandle($varName as String)';
       case UtsTypeKind.enumType:
@@ -804,10 +861,12 @@ class DartGenerator extends GeneratorBase {
             if (_isReferenceTypeClass(schema, pt.name)) {
               lines.add(
                   'final $deserName = ${pt.name}.fromHandle($rawExpr as String);');
-            } else {
+            } else if (!_isEmptyClassWithoutFromMap(schema, pt.name)) {
               lines.add(
                   'final map$i = ($rawExpr as Map).map((k, v) => MapEntry(k.toString(), v));');
               lines.add('final $deserName = ${pt.name}.fromMap(map$i);');
+            } else {
+              lines.add('final $deserName = $rawExpr as ${pt.name};');
             }
             break;
           case UtsTypeKind.nativeObject:
@@ -849,7 +908,10 @@ class DartGenerator extends GeneratorBase {
         if (_isReferenceTypeClass(schema, type.name)) {
           return 'String'; // handle
         }
-        return 'Map<Object?, Object?>';
+        if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+          return 'Map<Object?, Object?>';
+        }
+        return type.toDartType();
       case UtsTypeKind.nativeObject:
         return 'String'; // handle
       case UtsTypeKind.enumType:
@@ -875,10 +937,13 @@ class DartGenerator extends GeneratorBase {
         if (_isReferenceTypeClass(schema, elementType.name)) {
           return '.map((raw) => ${elementType.name}.fromHandle(raw))';
         }
-        return '.map((raw) {\n'
-            '    final map = (raw as Map).map((k, v) => MapEntry(k.toString(), v));\n'
-            '    return ${elementType.name}.fromMap(map);\n'
-            '  })';
+        if (!_isEmptyClassWithoutFromMap(schema, elementType.name)) {
+          return '.map((raw) {\n'
+              '    final map = (raw as Map).map((k, v) => MapEntry(k.toString(), v));\n'
+              '    return ${elementType.name}.fromMap(map);\n'
+              '  })';
+        }
+        return '.cast<${elementType.name}>()';
       case UtsTypeKind.nativeObject:
         return '.map((raw) => ${elementType.name}.fromHandle(raw))';
       case UtsTypeKind.enumType:
@@ -903,6 +968,23 @@ class DartGenerator extends GeneratorBase {
   bool _isReferenceTypeClass(UnifiedTypeSchema schema, String typeName) {
     final cls = schema.classes.where((c) => c.name == typeName).toList();
     return cls.isNotEmpty && cls.first.methods.any((m) => !m.isStatic);
+  }
+
+  /// Checks if a named object type won't have `fromMap`/`toMap` generated.
+  ///
+  /// Returns true for:
+  /// - Classes in [schema.classes] with no fields and no instance methods
+  ///   (generate as bare `class Foo {}`)
+  /// - Enums in [schema.enums] (use `.name`/`.values.byName()`, not fromMap)
+  bool _isEmptyClassWithoutFromMap(UnifiedTypeSchema schema, String typeName) {
+    // Enums never have fromMap/toMap
+    if (schema.enums.any((e) => e.name == typeName)) return true;
+    // Empty non-reference classes don't get fromMap/toMap
+    final cls = schema.classes.where((c) => c.name == typeName).toList();
+    if (cls.isEmpty) return false;
+    final c = cls.first;
+    final isRef = c.methods.any((m) => !m.isStatic);
+    return !isRef && c.fields.isEmpty;
   }
 
   /// Checks if the schema uses `Uint8List` anywhere, requiring a
@@ -961,27 +1043,42 @@ class DartGenerator extends GeneratorBase {
         typeDef.superclass != null ? ' extends ${typeDef.superclass}' : '';
     buffer.writeln('class ${typeDef.name}$extendsClause {');
 
+    // Deduplicate fields to avoid duplicate_definition errors
+    final dedupedFields = _deduplicateFields(typeDef.fields);
+    // Create a copy with deduplicated fields for constructor/fromMap/toMap
+    final dedupedTypeDef = UtsClass(
+      name: typeDef.name,
+      kind: typeDef.kind,
+      fields: dedupedFields,
+      methods: typeDef.methods,
+      superclass: typeDef.superclass,
+      interfaces: typeDef.interfaces,
+      sealedSubclasses: typeDef.sealedSubclasses,
+      documentation: typeDef.documentation,
+      constructorParameters: typeDef.constructorParameters,
+    );
+
     // Fields
-    for (final field in typeDef.fields) {
+    for (final field in dedupedFields) {
       if (field.documentation != null) {
         buffer.writeln('  /// ${field.documentation}');
       }
       final nullable = field.nullable ? '?' : '';
       buffer.writeln(
-          '  final ${field.type.toDartType()}$nullable ${field.name};');
+          '  final ${field.type.toDartType()}$nullable ${_esc(field.name)};');
     }
 
     buffer.writeln();
-    if (typeDef.fields.isNotEmpty) {
-      _generateConstructor(buffer, typeDef);
+    if (dedupedFields.isNotEmpty) {
+      _generateConstructor(buffer, dedupedTypeDef);
     } else {
       // Explicit default constructor for zero-field classes (needed by fromMap)
       buffer.writeln('  ${typeDef.name}();');
     }
     buffer.writeln();
-    _generateFromMap(buffer, schema, typeDef);
+    _generateFromMap(buffer, schema, dedupedTypeDef);
     buffer.writeln();
-    _generateToMap(buffer, schema, typeDef);
+    _generateToMap(buffer, schema, dedupedTypeDef);
 
     buffer.writeln('}');
   }
@@ -991,9 +1088,9 @@ class DartGenerator extends GeneratorBase {
     final params = <String>[];
     for (final field in classDef.fields) {
       if (field.nullable) {
-        params.add('this.${field.name}');
+        params.add('this.${_esc(field.name)}');
       } else {
-        params.add('required this.${field.name}');
+        params.add('required this.${_esc(field.name)}');
       }
     }
     buffer.write(params.join(', '));
@@ -1007,7 +1104,7 @@ class DartGenerator extends GeneratorBase {
     buffer.writeln('    return ${classDef.name}(');
     for (final field in classDef.fields) {
       final cast = _castFromMap(schema, field);
-      buffer.writeln('      ${field.name}: $cast,');
+      buffer.writeln('      ${_esc(field.name)}: $cast,');
     }
     buffer.writeln('    );');
     buffer.writeln('  }');
@@ -1019,7 +1116,7 @@ class DartGenerator extends GeneratorBase {
     for (final field in classDef.fields) {
       if (field.nullable) {
         buffer.writeln(
-            "    if (${field.name} != null) '${field.name}': ${_serializeField(schema, field)},");
+            "    if (${_esc(field.name)} != null) '${field.name}': ${_serializeField(schema, field, nullChecked: true)},");
       } else {
         buffer
             .writeln("    '${field.name}': ${_serializeField(schema, field)},");
@@ -1047,7 +1144,7 @@ class DartGenerator extends GeneratorBase {
         buffer.writeln('  /// ${value.documentation}');
       }
       final comma = i < enumDef.values.length - 1 ? ',' : ';';
-      buffer.writeln('  ${value.name}$comma');
+      buffer.writeln('  ${_esc(value.name)}$comma');
     }
     buffer.writeln('}');
   }
@@ -1061,7 +1158,7 @@ class DartGenerator extends GeneratorBase {
     final parts = <String>[];
 
     for (final p in positional) {
-      parts.add('${p.type.toDartType()} ${p.name}');
+      parts.add('${p.type.toDartType()} ${_esc(p.name)}');
     }
 
     if (named.isNotEmpty) {
@@ -1072,9 +1169,9 @@ class DartGenerator extends GeneratorBase {
           // dynamic is already nullable; types already ending with '?' don't need another
           final suffix =
               (dartType == 'dynamic' || dartType.endsWith('?')) ? '' : '?';
-          namedParts.add('$dartType$suffix ${p.name}');
+          namedParts.add('$dartType$suffix ${_esc(p.name)}');
         } else {
-          namedParts.add('required $dartType ${p.name}');
+          namedParts.add('required $dartType ${_esc(p.name)}');
         }
       }
       parts.add('{${namedParts.join(', ')}}');
@@ -1083,33 +1180,42 @@ class DartGenerator extends GeneratorBase {
     return parts.join(', ');
   }
 
-  String _serializeParam(UnifiedTypeSchema schema, UtsParameter param) {
-    return _serializeExpr(schema, param.type, param.name);
+  String _serializeParam(UnifiedTypeSchema schema, UtsParameter param,
+      {bool nullChecked = false}) {
+    return _serializeExpr(schema, param.type, _esc(param.name),
+        nullChecked: nullChecked);
   }
 
   /// Returns the expression to serialize a value for sending over the channel.
   ///
   /// [depth] tracks nesting level for unique variable names in nested
   /// collections (e.g., `e0`, `e1` instead of shadowed `e`).
+  /// [nullChecked] indicates the value has already been null-checked by the
+  /// caller, so nullable operators should not be emitted.
   String _serializeExpr(UnifiedTypeSchema schema, UtsType type, String expr,
-      {int depth = 0}) {
+      {int depth = 0, bool nullChecked = false}) {
+    final isNullable = type.nullable && !nullChecked;
+    final dot = isNullable ? '?.' : '.';
     if (type.kind == UtsTypeKind.primitive && type.name == 'DateTime') {
-      return '$expr.toIso8601String()';
+      return '$expr${dot}toIso8601String()';
     }
     if (type.kind == UtsTypeKind.primitive && type.name == 'Duration') {
-      return '$expr.inMicroseconds';
+      return '$expr${dot}inMicroseconds';
     }
     if (type.kind == UtsTypeKind.primitive && type.name == 'Uri') {
-      return '$expr.toString()';
+      return '$expr${dot}toString()';
     }
     if (type.kind == UtsTypeKind.nativeObject) {
-      return '$expr._handle';
+      return '$expr${isNullable ? '?' : ''}._handle';
     }
     if (type.kind == UtsTypeKind.object) {
       if (_isReferenceTypeClass(schema, type.name)) {
-        return '$expr._handle';
+        return '$expr${isNullable ? '?' : ''}._handle';
       }
-      return '$expr.toMap()';
+      if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+        return '$expr${dot}toMap()';
+      }
+      return expr;
     }
     if (type.kind == UtsTypeKind.enumType) {
       return '$expr.name';
@@ -1179,37 +1285,42 @@ class DartGenerator extends GeneratorBase {
     return false;
   }
 
-  String _serializeField(UnifiedTypeSchema schema, UtsField field) {
-    if (!field.nullable) {
-      return _serializeExpr(schema, field.type, field.name);
+  String _serializeField(UnifiedTypeSchema schema, UtsField field,
+      {bool nullChecked = false}) {
+    final eName = _esc(field.name);
+    if (!field.nullable || nullChecked) {
+      return _serializeExpr(schema, field.type, eName, nullChecked: true);
     }
     // Nullable: need ?. operator
     final type = field.type;
     if (type.kind == UtsTypeKind.primitive && type.name == 'DateTime') {
-      return '${field.name}?.toIso8601String()';
+      return '$eName?.toIso8601String()';
     }
     if (type.kind == UtsTypeKind.primitive && type.name == 'Duration') {
-      return '${field.name}?.inMicroseconds';
+      return '$eName?.inMicroseconds';
     }
     if (type.kind == UtsTypeKind.primitive && type.name == 'Uri') {
-      return '${field.name}?.toString()';
+      return '$eName?.toString()';
     }
     if (type.kind == UtsTypeKind.nativeObject) {
-      return '${field.name}?._handle';
+      return '$eName?._handle';
     }
     if (type.kind == UtsTypeKind.object) {
       if (_isReferenceTypeClass(schema, type.name)) {
-        return '${field.name}?._handle';
+        return '$eName?._handle';
       }
-      return '${field.name}?.toMap()';
+      if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+        return '$eName?.toMap()';
+      }
+      return eName;
     }
     if (type.kind == UtsTypeKind.enumType) {
-      return '${field.name}?.name';
+      return '$eName?.name';
     }
     if (type.kind == UtsTypeKind.list) {
       final elementType = type.typeArguments?.first;
       if (elementType != null && _needsTypeSerialization(elementType)) {
-        return '${field.name}?.map((e0) => ${_serializeExpr(schema, elementType, 'e0', depth: 1)}).toList()';
+        return '$eName?.map((e0) => ${_serializeExpr(schema, elementType, 'e0', depth: 1)}).toList()';
       }
     }
     if (type.kind == UtsTypeKind.map) {
@@ -1228,10 +1339,10 @@ class DartGenerator extends GeneratorBase {
         final valueSer = valueNeedsSer
             ? _serializeExpr(schema, valueType, 'v0', depth: 1)
             : 'v0';
-        return '${field.name}?.map((k0, v0) => MapEntry($keySer, $valueSer))';
+        return '$eName?.map((k0, v0) => MapEntry($keySer, $valueSer))';
       }
     }
-    return field.name;
+    return eName;
   }
 
   String _castFromMap(UnifiedTypeSchema schema, UtsField field) {
@@ -1272,10 +1383,23 @@ class DartGenerator extends GeneratorBase {
     }
 
     if (type.kind == UtsTypeKind.object) {
-      if (nullable) {
-        return 'map[$key] != null ? ${type.name}.fromMap(map[$key] as Map<String, dynamic>) : null';
+      if (_isReferenceTypeClass(schema, type.name)) {
+        if (nullable) {
+          return 'map[$key] != null ? ${type.name}.fromHandle(map[$key] as String) : null';
+        }
+        return '${type.name}.fromHandle(map[$key] as String)';
       }
-      return '${type.name}.fromMap(map[$key] as Map<String, dynamic>)';
+      if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+        if (nullable) {
+          return 'map[$key] != null ? ${type.name}.fromMap(map[$key] as Map<String, dynamic>) : null';
+        }
+        return '${type.name}.fromMap(map[$key] as Map<String, dynamic>)';
+      }
+      // Opaque/empty type — pass through as dynamic cast
+      if (nullable) {
+        return 'map[$key] as ${type.name}?';
+      }
+      return 'map[$key] as ${type.name}';
     }
 
     if (type.kind == UtsTypeKind.enumType) {

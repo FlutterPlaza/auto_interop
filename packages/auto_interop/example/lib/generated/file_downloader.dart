@@ -20,12 +20,17 @@ enum DownloadStatus {
 class DownloadProgress {
   /// Bytes received so far
   final int bytesReceived;
+
   /// Total bytes expected
   final int totalBytes;
+
   /// Download progress fraction (0.0 to 1.0)
   final double progress;
 
-  DownloadProgress({required this.bytesReceived, required this.totalBytes, required this.progress});
+  DownloadProgress(
+      {required this.bytesReceived,
+      required this.totalBytes,
+      required this.progress});
 
   factory DownloadProgress.fromMap(Map<String, dynamic> map) {
     return DownloadProgress(
@@ -36,15 +41,19 @@ class DownloadProgress {
   }
 
   Map<String, dynamic> toMap() => {
-    'bytesReceived': bytesReceived,
-    'totalBytes': totalBytes,
-    'progress': progress,
-  };
+        'bytesReceived': bytesReceived,
+        'totalBytes': totalBytes,
+        'progress': progress,
+      };
 }
 
 abstract interface class FileDownloaderInterface {
   /// Downloads a file from a URL with progress reporting.
-  Future<void> download({required String url, required String destination, required void Function(DownloadProgress) onProgress, required void Function(DownloadStatus, String?) onComplete});
+  Future<void> download(
+      {required String url,
+      required String destination,
+      required void Function(DownloadProgress) onProgress,
+      required void Function(DownloadStatus, String?) onComplete});
 
   /// Cancels all active downloads.
   Future<void> cancelAll();
@@ -58,15 +67,20 @@ class FileDownloader implements FileDownloaderInterface {
 
   /// Downloads a file from a URL with progress reporting.
   @override
-  Future<void> download({required String url, required String destination, required void Function(DownloadProgress) onProgress, required void Function(DownloadStatus, String?) onComplete}) async {
+  Future<void> download(
+      {required String url,
+      required String destination,
+      required void Function(DownloadProgress) onProgress,
+      required void Function(DownloadStatus, String?) onComplete}) async {
     final _onProgressId = CallbackManager.instance.register((dynamic raw) {
       final map0 = (raw as Map).map((k, v) => MapEntry(k.toString(), v));
-    final p0 = DownloadProgress.fromMap(map0);
-    onProgress(p0);
+      final p0 = DownloadProgress.fromMap(map0);
+      onProgress(p0);
     });
-    final _onCompleteId = CallbackManager.instance.register((dynamic arg0, dynamic arg1) {
+    final _onCompleteId =
+        CallbackManager.instance.register((dynamic arg0, dynamic arg1) {
       final p0 = DownloadStatus.values.byName(arg0 as String);
-    onComplete(p0, arg1);
+      onComplete(p0, arg1);
     });
     await _channel.invoke<void>('download', {
       'url': url,
@@ -81,6 +95,4 @@ class FileDownloader implements FileDownloaderInterface {
   Future<void> cancelAll() async {
     await _channel.invoke<void>('cancelAll');
   }
-
 }
-

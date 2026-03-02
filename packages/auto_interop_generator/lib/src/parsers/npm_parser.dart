@@ -457,8 +457,9 @@ class NpmParser extends ParserBase {
     String? memberDoc;
     for (var i = startIndex + 1; i < blockEnd; i++) {
       final memberLine = lines[i].trim();
-      if (memberLine.isEmpty || memberLine == '};' || memberLine == '}')
+      if (memberLine.isEmpty || memberLine == '};' || memberLine == '}') {
         continue;
+      }
 
       if (memberLine.startsWith('/**')) {
         final docResult = _parseJsDoc(lines, i);

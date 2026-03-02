@@ -436,10 +436,11 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
             instance.startAutomaticPing(pingInterval: pingInterval)
             result(nil)
         case "WebSocketRequest.startAutomaticPing":
-            let duration = args["duration"] as! Any
+            let duration = args["duration"] as! Int
+            let durationInterval = TimeInterval(Double(duration) / 1_000_000.0)
             let handle = args["_handle"] as! String
             let instance = instances[handle] as! WebSocketRequest
-            instance.startAutomaticPing(duration: duration)
+            instance.startAutomaticPing(duration: durationInterval)
             result(nil)
         case "WebSocketRequest.cancelAutomaticPing":
             let handle = args["_handle"] as! String
@@ -646,10 +647,11 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
         case "SessionDelegate.urlSession":
             let session = args["session"] as! Any
             let downloadTask = args["downloadTask"] as! Any
-            let location = args["location"] as! Any
+            let location = args["location"] as! String
+            let locationURL = URL(string: location!)
             let handle = args["_handle"] as! String
             let instance = instances[handle] as! SessionDelegate
-            instance.urlSession(session: session, downloadTask: downloadTask, location: location)
+            instance.urlSession(session: session, downloadTask: downloadTask, location: locationURL)
             result(nil)
         case "ServerTrustManager._create":
             let instance = ServerTrustManager()
@@ -881,10 +883,11 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
             result(nil)
         case "CompositeEventMonitor.request":
             let request = args["request"] as! String
-            let url = args["url"] as! Any
+            let url = args["url"] as! String
+            let urlURL = URL(string: url!)
             let handle = args["_handle"] as! String
             let instance = instances[handle] as! CompositeEventMonitor
-            instance.request(request: instances[request] as! DownloadRequest, url: url)
+            instance.request(request: instances[request] as! DownloadRequest, url: urlURL)
             result(nil)
         case "CompositeEventMonitor.request":
             let request = args["request"] as! String
@@ -899,6 +902,29 @@ public class AlamofirePlugin: NSObject, FlutterPlugin {
             result(nil)
         default:
             result(FlutterMethodNotImplemented)
+        }
+    }
+
+    private func normalizeErrorCode(_ error: Error) -> String {
+        let nsError = error as NSError
+        switch nsError.domain {
+        case NSURLErrorDomain:
+            switch nsError.code {
+            case NSURLErrorTimedOut: return "TIMEOUT"
+            case NSURLErrorCancelled: return "CANCELLED"
+            case NSURLErrorNotConnectedToInternet, NSURLErrorNetworkConnectionLost: return "NETWORK_ERROR"
+            default: return "NETWORK_ERROR"
+            }
+        case NSCocoaErrorDomain:
+            switch nsError.code {
+            case NSFileNoSuchFileError, NSFileReadNoSuchFileError: return "NOT_FOUND"
+            case NSFileWriteNoPermissionError, NSFileReadNoPermissionError: return "PERMISSION_DENIED"
+            default: return "IO_ERROR"
+            }
+        default:
+            if error is DecodingError { return "TYPE_ERROR" }
+            if error is EncodingError { return "TYPE_ERROR" }
+            return String(describing: type(of: error))
         }
     }
 }

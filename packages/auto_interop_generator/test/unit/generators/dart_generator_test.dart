@@ -1164,6 +1164,365 @@ void main() {
       });
     });
 
+    group('reserved keyword escaping', () {
+      test('escapes reserved field names in data class declarations', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Filter',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'in', type: UtsType.primitive('String')),
+                UtsField(name: 'for', type: UtsType.primitive('int')),
+                UtsField(name: 'safe', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
+        ));
+        // Field declarations use escaped names
+        expect(code, contains(r'final String in$;'));
+        expect(code, contains(r'final int for$;'));
+        expect(code, contains('final String safe;'));
+      });
+
+      test('escapes reserved field names in constructor', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Filter',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'in', type: UtsType.primitive('String')),
+                UtsField(name: 'for', type: UtsType.primitive('int')),
+              ],
+            ),
+          ],
+        ));
+        expect(code, contains(r'required this.in$'));
+        expect(code, contains(r'required this.for$'));
+      });
+
+      test('escapes reserved field names in fromMap', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Filter',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'in', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
+        ));
+        // fromMap uses escaped name for the named parameter but original for map key
+        expect(code, contains(r"in$: map['in']"));
+      });
+
+      test('preserves original wire names in toMap keys', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Filter',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'in', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
+        ));
+        // toMap key is the original wire name, value is escaped
+        expect(code, contains(r"'in': in$"));
+      });
+
+      test('does not escape non-reserved names', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Filter',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'value', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
+        ));
+        expect(code, contains('final String value;'));
+        expect(code, contains('required this.value'));
+        expect(code, isNot(contains(r'value$')));
+      });
+
+      test('escapes reserved parameter names in methods', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'search',
+              isStatic: true,
+              parameters: [
+                UtsParameter(name: 'in', type: UtsType.primitive('String')),
+              ],
+              returnType: UtsType.primitive('String'),
+            ),
+          ],
+        ));
+        // Parameter declaration uses escaped name
+        expect(code, contains(r'String in$'));
+        // Map key preserves wire name
+        expect(code, contains("'in':"));
+      });
+
+      test('escapes reserved method names in interface and implementation', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          functions: [
+            UtsMethod(
+              name: 'in',
+              isStatic: true,
+              parameters: [],
+              returnType: UtsType.primitive('String'),
+            ),
+          ],
+        ));
+        // Method declaration uses escaped name
+        expect(code, contains(r'in$('));
+        // Channel wire name preserves original
+        expect(code, contains("('in')"));
+      });
+
+      test('escapes reserved enum value names', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          enums: [
+            UtsEnum(
+              name: 'Direction',
+              values: [
+                UtsEnumValue(name: 'in'),
+                UtsEnumValue(name: 'out'),
+                UtsEnumValue(name: 'for'),
+              ],
+            ),
+          ],
+        ));
+        expect(code, contains(r'in$,'));
+        expect(code, contains('out,'));
+        expect(code, contains(r'for$;'));
+      });
+
+      test('escapes nullable reserved field in toMap null check', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Options',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(
+                    name: 'in',
+                    type: UtsType.primitive('String'),
+                    nullable: true),
+              ],
+            ),
+          ],
+        ));
+        // Null-check uses escaped name, map key stays original
+        expect(code, contains(r"if (in$ != null) 'in': in$"));
+      });
+    });
+
+    group('deduplication', () {
+      test('duplicate methods produce only one method in output', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'MyClass',
+              kind: UtsClassKind.concreteClass,
+              methods: [
+                UtsMethod(
+                  name: 'doWork',
+                  isStatic: false,
+                  returnType: UtsType.voidType(),
+                ),
+                UtsMethod(
+                  name: 'doWork',
+                  isStatic: false,
+                  parameters: [
+                    UtsParameter(name: 'x', type: UtsType.primitive('int')),
+                  ],
+                  returnType: UtsType.voidType(),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // Should appear exactly once in the interface
+        expect(
+          RegExp(r'doWork\(').allMatches(code).length,
+          // Once in interface, once in class (with @override)
+          equals(2),
+        );
+      });
+
+      test('duplicate fields produce only one field in data class output', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          types: [
+            UtsClass(
+              name: 'Options',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'timeout', type: UtsType.primitive('int')),
+                UtsField(name: 'timeout', type: UtsType.primitive('double')),
+              ],
+            ),
+          ],
+        ));
+        // 'final int timeout;' should appear only once
+        expect(
+          RegExp(r'final \w+ timeout;').allMatches(code).length,
+          equals(1),
+        );
+      });
+    });
+
+    group('reference types', () {
+      test('reference type classes do not emit data fields', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Client',
+              kind: UtsClassKind.concreteClass,
+              fields: [
+                UtsField(name: 'timeout', type: UtsType.primitive('int')),
+              ],
+              methods: [
+                UtsMethod(
+                  name: 'fetch',
+                  isStatic: false,
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // Should have _handle but NOT the data field
+        expect(code, contains('_handle'));
+        expect(code, isNot(contains('final int timeout;')));
+      });
+
+      test('reference type classes do not emit fromMap or toMap', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Client',
+              kind: UtsClassKind.concreteClass,
+              fields: [
+                UtsField(name: 'timeout', type: UtsType.primitive('int')),
+              ],
+              methods: [
+                UtsMethod(
+                  name: 'fetch',
+                  isStatic: false,
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        expect(code, isNot(contains('fromMap')));
+        expect(code, isNot(contains('toMap')));
+      });
+
+      test('reference type classes do not emit field-based constructor', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Client',
+              kind: UtsClassKind.concreteClass,
+              fields: [
+                UtsField(name: 'timeout', type: UtsType.primitive('int')),
+              ],
+              methods: [
+                UtsMethod(
+                  name: 'fetch',
+                  isStatic: false,
+                  returnType: UtsType.primitive('String'),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // Should NOT have Client({required this.timeout})
+        expect(code, isNot(contains('required this.timeout')));
+      });
+    });
+
+    group('static/instance conflicts', () {
+      test('static method conflicting with instance method is skipped', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.cocoapods,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Session',
+              kind: UtsClassKind.concreteClass,
+              methods: [
+                UtsMethod(
+                  name: 'start',
+                  isStatic: true,
+                  returnType: UtsType.voidType(),
+                ),
+                UtsMethod(
+                  name: 'start',
+                  isStatic: false,
+                  returnType: UtsType.voidType(),
+                ),
+              ],
+            ),
+          ],
+        ));
+        // 'static' should not appear before 'start' — instance wins
+        expect(code, isNot(contains('static Future<void> start(')));
+      });
+    });
+
     group('naming conventions', () {
       test('converts package name with hyphens to PascalCase', () {
         final schema = UnifiedTypeSchema(

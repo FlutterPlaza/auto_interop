@@ -63,16 +63,18 @@ class _MainShellState extends State<_MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_tab],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (i) => setState(() => _tab = i),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.http), label: 'HTTP'),
-          NavigationDestination(icon: Icon(Icons.sensors), label: 'Sensors'),
-          NavigationDestination(icon: Icon(Icons.build), label: 'System'),
-        ],
+    return SelectionArea(
+      child: Scaffold(
+        body: _pages[_tab],
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.http), label: 'HTTP'),
+            NavigationDestination(icon: Icon(Icons.sensors), label: 'Sensors'),
+            NavigationDestination(icon: Icon(Icons.build), label: 'System'),
+          ],
+        ),
       ),
     );
   }
@@ -400,7 +402,8 @@ class _CancelResumeDemoState extends State<_CancelResumeDemo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Cancel / Resume', style: Theme.of(context).textTheme.titleSmall),
+            Text('Cancel / Resume',
+                style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 4),
             Text(
               'DataRequest.cancel() and .resume() control in-flight requests',
@@ -491,9 +494,8 @@ class _AccelerometerDemoState extends State<_AccelerometerDemo> {
         _eventCount = 0;
       });
       try {
-        _sub = SensorStream.instance
-            .accelerometerEvents(samplingRate: 30)
-            .listen(
+        _sub =
+            SensorStream.instance.accelerometerEvents(samplingRate: 30).listen(
           (e) {
             _eventCount++;
             setState(() {
@@ -552,7 +554,9 @@ class _AccelerometerDemoState extends State<_AccelerometerDemo> {
                   color: theme.colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(_error!, style: TextStyle(color: theme.colorScheme.onErrorContainer)),
+                child: Text(_error!,
+                    style:
+                        TextStyle(color: theme.colorScheme.onErrorContainer)),
               )
             else ...[
               _AxisBar(label: 'X', value: _x, color: Colors.red),
@@ -590,7 +594,8 @@ class _AxisBar extends StatelessWidget {
   final String label;
   final double value;
   final Color color;
-  const _AxisBar({required this.label, required this.value, required this.color});
+  const _AxisBar(
+      {required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -599,7 +604,10 @@ class _AxisBar extends StatelessWidget {
     final fraction = (clamped + 2.0) / 4.0; // 0.0 → 1.0
     return Row(
       children: [
-        SizedBox(width: 20, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
+        SizedBox(
+            width: 20,
+            child: Text(label,
+                style: const TextStyle(fontWeight: FontWeight.bold))),
         const SizedBox(width: 8),
         Expanded(
           child: ClipRRect(
@@ -690,7 +698,7 @@ class _FileDownloadDemoState extends State<_FileDownloadDemo> {
         onComplete: (status, error) {
           setState(() {
             _status = status.name;
-            _error = error as String?;
+            _error = error;
             if (status == DownloadStatus.completed) _progress = 1.0;
           });
         },
@@ -748,7 +756,8 @@ class _FileDownloadDemoState extends State<_FileDownloadDemo> {
               children: [
                 Text(
                   '${(_progress * 100).toInt()}%',
-                  style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontFamily: 'monospace', fontWeight: FontWeight.bold),
                 ),
                 Text(
                   _totalBytes > 0
@@ -760,7 +769,9 @@ class _FileDownloadDemoState extends State<_FileDownloadDemo> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 8),
-              Text(_error!, style: TextStyle(color: theme.colorScheme.error, fontSize: 12)),
+              Text(_error!,
+                  style:
+                      TextStyle(color: theme.colorScheme.error, fontSize: 12)),
             ],
             if (isDone) ...[
               const SizedBox(height: 8),
@@ -769,13 +780,16 @@ class _FileDownloadDemoState extends State<_FileDownloadDemo> {
                   Icon(Icons.check_circle, color: Colors.green, size: 16),
                   const SizedBox(width: 4),
                   Text('Saved to /tmp/auto_interop_test.bin',
-                      style: theme.textTheme.bodySmall?.copyWith(color: Colors.green)),
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: Colors.green)),
                 ],
               ),
             ],
             const SizedBox(height: 12),
             FilledButton.icon(
-              onPressed: (_status == 'downloading' || _status == 'starting') ? null : _start,
+              onPressed: (_status == 'downloading' || _status == 'starting')
+                  ? null
+                  : _start,
               icon: const Icon(Icons.download),
               label: const Text('Download 1 MB'),
             ),
@@ -819,7 +833,8 @@ class _HandleLifecycleDemoState extends State<_HandleLifecycleDemo> {
     final session = entry.object as Session;
     setState(() => _log += 'Using ${entry.type}...\n');
     try {
-      final req = await session.request('https://httpbin.org/status/200', HTTPMethod.get, null);
+      final req = await session.request(
+          'https://httpbin.org/status/200', HTTPMethod.get, null);
       final resp = await req.response();
       setState(() => _log += '  Response: ${resp.statusCode}\n');
       await req.dispose();
@@ -863,9 +878,12 @@ class _HandleLifecycleDemoState extends State<_HandleLifecycleDemo> {
           children: [
             Row(
               children: [
-                Expanded(child: Text('Native Handle Lifecycle', style: theme.textTheme.titleSmall)),
+                Expanded(
+                    child: Text('Native Handle Lifecycle',
+                        style: theme.textTheme.titleSmall)),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -892,7 +910,8 @@ class _HandleLifecycleDemoState extends State<_HandleLifecycleDemo> {
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
                     children: [
-                      Icon(Icons.memory, size: 16, color: theme.colorScheme.primary),
+                      Icon(Icons.memory,
+                          size: 16, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Expanded(child: Text('${_handles[i].type} #${i + 1}')),
                       TextButton(
@@ -916,7 +935,8 @@ class _HandleLifecycleDemoState extends State<_HandleLifecycleDemo> {
                   reverse: true,
                   child: Text(
                     _log.trimRight(),
-                    style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                    style:
+                        const TextStyle(fontFamily: 'monospace', fontSize: 11),
                   ),
                 ),
               ),
@@ -1014,7 +1034,8 @@ class _ErrorHandlingDemoState extends State<_ErrorHandlingDemo> {
         null,
       );
       final resp = await req.response();
-      setState(() => _result = 'Got response: ${resp.statusCode} (unexpected success)');
+      setState(() =>
+          _result = 'Got response: ${resp.statusCode} (unexpected success)');
       await req.dispose();
       await session.dispose();
     } on AutoInteropException catch (e) {
@@ -1136,10 +1157,15 @@ class _ResultBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: loading
-          ? const Center(child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)))
+          ? const Center(
+              child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2)))
           : Text(
               text,
-              style: theme.textTheme.bodyMedium?.copyWith(fontFamily: 'monospace', fontSize: 12),
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(fontFamily: 'monospace', fontSize: 12),
             ),
     );
   }

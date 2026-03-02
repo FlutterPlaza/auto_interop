@@ -5,13 +5,15 @@
 // Source: cocoapods
 // Platform availability: iOS and macOS only (CocoaPods package)
 
+// ignore_for_file: unused_field, unused_import, camel_case_types, prefer_null_aware_operators
+
 import 'dart:typed_data';
 
 import 'package:auto_interop/auto_interop.dart';
 
 /// HTTP methods supported by Alamofire.
 enum HTTPMethod {
-  get,
+  get$,
   post,
   put,
   delete,

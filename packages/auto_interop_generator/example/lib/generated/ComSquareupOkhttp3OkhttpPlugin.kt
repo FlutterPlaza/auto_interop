@@ -53,7 +53,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.intercept(chain = chain)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.invoke" -> {
@@ -63,7 +63,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.invoke()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.request" -> {
@@ -73,7 +73,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.request()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.proceed" -> {
@@ -84,7 +84,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.proceed(request = instances[request] as Request)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.connection" -> {
@@ -94,7 +94,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connection()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.call" -> {
@@ -104,7 +104,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.call()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.connectTimeoutMillis" -> {
@@ -114,7 +114,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connectTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.withConnectTimeout" -> {
@@ -126,7 +126,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.withConnectTimeout(timeout = timeout, unit = unit)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.readTimeoutMillis" -> {
@@ -136,7 +136,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.readTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.withReadTimeout" -> {
@@ -148,7 +148,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.withReadTimeout(timeout = timeout, unit = unit)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.writeTimeoutMillis" -> {
@@ -158,7 +158,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.writeTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Interceptor.withWriteTimeout" -> {
@@ -170,7 +170,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.withWriteTimeout(timeout = timeout, unit = unit)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType._create" -> {
@@ -186,7 +186,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.charset(defaultValue = defaultValue)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.parameter" -> {
@@ -197,7 +197,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.parameter(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.type" -> {
@@ -207,7 +207,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.type()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.subtype" -> {
@@ -217,7 +217,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.subtype()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.toString" -> {
@@ -227,7 +227,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.equals" -> {
@@ -238,7 +238,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.equals(other = other)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.hashCode" -> {
@@ -248,7 +248,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.hashCode()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.get" -> {
@@ -257,7 +257,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = MediaType.get(mediaType = mediaType)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "MediaType.parse" -> {
@@ -266,7 +266,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = MediaType.parse(mediaType = mediaType)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite._create" -> {
@@ -281,7 +281,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.javaName()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite.toString" -> {
@@ -291,7 +291,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite.compare" -> {
@@ -301,7 +301,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CipherSuite.compare(a = a, b = b)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite.forJavaName" -> {
@@ -310,7 +310,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CipherSuite.forJavaName(javaName = javaName)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite.secondaryName" -> {
@@ -319,7 +319,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CipherSuite.secondaryName(javaName = javaName)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CipherSuite.init" -> {
@@ -329,7 +329,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CipherSuite.init(javaName = javaName, value = value)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient._create" -> {
@@ -345,7 +345,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newCall(request = instances[request] as Request)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.newWebSocket" -> {
@@ -357,7 +357,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newWebSocket(request = instances[request] as Request, listener = instances[listener] as WebSocketListener)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.newBuilder" -> {
@@ -367,7 +367,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.dispatcher" -> {
@@ -377,7 +377,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.dispatcher()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectionPool" -> {
@@ -387,7 +387,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connectionPool()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.interceptors" -> {
@@ -397,7 +397,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.interceptors()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.networkInterceptors" -> {
@@ -407,7 +407,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.networkInterceptors()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.eventListenerFactory" -> {
@@ -417,7 +417,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.eventListenerFactory()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.retryOnConnectionFailure" -> {
@@ -427,7 +427,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.retryOnConnectionFailure()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.authenticator" -> {
@@ -437,7 +437,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.authenticator()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.followRedirects" -> {
@@ -447,7 +447,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.followRedirects()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.followSslRedirects" -> {
@@ -457,7 +457,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.followSslRedirects()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.cookieJar" -> {
@@ -467,7 +467,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cookieJar()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.cache" -> {
@@ -477,7 +477,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cache()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.dns" -> {
@@ -487,7 +487,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.dns()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxy" -> {
@@ -497,7 +497,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.proxy()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxySelector" -> {
@@ -507,7 +507,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.proxySelector()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxyAuthenticator" -> {
@@ -517,7 +517,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.proxyAuthenticator()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.socketFactory" -> {
@@ -527,7 +527,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.socketFactory()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.sslSocketFactory" -> {
@@ -537,7 +537,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.sslSocketFactory()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectionSpecs" -> {
@@ -547,7 +547,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connectionSpecs()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.protocols" -> {
@@ -557,7 +557,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.protocols()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.hostnameVerifier" -> {
@@ -567,7 +567,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hostnameVerifier()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.certificatePinner" -> {
@@ -577,7 +577,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.certificatePinner()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.callTimeoutMillis" -> {
@@ -587,7 +587,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.callTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectTimeoutMillis" -> {
@@ -597,7 +597,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connectTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.readTimeoutMillis" -> {
@@ -607,7 +607,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.readTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.writeTimeoutMillis" -> {
@@ -617,7 +617,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.writeTimeoutMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.pingIntervalMillis" -> {
@@ -627,7 +627,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.pingIntervalMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.dispatcher" -> {
@@ -638,7 +638,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.dispatcher(dispatcher = instances[dispatcher] as Dispatcher)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectionPool" -> {
@@ -649,7 +649,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.connectionPool(connectionPool = instances[connectionPool] as ConnectionPool)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.interceptors" -> {
@@ -659,7 +659,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.interceptors()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.addInterceptor" -> {
@@ -670,7 +670,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addInterceptor(interceptor = instances[interceptor] as Interceptor)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.addInterceptor" -> {
@@ -680,7 +680,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addInterceptor()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.networkInterceptors" -> {
@@ -690,7 +690,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.networkInterceptors()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.addNetworkInterceptor" -> {
@@ -701,7 +701,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addNetworkInterceptor(interceptor = instances[interceptor] as Interceptor)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.addNetworkInterceptor" -> {
@@ -711,7 +711,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addNetworkInterceptor()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.eventListener" -> {
@@ -722,7 +722,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.eventListener(eventListener = instances[eventListener] as EventListener)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.eventListenerFactory" -> {
@@ -733,7 +733,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.eventListenerFactory(eventListenerFactory = eventListenerFactory)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.retryOnConnectionFailure" -> {
@@ -744,7 +744,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.retryOnConnectionFailure(retryOnConnectionFailure = retryOnConnectionFailure)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.authenticator" -> {
@@ -755,7 +755,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.authenticator(authenticator = instances[authenticator] as Authenticator)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.followRedirects" -> {
@@ -766,7 +766,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.followRedirects(followRedirects = followRedirects)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.followSslRedirects" -> {
@@ -777,7 +777,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.followSslRedirects(followProtocolRedirects = followProtocolRedirects)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.cookieJar" -> {
@@ -788,7 +788,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cookieJar(cookieJar = instances[cookieJar] as CookieJar)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.cache" -> {
@@ -799,7 +799,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cache(cache = instances[cache] as Cache)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.dns" -> {
@@ -810,7 +810,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.dns(dns = instances[dns] as Dns)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxy" -> {
@@ -821,7 +821,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.proxy(proxy = proxy)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxySelector" -> {
@@ -832,7 +832,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.proxySelector(proxySelector = proxySelector)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.proxyAuthenticator" -> {
@@ -843,7 +843,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.proxyAuthenticator(proxyAuthenticator = instances[proxyAuthenticator] as Authenticator)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.socketFactory" -> {
@@ -854,7 +854,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.socketFactory(socketFactory = socketFactory)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.sslSocketFactory" -> {
@@ -865,7 +865,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.sslSocketFactory(sslSocketFactory = sslSocketFactory)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectionSpecs" -> {
@@ -876,7 +876,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.connectionSpecs(connectionSpecs = connectionSpecs)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.protocols" -> {
@@ -887,7 +887,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.protocols(protocols = protocols)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.hostnameVerifier" -> {
@@ -898,7 +898,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.hostnameVerifier(hostnameVerifier = hostnameVerifier)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.certificatePinner" -> {
@@ -909,7 +909,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.certificatePinner(certificatePinner = instances[certificatePinner] as CertificatePinner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.callTimeout" -> {
@@ -921,18 +921,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.callTimeout(timeout = timeout, unit = unit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.callTimeout" -> {
-                val duration = call.argument<Any>("duration")!!
+                val duration = call.argument<Long>("duration")!!
+                val durationDuration = kotlin.time.Duration.Companion.microseconds(duration)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as OkHttpClient
-                    instance.callTimeout(duration = duration)
+                    instance.callTimeout(duration = durationDuration)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectTimeout" -> {
@@ -944,18 +945,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.connectTimeout(timeout = timeout, unit = unit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.connectTimeout" -> {
-                val duration = call.argument<Any>("duration")!!
+                val duration = call.argument<Long>("duration")!!
+                val durationDuration = kotlin.time.Duration.Companion.microseconds(duration)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as OkHttpClient
-                    instance.connectTimeout(duration = duration)
+                    instance.connectTimeout(duration = durationDuration)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.readTimeout" -> {
@@ -967,18 +969,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.readTimeout(timeout = timeout, unit = unit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.readTimeout" -> {
-                val duration = call.argument<Any>("duration")!!
+                val duration = call.argument<Long>("duration")!!
+                val durationDuration = kotlin.time.Duration.Companion.microseconds(duration)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as OkHttpClient
-                    instance.readTimeout(duration = duration)
+                    instance.readTimeout(duration = durationDuration)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.writeTimeout" -> {
@@ -990,18 +993,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writeTimeout(timeout = timeout, unit = unit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.writeTimeout" -> {
-                val duration = call.argument<Any>("duration")!!
+                val duration = call.argument<Long>("duration")!!
+                val durationDuration = kotlin.time.Duration.Companion.microseconds(duration)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as OkHttpClient
-                    instance.writeTimeout(duration = duration)
+                    instance.writeTimeout(duration = durationDuration)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.pingInterval" -> {
@@ -1013,18 +1017,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.pingInterval(interval = interval, unit = unit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.pingInterval" -> {
-                val duration = call.argument<Any>("duration")!!
+                val duration = call.argument<Long>("duration")!!
+                val durationDuration = kotlin.time.Duration.Companion.microseconds(duration)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as OkHttpClient
-                    instance.pingInterval(duration = duration)
+                    instance.pingInterval(duration = durationDuration)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.minWebSocketMessageToCompress" -> {
@@ -1035,7 +1040,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.minWebSocketMessageToCompress(bytes = bytes)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "OkHttpClient.build" -> {
@@ -1045,7 +1050,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Connection.route" -> {
@@ -1055,7 +1060,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.route()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Connection.socket" -> {
@@ -1065,7 +1070,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.socket()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Connection.handshake" -> {
@@ -1075,7 +1080,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.handshake()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Connection.protocol" -> {
@@ -1085,7 +1090,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.protocol()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie._create" -> {
@@ -1101,7 +1106,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.matches(url = instances[url] as HttpUrl)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.equals" -> {
@@ -1112,7 +1117,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.hashCode" -> {
@@ -1122,7 +1127,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.toString" -> {
@@ -1132,7 +1137,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.name" -> {
@@ -1142,7 +1147,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.name()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.value" -> {
@@ -1152,7 +1157,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.value()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.persistent" -> {
@@ -1162,7 +1167,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.persistent()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.expiresAt" -> {
@@ -1172,7 +1177,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.expiresAt()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.hostOnly" -> {
@@ -1182,7 +1187,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hostOnly()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.domain" -> {
@@ -1192,7 +1197,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.domain()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.path" -> {
@@ -1202,7 +1207,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.path()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.httpOnly" -> {
@@ -1212,7 +1217,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.httpOnly()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.secure" -> {
@@ -1222,7 +1227,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.secure()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.name" -> {
@@ -1233,7 +1238,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.name(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.value" -> {
@@ -1244,7 +1249,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.value(value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.expiresAt" -> {
@@ -1255,7 +1260,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.expiresAt(expiresAt = expiresAt)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.domain" -> {
@@ -1266,7 +1271,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.domain(domain = domain)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.hostOnlyDomain" -> {
@@ -1277,7 +1282,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hostOnlyDomain(domain = domain)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.path" -> {
@@ -1288,7 +1293,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.path(path = path)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.secure" -> {
@@ -1298,7 +1303,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.secure()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.httpOnly" -> {
@@ -1308,7 +1313,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.httpOnly()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.build" -> {
@@ -1318,7 +1323,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.domainMatch" -> {
@@ -1328,7 +1333,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.domainMatch(urlHost = urlHost, domain = domain)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.pathMatch" -> {
@@ -1338,7 +1343,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.pathMatch(url = instances[url] as HttpUrl, path = path)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parse" -> {
@@ -1348,7 +1353,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parse(url = instances[url] as HttpUrl, setCookie = setCookie)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parse" -> {
@@ -1359,7 +1364,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parse(currentTimeMillis = currentTimeMillis, url = instances[url] as HttpUrl, setCookie = setCookie)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parseExpires" -> {
@@ -1370,7 +1375,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parseExpires(s = s, pos = pos, limit = limit)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.dateCharacterOffset" -> {
@@ -1382,7 +1387,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.dateCharacterOffset(input = input, pos = pos, limit = limit, invert = invert)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parseMaxAge" -> {
@@ -1391,7 +1396,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parseMaxAge(s = s)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parseDomain" -> {
@@ -1400,7 +1405,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parseDomain(s = s)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cookie.parseAll" -> {
@@ -1410,7 +1415,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cookie.parseAll(url = instances[url] as HttpUrl, headers = instances[headers] as Headers)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.contentType" -> {
@@ -1420,7 +1425,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentType()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.contentLength" -> {
@@ -1430,7 +1435,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentLength()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.byteStream" -> {
@@ -1440,7 +1445,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.byteStream()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.source" -> {
@@ -1450,7 +1455,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.source()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.bytes" -> {
@@ -1460,7 +1465,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.bytes()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.byteString" -> {
@@ -1470,7 +1475,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.byteString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.charStream" -> {
@@ -1480,7 +1485,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.charStream()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.string" -> {
@@ -1490,7 +1495,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.string()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.close" -> {
@@ -1500,7 +1505,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.read" -> {
@@ -1513,7 +1518,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.read(cbuf = cbuf, off = off, len = len)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.close" -> {
@@ -1523,7 +1528,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.contentType" -> {
@@ -1531,7 +1536,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.contentType()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.contentLength" -> {
@@ -1539,7 +1544,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.contentLength()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.source" -> {
@@ -1547,7 +1552,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.source()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.create" -> {
@@ -1557,7 +1562,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.create(contentType = instances[contentType] as MediaType, content = content)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.create" -> {
@@ -1567,7 +1572,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.create(contentType = instances[contentType] as MediaType, content = content)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ResponseBody.create" -> {
@@ -1577,7 +1582,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     ResponseBody.create(contentType = instances[contentType] as MediaType, content = content)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.requestHeadersEnd" -> {
@@ -1589,7 +1594,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.requestHeadersEnd(call = instances[call] as Call, request = instances[request] as Request)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.satisfactionFailure" -> {
@@ -1601,7 +1606,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.satisfactionFailure(call = instances[call] as Call, response = instances[response] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.cacheHit" -> {
@@ -1613,7 +1618,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cacheHit(call = instances[call] as Call, response = instances[response] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.cacheMiss" -> {
@@ -1624,7 +1629,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cacheMiss(call = instances[call] as Call)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.cacheConditionalHit" -> {
@@ -1636,7 +1641,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cacheConditionalHit(call = instances[call] as Call, cachedResponse = instances[cachedResponse] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "EventListener.create" -> {
@@ -1647,7 +1652,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.create(call = instances[call] as Call)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge._create" -> {
@@ -1663,7 +1668,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.withCharset(charset = charset)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.scheme" -> {
@@ -1673,7 +1678,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.scheme()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.authParams" -> {
@@ -1683,7 +1688,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.authParams()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.realm" -> {
@@ -1693,7 +1698,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.realm()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.charset" -> {
@@ -1703,7 +1708,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.charset()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.equals" -> {
@@ -1714,7 +1719,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.hashCode" -> {
@@ -1724,7 +1729,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Challenge.toString" -> {
@@ -1734,7 +1739,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.request" -> {
@@ -1744,7 +1749,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.request()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.queueSize" -> {
@@ -1754,7 +1759,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queueSize()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.send" -> {
@@ -1765,7 +1770,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.send(text = text)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.send" -> {
@@ -1776,7 +1781,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.send(bytes = bytes)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.close" -> {
@@ -1788,7 +1793,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.close(code = code, reason = reason)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.cancel" -> {
@@ -1798,7 +1803,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancel()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocket.newWebSocket" -> {
@@ -1810,7 +1815,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newWebSocket(request = instances[request] as Request, listener = instances[listener] as WebSocketListener)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onOpen" -> {
@@ -1822,7 +1827,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onOpen(webSocket = instances[webSocket] as WebSocket, response = instances[response] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onMessage" -> {
@@ -1834,7 +1839,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onMessage(webSocket = instances[webSocket] as WebSocket, text = text)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onMessage" -> {
@@ -1846,7 +1851,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onMessage(webSocket = instances[webSocket] as WebSocket, bytes = bytes)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onClosing" -> {
@@ -1859,7 +1864,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onClosing(webSocket = instances[webSocket] as WebSocket, code = code, reason = reason)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onClosed" -> {
@@ -1872,7 +1877,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onClosed(webSocket = instances[webSocket] as WebSocket, code = code, reason = reason)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "WebSocketListener.onFailure" -> {
@@ -1885,7 +1890,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onFailure(webSocket = instances[webSocket] as WebSocket, t = t, response = instances[response] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CookieJar.saveFromResponse" -> {
@@ -1897,7 +1902,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.saveFromResponse(url = instances[url] as HttpUrl, cookies = cookies)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CookieJar.loadForRequest" -> {
@@ -1908,7 +1913,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.loadForRequest(url = instances[url] as HttpUrl)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CookieJar.saveFromResponse" -> {
@@ -1920,7 +1925,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.saveFromResponse(url = instances[url] as HttpUrl, cookies = cookies)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CookieJar.loadForRequest" -> {
@@ -1931,7 +1936,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.loadForRequest(url = instances[url] as HttpUrl)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionPool._create" -> {
@@ -1946,7 +1951,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.idleConnectionCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionPool.connectionCount" -> {
@@ -1956,7 +1961,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.connectionCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionPool.evictAll" -> {
@@ -1966,7 +1971,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.evictAll()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheStrategy._create" -> {
@@ -1981,7 +1986,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.compute()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheStrategy.isCacheable" -> {
@@ -1991,7 +1996,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CacheStrategy.isCacheable(response = instances[response] as Response, request = instances[request] as Request)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RouteDatabase._create" -> {
@@ -2007,7 +2012,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.failed(failedRoute = instances[failedRoute] as Route)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RouteDatabase.connected" -> {
@@ -2018,7 +2023,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.connected(route = instances[route] as Route)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RouteDatabase.shouldPostpone" -> {
@@ -2029,7 +2034,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.shouldPostpone(route = instances[route] as Route)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall._create" -> {
@@ -2044,7 +2049,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.timedOut()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.timeout" -> {
@@ -2054,7 +2059,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.timeout()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.clone" -> {
@@ -2064,7 +2069,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.clone()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.request" -> {
@@ -2074,7 +2079,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.request()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.cancel" -> {
@@ -2084,7 +2089,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancel()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.isCanceled" -> {
@@ -2094,7 +2099,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.isCanceled()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.execute" -> {
@@ -2104,7 +2109,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.execute()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.enqueue" -> {
@@ -2115,7 +2120,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.enqueue(responseCallback = instances[responseCallback] as Callback)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.isExecuted" -> {
@@ -2125,7 +2130,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isExecuted()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.enterNetworkInterceptorExchange" -> {
@@ -2137,7 +2142,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.enterNetworkInterceptorExchange(request = instances[request] as Request, newExchangeFinder = newExchangeFinder)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.acquireConnectionNoEvents" -> {
@@ -2148,7 +2153,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.acquireConnectionNoEvents(connection = instances[connection] as RealConnection)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.timeoutEarlyExit" -> {
@@ -2158,7 +2163,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.timeoutEarlyExit()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.retryAfterFailure" -> {
@@ -2168,7 +2173,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.retryAfterFailure()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.reuseCallsPerHostFrom" -> {
@@ -2179,7 +2184,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.reuseCallsPerHostFrom(other = other)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.executeOn" -> {
@@ -2190,7 +2195,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.executeOn(executorService = executorService)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealCall.run" -> {
@@ -2200,7 +2205,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.run()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RouteException._create" -> {
@@ -2216,7 +2221,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addConnectException(e = e)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection._create" -> {
@@ -2231,7 +2236,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noNewExchanges()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.noCoalescedConnections" -> {
@@ -2241,7 +2246,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noCoalescedConnections()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.incrementSuccessCount" -> {
@@ -2251,7 +2256,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.incrementSuccessCount()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.close" -> {
@@ -2261,7 +2266,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.route" -> {
@@ -2271,7 +2276,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.route()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.cancel" -> {
@@ -2281,7 +2286,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancel()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.socket" -> {
@@ -2291,7 +2296,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.socket()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.isHealthy" -> {
@@ -2302,7 +2307,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isHealthy(doExtensiveChecks = doExtensiveChecks)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.onStream" -> {
@@ -2313,7 +2318,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onStream(stream = instances[stream] as Http2Stream)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.onSettings" -> {
@@ -2325,7 +2330,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onSettings(connection = instances[connection] as Http2Connection, settings = instances[settings] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.handshake" -> {
@@ -2335,7 +2340,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.handshake()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.trackFailure" -> {
@@ -2347,7 +2352,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.trackFailure(call = instances[call] as RealCall, e = e)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.protocol" -> {
@@ -2357,7 +2362,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.protocol()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RealConnection.toString" -> {
@@ -2367,7 +2372,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings._create" -> {
@@ -2382,7 +2387,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.clear()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.set" -> {
@@ -2394,7 +2399,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.set(id = id, value = value)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.isSet" -> {
@@ -2405,7 +2410,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isSet(id = id)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.get" -> {
@@ -2416,7 +2421,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.get(id = id)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.size" -> {
@@ -2426,7 +2431,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.size()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.getEnablePush" -> {
@@ -2437,7 +2442,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getEnablePush(defaultValue = defaultValue)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.getMaxConcurrentStreams" -> {
@@ -2447,7 +2452,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getMaxConcurrentStreams()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.getMaxFrameSize" -> {
@@ -2458,7 +2463,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getMaxFrameSize(defaultValue = defaultValue)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.getMaxHeaderListSize" -> {
@@ -2469,7 +2474,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getMaxHeaderListSize(defaultValue = defaultValue)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Settings.merge" -> {
@@ -2480,7 +2485,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.merge(other = instances[other] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onRequest" -> {
@@ -2492,7 +2497,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onRequest(streamId = streamId, requestHeaders = requestHeaders)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onHeaders" -> {
@@ -2505,7 +2510,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onHeaders(streamId = streamId, responseHeaders = responseHeaders, last = last)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onData" -> {
@@ -2519,7 +2524,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onData(streamId = streamId, source = source, byteCount = byteCount, last = last)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onReset" -> {
@@ -2531,7 +2536,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onReset(streamId = streamId, errorCode = errorCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onRequest" -> {
@@ -2543,7 +2548,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onRequest(streamId = streamId, requestHeaders = requestHeaders)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onHeaders" -> {
@@ -2556,7 +2561,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onHeaders(streamId = streamId, responseHeaders = responseHeaders, last = last)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onData" -> {
@@ -2570,7 +2575,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.onData(streamId = streamId, source = source, byteCount = byteCount, last = last)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "PushObserver.onReset" -> {
@@ -2582,7 +2587,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onReset(streamId = streamId, errorCode = errorCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection._create" -> {
@@ -2597,7 +2602,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.openStreamCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.getStream" -> {
@@ -2608,7 +2613,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getStream(id = id)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.removeStream" -> {
@@ -2619,7 +2624,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.removeStream(streamId = streamId)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.updateConnectionFlowControl" -> {
@@ -2630,7 +2635,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.updateConnectionFlowControl(read = read)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.writePingAndAwaitPong" -> {
@@ -2640,7 +2645,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writePingAndAwaitPong()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.writePing" -> {
@@ -2650,7 +2655,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writePing()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.awaitPong" -> {
@@ -2660,7 +2665,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.awaitPong()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.flush" -> {
@@ -2670,7 +2675,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.flush()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.shutdown" -> {
@@ -2681,7 +2686,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.shutdown(statusCode = statusCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.close" -> {
@@ -2691,7 +2696,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.start" -> {
@@ -2703,7 +2708,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.start(sendConnectionPreface = sendConnectionPreface, taskRunner = instances[taskRunner] as TaskRunner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.setSettings" -> {
@@ -2714,7 +2719,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.setSettings(settings = instances[settings] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.isHealthy" -> {
@@ -2725,7 +2730,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isHealthy(nowNs = nowNs)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.listener" -> {
@@ -2736,7 +2741,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.listener(listener = listener)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.pushObserver" -> {
@@ -2747,7 +2752,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.pushObserver(pushObserver = instances[pushObserver] as PushObserver)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.pingIntervalMillis" -> {
@@ -2758,7 +2763,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.pingIntervalMillis(pingIntervalMillis = pingIntervalMillis)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.build" -> {
@@ -2768,7 +2773,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.invoke" -> {
@@ -2778,7 +2783,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.invoke()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.rstStream" -> {
@@ -2790,7 +2795,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.rstStream(streamId = streamId, errorCode = errorCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.settings" -> {
@@ -2802,7 +2807,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.settings(clearPrevious = clearPrevious, settings = instances[settings] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.applyAndAckSettings" -> {
@@ -2814,7 +2819,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.applyAndAckSettings(clearPrevious = clearPrevious, settings = instances[settings] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.ackSettings" -> {
@@ -2824,7 +2829,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.ackSettings()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.windowUpdate" -> {
@@ -2836,7 +2841,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.windowUpdate(streamId = streamId, windowSizeIncrement = windowSizeIncrement)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.onStream" -> {
@@ -2847,7 +2852,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onStream(stream = instances[stream] as Http2Stream)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.onSettings" -> {
@@ -2859,7 +2864,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onSettings(connection = instances[connection] as Http2Connection, settings = instances[settings] as Settings)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Connection.onStream" -> {
@@ -2868,7 +2873,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     Http2Connection.onStream(stream = instances[stream] as Http2Stream)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Reader._create" -> {
@@ -2883,7 +2888,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getAndResetHeaderList()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Reader.maxDynamicTableByteCount" -> {
@@ -2893,7 +2898,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.maxDynamicTableByteCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Reader.readHeaders" -> {
@@ -2903,7 +2908,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.readHeaders()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Reader.readInt" -> {
@@ -2915,7 +2920,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.readInt(firstByte = firstByte, prefixMask = prefixMask)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Reader.readByteString" -> {
@@ -2925,7 +2930,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.readByteString()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream._create" -> {
@@ -2940,7 +2945,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.takeHeaders()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.trailers" -> {
@@ -2950,7 +2955,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.trailers()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.writeHeaders" -> {
@@ -2963,7 +2968,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writeHeaders(responseHeaders = responseHeaders, outFinished = outFinished, flushHeaders = flushHeaders)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.enqueueTrailers" -> {
@@ -2974,7 +2979,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.enqueueTrailers(trailers = instances[trailers] as Headers)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.readTimeout" -> {
@@ -2984,7 +2989,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.readTimeout()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.writeTimeout" -> {
@@ -2994,7 +2999,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.writeTimeout()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.getSource" -> {
@@ -3004,7 +3009,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getSource()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.getSink" -> {
@@ -3014,7 +3019,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getSink()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.close" -> {
@@ -3026,7 +3031,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close(rstStatusCode = rstStatusCode, errorException = errorException)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.closeLater" -> {
@@ -3037,7 +3042,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.closeLater(errorCode = errorCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.receiveData" -> {
@@ -3049,7 +3054,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.receiveData(source = source, length = length)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.receiveHeaders" -> {
@@ -3061,7 +3066,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.receiveHeaders(headers = instances[headers] as Headers, inFinished = inFinished)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.receiveRstStream" -> {
@@ -3072,7 +3077,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.receiveRstStream(errorCode = errorCode)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.read" -> {
@@ -3084,7 +3089,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.read(sink = sink, byteCount = byteCount)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.timeout" -> {
@@ -3094,7 +3099,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.timeout()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.close" -> {
@@ -3104,7 +3109,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.write" -> {
@@ -3116,7 +3121,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.write(source = source, byteCount = byteCount)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.flush" -> {
@@ -3126,7 +3131,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.flush()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.timeout" -> {
@@ -3136,7 +3141,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.timeout()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.close" -> {
@@ -3146,7 +3151,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.addBytesToWriteWindow" -> {
@@ -3157,7 +3162,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addBytesToWriteWindow(delta = delta)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.timedOut" -> {
@@ -3167,7 +3172,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.timedOut()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.newTimeoutException" -> {
@@ -3178,7 +3183,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newTimeoutException(cause = cause)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Http2Stream.exitAndThrowIfTimedOut" -> {
@@ -3188,7 +3193,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.exitAndThrowIfTimedOut()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue._create" -> {
@@ -3205,7 +3210,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.schedule(task = instances[task] as Task, delayNanos = delayNanos)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.runOnce" -> {
@@ -3215,7 +3220,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.runOnce()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.runOnce" -> {
@@ -3225,7 +3230,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.runOnce()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.idleLatch" -> {
@@ -3235,7 +3240,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.idleLatch()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.runOnce" -> {
@@ -3245,7 +3250,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.runOnce()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.cancelAll" -> {
@@ -3255,7 +3260,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancelAll()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.shutdown" -> {
@@ -3265,7 +3270,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.shutdown()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskQueue.toString" -> {
@@ -3275,7 +3280,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Task.runOnce" -> {
@@ -3285,7 +3290,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.runOnce()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Task.toString" -> {
@@ -3295,7 +3300,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner._create" -> {
@@ -3310,7 +3315,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.run()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.awaitTaskToRun" -> {
@@ -3320,7 +3325,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.awaitTaskToRun()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.newQueue" -> {
@@ -3330,7 +3335,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newQueue()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.activeQueues" -> {
@@ -3340,7 +3345,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.activeQueues()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.cancelAll" -> {
@@ -3350,7 +3355,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancelAll()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.beforeTask" -> {
@@ -3361,7 +3366,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.beforeTask(taskRunner = instances[taskRunner] as TaskRunner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.nanoTime" -> {
@@ -3371,7 +3376,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.nanoTime()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.coordinatorNotify" -> {
@@ -3382,7 +3387,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.coordinatorNotify(taskRunner = instances[taskRunner] as TaskRunner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.coordinatorWait" -> {
@@ -3394,7 +3399,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.coordinatorWait(taskRunner = instances[taskRunner] as TaskRunner, nanos = nanos)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.execute" -> {
@@ -3405,7 +3410,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.execute(runnable = runnable)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.beforeTask" -> {
@@ -3416,7 +3421,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.beforeTask(taskRunner = instances[taskRunner] as TaskRunner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.nanoTime" -> {
@@ -3426,7 +3431,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.nanoTime()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.coordinatorNotify" -> {
@@ -3437,7 +3442,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.coordinatorNotify(taskRunner = instances[taskRunner] as TaskRunner)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.coordinatorWait" -> {
@@ -3449,7 +3454,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.coordinatorWait(taskRunner = instances[taskRunner] as TaskRunner, nanos = nanos)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.execute" -> {
@@ -3460,7 +3465,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.execute(runnable = runnable)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "TaskRunner.shutdown" -> {
@@ -3470,7 +3475,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.shutdown()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers._create" -> {
@@ -3486,7 +3491,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.get(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.getDate" -> {
@@ -3497,7 +3502,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getDate(name = name)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.getInstant" -> {
@@ -3508,7 +3513,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.getInstant(name = name)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.size" -> {
@@ -3518,7 +3523,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.size()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.name" -> {
@@ -3529,7 +3534,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.name(index = index)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.value" -> {
@@ -3540,7 +3545,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.value(index = index)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.names" -> {
@@ -3550,7 +3555,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.names()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.values" -> {
@@ -3561,7 +3566,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.values(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.byteCount" -> {
@@ -3571,7 +3576,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.byteCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.iterator" -> {
@@ -3581,7 +3586,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.iterator()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.newBuilder" -> {
@@ -3591,7 +3596,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.equals" -> {
@@ -3602,7 +3607,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.hashCode" -> {
@@ -3612,7 +3617,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.toString" -> {
@@ -3622,7 +3627,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.toMultimap" -> {
@@ -3632,7 +3637,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toMultimap()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.add" -> {
@@ -3643,7 +3648,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.add(line = line)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.add" -> {
@@ -3655,7 +3660,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.add(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.addUnsafeNonAscii" -> {
@@ -3667,7 +3672,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addUnsafeNonAscii(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.addAll" -> {
@@ -3678,7 +3683,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addAll(headers = instances[headers] as Headers)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.add" -> {
@@ -3690,7 +3695,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.add(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.add" -> {
@@ -3702,7 +3707,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.add(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.set" -> {
@@ -3714,7 +3719,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.set(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.set" -> {
@@ -3726,7 +3731,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.set(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.removeAll" -> {
@@ -3737,7 +3742,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removeAll(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.set" -> {
@@ -3749,7 +3754,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.set(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.get" -> {
@@ -3760,7 +3765,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.get(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.build" -> {
@@ -3770,7 +3775,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.get" -> {
@@ -3780,7 +3785,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Headers.get(namesAndValues = namesAndValues, name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.headersOf" -> {
@@ -3788,7 +3793,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Headers.headersOf()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.of" -> {
@@ -3796,7 +3801,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Headers.of()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.of" -> {
@@ -3805,7 +3810,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Headers.of(headers = headers)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.checkName" -> {
@@ -3814,7 +3819,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     Headers.checkName(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Headers.checkValue" -> {
@@ -3824,7 +3829,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     Headers.checkValue(value = value, name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.request" -> {
@@ -3834,7 +3839,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.request()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.execute" -> {
@@ -3844,7 +3849,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.execute()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.enqueue" -> {
@@ -3855,7 +3860,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.enqueue(responseCallback = instances[responseCallback] as Callback)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.cancel" -> {
@@ -3865,7 +3870,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancel()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.isExecuted" -> {
@@ -3875,7 +3880,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isExecuted()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.isCanceled" -> {
@@ -3885,7 +3890,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isCanceled()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.timeout" -> {
@@ -3895,7 +3900,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.timeout()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.clone" -> {
@@ -3905,7 +3910,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.clone()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Call.newCall" -> {
@@ -3916,7 +3921,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newCall(request = instances[request] as Request)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Authenticator.authenticate" -> {
@@ -3928,7 +3933,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.authenticate(route = instances[route] as Route, response = instances[response] as Response)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Authenticator.authenticate" -> {
@@ -3940,7 +3945,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.authenticate(route = instances[route] as Route, response = instances[response] as Response)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner._create" -> {
@@ -3957,7 +3962,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.check(hostname = hostname, peerCertificates = peerCertificates)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.check" -> {
@@ -3968,7 +3973,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.check(hostname = hostname)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.findMatchingPins" -> {
@@ -3979,7 +3984,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.findMatchingPins(hostname = hostname)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.equals" -> {
@@ -3990,7 +3995,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.hashCode" -> {
@@ -4000,7 +4005,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.matchesHostname" -> {
@@ -4011,7 +4016,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.matchesHostname(hostname = hostname)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.matchesCertificate" -> {
@@ -4022,7 +4027,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.matchesCertificate(certificate = certificate)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.toString" -> {
@@ -4032,7 +4037,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.equals" -> {
@@ -4043,7 +4048,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.hashCode" -> {
@@ -4053,7 +4058,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.add" -> {
@@ -4064,7 +4069,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.add(pattern = pattern)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.build" -> {
@@ -4074,7 +4079,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CertificatePinner.pin" -> {
@@ -4083,7 +4088,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CertificatePinner.pin(certificate = certificate)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl._create" -> {
@@ -4098,7 +4103,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noCache()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.noStore" -> {
@@ -4108,7 +4113,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noStore()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.maxAgeSeconds" -> {
@@ -4118,7 +4123,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.maxAgeSeconds()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.sMaxAgeSeconds" -> {
@@ -4128,7 +4133,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.sMaxAgeSeconds()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.mustRevalidate" -> {
@@ -4138,7 +4143,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.mustRevalidate()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.maxStaleSeconds" -> {
@@ -4148,7 +4153,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.maxStaleSeconds()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.minFreshSeconds" -> {
@@ -4158,7 +4163,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.minFreshSeconds()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.onlyIfCached" -> {
@@ -4168,7 +4173,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onlyIfCached()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.noTransform" -> {
@@ -4178,7 +4183,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noTransform()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.immutable" -> {
@@ -4188,7 +4193,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.immutable()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.toString" -> {
@@ -4198,7 +4203,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.noCache" -> {
@@ -4208,7 +4213,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noCache()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.noStore" -> {
@@ -4218,7 +4223,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noStore()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.maxAge" -> {
@@ -4230,7 +4235,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.maxAge(maxAge = maxAge, timeUnit = timeUnit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.maxStale" -> {
@@ -4242,7 +4247,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.maxStale(maxStale = maxStale, timeUnit = timeUnit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.minFresh" -> {
@@ -4254,7 +4259,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.minFresh(minFresh = minFresh, timeUnit = timeUnit)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.onlyIfCached" -> {
@@ -4264,7 +4269,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onlyIfCached()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.noTransform" -> {
@@ -4274,7 +4279,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.noTransform()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.immutable" -> {
@@ -4284,7 +4289,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.immutable()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.build" -> {
@@ -4294,7 +4299,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "CacheControl.parse" -> {
@@ -4303,7 +4308,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = CacheControl.parse(headers = instances[headers] as Headers)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dns.lookup" -> {
@@ -4314,7 +4319,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.lookup(hostname = hostname)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dns.lookup" -> {
@@ -4325,7 +4330,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.lookup(hostname = hostname)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentType" -> {
@@ -4335,7 +4340,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentType()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentLength" -> {
@@ -4345,7 +4350,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentLength()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.writeTo" -> {
@@ -4356,7 +4361,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writeTo(sink = sink)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.isDuplex" -> {
@@ -4366,7 +4371,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isDuplex()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.isOneShot" -> {
@@ -4376,7 +4381,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isOneShot()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentType" -> {
@@ -4384,7 +4389,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentType()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentLength" -> {
@@ -4392,7 +4397,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentLength()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.writeTo" -> {
@@ -4401,7 +4406,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.writeTo(sink = sink)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentType" -> {
@@ -4409,7 +4414,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentType()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentLength" -> {
@@ -4417,7 +4422,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentLength()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.writeTo" -> {
@@ -4426,7 +4431,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.writeTo(sink = sink)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentType" -> {
@@ -4434,7 +4439,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentType()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.contentLength" -> {
@@ -4442,7 +4447,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.contentLength()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.writeTo" -> {
@@ -4451,7 +4456,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.writeTo(sink = sink)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.create" -> {
@@ -4461,7 +4466,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.create(contentType = instances[contentType] as MediaType, content = content)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "RequestBody.create" -> {
@@ -4471,7 +4476,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     RequestBody.create(contentType = instances[contentType] as MediaType, file = file)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake._create" -> {
@@ -4486,7 +4491,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.tlsVersion()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.cipherSuite" -> {
@@ -4496,7 +4501,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cipherSuite()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.peerCertificates" -> {
@@ -4506,7 +4511,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.peerCertificates()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.peerPrincipal" -> {
@@ -4516,7 +4521,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.peerPrincipal()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.localCertificates" -> {
@@ -4526,7 +4531,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.localCertificates()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.localPrincipal" -> {
@@ -4536,7 +4541,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.localPrincipal()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.equals" -> {
@@ -4547,7 +4552,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.hashCode" -> {
@@ -4557,7 +4562,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.toString" -> {
@@ -4567,7 +4572,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Handshake.get" -> {
@@ -4576,7 +4581,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     Handshake.get(sslSession = sslSession)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Callback.onFailure" -> {
@@ -4588,7 +4593,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onFailure(call = instances[call] as Call, e = e)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Callback.onResponse" -> {
@@ -4600,7 +4605,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.onResponse(call = instances[call] as Call, response = instances[response] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher._create" -> {
@@ -4615,7 +4620,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cancelAll()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.executed" -> {
@@ -4626,7 +4631,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.executed(call = instances[call] as RealCall)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.queuedCalls" -> {
@@ -4636,7 +4641,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queuedCalls()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.runningCalls" -> {
@@ -4646,7 +4651,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.runningCalls()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.queuedCallsCount" -> {
@@ -4656,7 +4661,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queuedCallsCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.runningCallsCount" -> {
@@ -4666,7 +4671,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.runningCallsCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Dispatcher.executorService" -> {
@@ -4676,7 +4681,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.executorService()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response._create" -> {
@@ -4691,7 +4696,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.request()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.protocol" -> {
@@ -4701,7 +4706,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.protocol()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.code" -> {
@@ -4711,7 +4716,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.code()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.message" -> {
@@ -4721,7 +4726,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.message()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.handshake" -> {
@@ -4731,7 +4736,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.handshake()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.headers" -> {
@@ -4742,7 +4747,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.headers(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.header" -> {
@@ -4754,7 +4759,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.header(name = name, defaultValue = defaultValue)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.headers" -> {
@@ -4764,7 +4769,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.headers()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.trailers" -> {
@@ -4774,7 +4779,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.trailers()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.peekBody" -> {
@@ -4785,7 +4790,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.peekBody(byteCount = byteCount)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.body" -> {
@@ -4795,7 +4800,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.body()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.newBuilder" -> {
@@ -4805,7 +4810,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.networkResponse" -> {
@@ -4815,7 +4820,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.networkResponse()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.cacheResponse" -> {
@@ -4825,7 +4830,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cacheResponse()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.priorResponse" -> {
@@ -4835,7 +4840,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.priorResponse()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.challenges" -> {
@@ -4845,7 +4850,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.challenges()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.cacheControl" -> {
@@ -4855,7 +4860,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cacheControl()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.sentRequestAtMillis" -> {
@@ -4865,7 +4870,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.sentRequestAtMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.receivedResponseAtMillis" -> {
@@ -4875,7 +4880,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.receivedResponseAtMillis()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.close" -> {
@@ -4885,7 +4890,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.toString" -> {
@@ -4895,7 +4900,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.request" -> {
@@ -4906,7 +4911,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.request(request = instances[request] as Request)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.protocol" -> {
@@ -4917,7 +4922,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.protocol(protocol = protocol)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.code" -> {
@@ -4928,7 +4933,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.code(code = code)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.message" -> {
@@ -4939,7 +4944,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.message(message = message)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.handshake" -> {
@@ -4950,7 +4955,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.handshake(handshake = instances[handshake] as Handshake)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.header" -> {
@@ -4962,7 +4967,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.header(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.addHeader" -> {
@@ -4974,7 +4979,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addHeader(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.removeHeader" -> {
@@ -4985,7 +4990,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removeHeader(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.headers" -> {
@@ -4996,7 +5001,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.headers(headers = instances[headers] as Headers)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.body" -> {
@@ -5007,7 +5012,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.body(body = instances[body] as ResponseBody)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.networkResponse" -> {
@@ -5018,7 +5023,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.networkResponse(networkResponse = instances[networkResponse] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.cacheResponse" -> {
@@ -5029,7 +5034,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cacheResponse(cacheResponse = instances[cacheResponse] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.priorResponse" -> {
@@ -5040,7 +5045,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.priorResponse(priorResponse = instances[priorResponse] as Response)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.sentRequestAtMillis" -> {
@@ -5051,7 +5056,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.sentRequestAtMillis(sentRequestAtMillis = sentRequestAtMillis)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.receivedResponseAtMillis" -> {
@@ -5062,7 +5067,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.receivedResponseAtMillis(receivedResponseAtMillis = receivedResponseAtMillis)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Response.build" -> {
@@ -5072,7 +5077,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request._create" -> {
@@ -5088,7 +5093,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.header(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.headers" -> {
@@ -5099,7 +5104,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.headers(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.tag" -> {
@@ -5109,7 +5114,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.tag()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.newBuilder" -> {
@@ -5119,7 +5124,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.url" -> {
@@ -5129,7 +5134,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.url()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.method" -> {
@@ -5139,7 +5144,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.method()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.headers" -> {
@@ -5149,7 +5154,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.headers()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.body" -> {
@@ -5159,7 +5164,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.body()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.cacheControl" -> {
@@ -5169,7 +5174,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cacheControl()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.toString" -> {
@@ -5179,7 +5184,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.toString()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.url" -> {
@@ -5190,7 +5195,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.url(url = instances[url] as HttpUrl)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.url" -> {
@@ -5201,18 +5206,19 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.url(url = url)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.url" -> {
-                val url = call.argument<Any>("url")!!
+                val url = call.argument<String>("url")!!
+                val urlURI = java.net.URI.create(url)
                 try {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as Request
-                    instance.url(url = url)
+                    instance.url(url = urlURI)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.header" -> {
@@ -5224,7 +5230,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.header(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.addHeader" -> {
@@ -5236,7 +5242,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addHeader(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.removeHeader" -> {
@@ -5247,7 +5253,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removeHeader(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.headers" -> {
@@ -5258,7 +5264,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.headers(headers = instances[headers] as Headers)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.cacheControl" -> {
@@ -5269,7 +5275,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cacheControl(cacheControl = instances[cacheControl] as CacheControl)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.get" -> {
@@ -5279,7 +5285,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.get()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.head" -> {
@@ -5289,7 +5295,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.head()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.post" -> {
@@ -5300,7 +5306,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.post(body = instances[body] as RequestBody)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.delete" -> {
@@ -5311,7 +5317,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.delete(body = instances[body] as RequestBody)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.put" -> {
@@ -5322,7 +5328,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.put(body = instances[body] as RequestBody)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.patch" -> {
@@ -5333,7 +5339,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.patch(body = instances[body] as RequestBody)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.method" -> {
@@ -5345,7 +5351,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.method(method = method, body = instances[body] as RequestBody)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.tag" -> {
@@ -5356,7 +5362,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.tag(tag = tag)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Request.build" -> {
@@ -5366,7 +5372,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache._create" -> {
@@ -5381,7 +5387,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.initialize()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.delete" -> {
@@ -5391,7 +5397,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.delete()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.evictAll" -> {
@@ -5401,7 +5407,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.evictAll()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.urls" -> {
@@ -5411,7 +5417,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.urls()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.hasNext" -> {
@@ -5421,7 +5427,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hasNext()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.next" -> {
@@ -5431,7 +5437,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.next()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.remove" -> {
@@ -5441,7 +5447,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.remove()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.writeAbortCount" -> {
@@ -5451,7 +5457,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.writeAbortCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.writeSuccessCount" -> {
@@ -5461,7 +5467,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.writeSuccessCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.size" -> {
@@ -5471,7 +5477,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.size()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.maxSize" -> {
@@ -5481,7 +5487,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.maxSize()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.flush" -> {
@@ -5491,7 +5497,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.flush()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.close" -> {
@@ -5501,7 +5507,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.directory" -> {
@@ -5511,7 +5517,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.directory()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.trackResponse" -> {
@@ -5522,7 +5528,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.trackResponse(cacheStrategy = instances[cacheStrategy] as CacheStrategy)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.trackConditionalCacheHit" -> {
@@ -5532,7 +5538,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.trackConditionalCacheHit()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.networkCount" -> {
@@ -5542,7 +5548,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.networkCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.hitCount" -> {
@@ -5552,7 +5558,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hitCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.requestCount" -> {
@@ -5562,7 +5568,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.requestCount()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.close" -> {
@@ -5572,7 +5578,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.abort" -> {
@@ -5582,7 +5588,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.abort()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.body" -> {
@@ -5592,7 +5598,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.body()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.writeTo" -> {
@@ -5603,7 +5609,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.writeTo(editor = editor)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.matches" -> {
@@ -5615,7 +5621,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.matches(request = instances[request] as Request, response = instances[response] as Response)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.response" -> {
@@ -5626,7 +5632,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.response(snapshot = snapshot)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.close" -> {
@@ -5636,7 +5642,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.close()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.contentType" -> {
@@ -5646,7 +5652,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentType()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.contentLength" -> {
@@ -5656,7 +5662,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.contentLength()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.source" -> {
@@ -5666,7 +5672,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.source()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.key" -> {
@@ -5675,7 +5681,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cache.key(url = instances[url] as HttpUrl)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.readInt" -> {
@@ -5684,7 +5690,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cache.readInt(source = source)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Cache.varyHeaders" -> {
@@ -5694,7 +5700,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = Cache.varyHeaders(requestHeaders = instances[requestHeaders] as Headers, responseHeaders = instances[responseHeaders] as Headers)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl._create" -> {
@@ -5707,9 +5713,9 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as HttpUrl
                     val nativeResult = instance.toUrl()
-                    result.success(nativeResult)
+                    result.success(nativeResult.toString())
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.toUri" -> {
@@ -5717,9 +5723,9 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val handle = call.argument<String>("_handle")!!
                     val instance = instances[handle] as HttpUrl
                     val nativeResult = instance.toUri()
-                    result.success(nativeResult)
+                    result.success(nativeResult.toString())
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.queryParameter" -> {
@@ -5730,7 +5736,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queryParameter(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.queryParameterValues" -> {
@@ -5741,7 +5747,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queryParameterValues(name = name)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.queryParameterName" -> {
@@ -5752,7 +5758,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queryParameterName(index = index)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.queryParameterValue" -> {
@@ -5763,7 +5769,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queryParameterValue(index = index)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.redact" -> {
@@ -5773,7 +5779,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.redact()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.resolve" -> {
@@ -5784,7 +5790,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.resolve(link = link)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.newBuilder" -> {
@@ -5794,7 +5800,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.newBuilder" -> {
@@ -5805,7 +5811,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.newBuilder(link = link)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.equals" -> {
@@ -5816,7 +5822,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.hashCode" -> {
@@ -5826,7 +5832,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.toString" -> {
@@ -5836,7 +5842,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.topPrivateDomain" -> {
@@ -5846,7 +5852,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.topPrivateDomain()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.url" -> {
@@ -5856,7 +5862,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.url()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.uri" -> {
@@ -5866,7 +5872,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.uri()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.scheme" -> {
@@ -5876,7 +5882,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.scheme()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedUsername" -> {
@@ -5886,7 +5892,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedUsername()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.username" -> {
@@ -5896,7 +5902,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.username()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedPassword" -> {
@@ -5906,7 +5912,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedPassword()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.password" -> {
@@ -5916,7 +5922,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.password()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.host" -> {
@@ -5926,7 +5932,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.host()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.port" -> {
@@ -5936,7 +5942,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.port()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.pathSize" -> {
@@ -5946,7 +5952,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.pathSize()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedPath" -> {
@@ -5956,7 +5962,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedPath()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedPathSegments" -> {
@@ -5966,7 +5972,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedPathSegments()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.pathSegments" -> {
@@ -5976,7 +5982,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.pathSegments()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedQuery" -> {
@@ -5986,7 +5992,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedQuery()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.query" -> {
@@ -5996,7 +6002,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.query()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.querySize" -> {
@@ -6006,7 +6012,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.querySize()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.queryParameterNames" -> {
@@ -6016,7 +6022,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.queryParameterNames()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedFragment" -> {
@@ -6026,7 +6032,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.encodedFragment()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.fragment" -> {
@@ -6036,7 +6042,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.fragment()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.scheme" -> {
@@ -6047,7 +6053,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.scheme(scheme = scheme)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.username" -> {
@@ -6058,7 +6064,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.username(username = username)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedUsername" -> {
@@ -6069,7 +6075,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.encodedUsername(encodedUsername = encodedUsername)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.password" -> {
@@ -6080,7 +6086,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.password(password = password)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedPassword" -> {
@@ -6091,7 +6097,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.encodedPassword(encodedPassword = encodedPassword)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.host" -> {
@@ -6102,7 +6108,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.host(host = host)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.port" -> {
@@ -6113,7 +6119,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.port(port = port)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addPathSegment" -> {
@@ -6124,7 +6130,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addPathSegment(pathSegment = pathSegment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addPathSegments" -> {
@@ -6135,7 +6141,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.addPathSegments(pathSegments = pathSegments)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addEncodedPathSegment" -> {
@@ -6146,7 +6152,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addEncodedPathSegment(encodedPathSegment = encodedPathSegment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addEncodedPathSegments" -> {
@@ -6157,7 +6163,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.addEncodedPathSegments(encodedPathSegments = encodedPathSegments)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.setPathSegment" -> {
@@ -6169,7 +6175,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.setPathSegment(index = index, pathSegment = pathSegment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.setEncodedPathSegment" -> {
@@ -6181,7 +6187,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.setEncodedPathSegment(index = index, encodedPathSegment = encodedPathSegment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.removePathSegment" -> {
@@ -6192,7 +6198,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removePathSegment(index = index)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedPath" -> {
@@ -6203,7 +6209,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.encodedPath(encodedPath = encodedPath)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.query" -> {
@@ -6214,7 +6220,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.query(query = query)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedQuery" -> {
@@ -6225,7 +6231,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.encodedQuery(encodedQuery = encodedQuery)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addQueryParameter" -> {
@@ -6237,7 +6243,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addQueryParameter(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.addEncodedQueryParameter" -> {
@@ -6249,7 +6255,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.addEncodedQueryParameter(encodedName = encodedName, encodedValue = encodedValue)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.setQueryParameter" -> {
@@ -6261,7 +6267,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.setQueryParameter(name = name, value = value)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.setEncodedQueryParameter" -> {
@@ -6273,7 +6279,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.setEncodedQueryParameter(encodedName = encodedName, encodedValue = encodedValue)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.removeAllQueryParameters" -> {
@@ -6284,7 +6290,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removeAllQueryParameters(name = name)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.removeAllEncodedQueryParameters" -> {
@@ -6295,7 +6301,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.removeAllEncodedQueryParameters(encodedName = encodedName)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.fragment" -> {
@@ -6306,7 +6312,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.fragment(fragment = fragment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.encodedFragment" -> {
@@ -6317,7 +6323,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.encodedFragment(encodedFragment = encodedFragment)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.build" -> {
@@ -6327,7 +6333,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.toString" -> {
@@ -6337,7 +6343,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.schemeDelimiterOffset" -> {
@@ -6348,7 +6354,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.schemeDelimiterOffset(input = input, pos = pos, limit = limit)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.portColonOffset" -> {
@@ -6359,7 +6365,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.portColonOffset(input = input, pos = pos, limit = limit)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.parsePort" -> {
@@ -6370,7 +6376,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.parsePort(input = input, pos = pos, limit = limit)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.defaultPort" -> {
@@ -6379,7 +6385,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.defaultPort(scheme = scheme)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.get" -> {
@@ -6388,7 +6394,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.get(url = url)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.parse" -> {
@@ -6397,25 +6403,27 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = HttpUrl.parse(url = url)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.get" -> {
-                val url = call.argument<Any>("url")!!
+                val url = call.argument<String>("url")!!
+                val urlURI = java.net.URI.create(url)
                 try {
-                    val nativeResult = HttpUrl.get(url = url)
+                    val nativeResult = HttpUrl.get(url = urlURI)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "HttpUrl.get" -> {
-                val uri = call.argument<Any>("uri")!!
+                val uri = call.argument<String>("uri")!!
+                val uriURI = java.net.URI.create(uri)
                 try {
-                    val nativeResult = HttpUrl.get(uri = uri)
+                    val nativeResult = HttpUrl.get(uri = uriURI)
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec._create" -> {
@@ -6430,7 +6438,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cipherSuites()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.tlsVersions" -> {
@@ -6440,7 +6448,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.tlsVersions()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.supportsTlsExtensions" -> {
@@ -6450,7 +6458,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.supportsTlsExtensions()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.isCompatible" -> {
@@ -6461,7 +6469,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.isCompatible(socket = socket)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.equals" -> {
@@ -6472,7 +6480,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.hashCode" -> {
@@ -6482,7 +6490,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.toString" -> {
@@ -6492,7 +6500,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.allEnabledCipherSuites" -> {
@@ -6502,7 +6510,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.allEnabledCipherSuites()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.cipherSuites" -> {
@@ -6512,7 +6520,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.cipherSuites()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.cipherSuites" -> {
@@ -6522,7 +6530,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.cipherSuites()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.allEnabledTlsVersions" -> {
@@ -6532,7 +6540,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.allEnabledTlsVersions()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.tlsVersions" -> {
@@ -6542,7 +6550,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.tlsVersions()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.tlsVersions" -> {
@@ -6552,7 +6560,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.tlsVersions()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.supportsTlsExtensions" -> {
@@ -6563,7 +6571,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.supportsTlsExtensions(supportsTlsExtensions = supportsTlsExtensions)
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "ConnectionSpec.build" -> {
@@ -6573,7 +6581,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.build()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route._create" -> {
@@ -6588,7 +6596,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.address()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.proxy" -> {
@@ -6598,7 +6606,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.proxy()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.socketAddress" -> {
@@ -6608,7 +6616,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.socketAddress()
                     result.success(createHandle(nativeResult))
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.requiresTunnel" -> {
@@ -6618,7 +6626,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     instance.requiresTunnel()
                     result.success(null)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.equals" -> {
@@ -6629,7 +6637,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.equals(other = other)
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.hashCode" -> {
@@ -6639,7 +6647,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.hashCode()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "Route.toString" -> {
@@ -6649,7 +6657,7 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                     val nativeResult = instance.toString()
                     result.success(nativeResult)
                 } catch (e: Exception) {
-                    result.error(e::class.simpleName ?: "UNKNOWN", e.message, e.stackTraceToString())
+                    result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())
                 }
             }
             "_dispose" -> {
@@ -6658,6 +6666,26 @@ class ComSquareupOkhttp3OkhttpPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(null)
             }
             else -> result.notImplemented()
+        }
+    }
+
+    private fun normalizeErrorCode(e: Exception): String {
+        return when (e) {
+            is java.io.IOException -> "IO_ERROR"
+            is java.net.SocketException -> "NETWORK_ERROR"
+            is java.net.SocketTimeoutException -> "TIMEOUT"
+            is java.util.concurrent.TimeoutException -> "TIMEOUT"
+            is SecurityException -> "PERMISSION_DENIED"
+            is IllegalArgumentException -> "INVALID_ARGUMENT"
+            is IllegalStateException -> "INVALID_STATE"
+            is UnsupportedOperationException -> "UNSUPPORTED"
+            is NullPointerException -> "NULL_REFERENCE"
+            is IndexOutOfBoundsException -> "OUT_OF_RANGE"
+            is ClassCastException -> "TYPE_ERROR"
+            is NoSuchElementException -> "NOT_FOUND"
+            is ConcurrentModificationException -> "CONCURRENT_MODIFICATION"
+            is kotlinx.coroutines.CancellationException -> "CANCELLED"
+            else -> e::class.simpleName ?: "UNKNOWN"
         }
     }
 }

@@ -5,12 +5,14 @@
 ///
 /// The generated bindings in lib/generated/ were produced by running:
 ///   dart run auto_interop_generator:generate
+library;
+
 import 'package:flutter/material.dart';
 import 'package:auto_interop/auto_interop.dart';
 
 import 'generated/date_fns.dart';
-import 'generated/alamofire.dart';
-import 'generated/com_squareup_okhttp3_okhttp.dart';
+import 'generated/alamofire.dart' as alamofire;
+import 'generated/com_squareup_okhttp3_okhttp.dart' as okhttp;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,8 +51,6 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 
   // Dependency injection via interfaces — easy to mock in tests
   final DateFnsInterface _dateFns = DateFns.instance;
-  final SessionInterface _session = Session();
-  final OkHttpClientInterface _httpClient = OkHttpClient();
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +73,15 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 
             // Alamofire example (iOS)
             FilledButton(
-              onPressed: _alamofireRequest,
-              child: const Text('Alamofire: GET Request (iOS)'),
+              onPressed: _alamofireSession,
+              child: const Text('Alamofire: Create Session (iOS)'),
             ),
             const SizedBox(height: 8),
 
             // OkHttp example (Android)
             FilledButton(
-              onPressed: _okhttpRequest,
-              child: const Text('OkHttp: GET Request (Android)'),
+              onPressed: _okhttpClient,
+              child: const Text('OkHttp: Create Client (Android)'),
             ),
           ],
         ),
@@ -101,28 +101,19 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
     }
   }
 
-  Future<void> _alamofireRequest() async {
+  Future<void> _alamofireSession() async {
     try {
-      final request = await _session.request(
-        'https://httpbin.org/get',
-        'GET',
-        null,
-      );
-      setState(() => _result = 'Alamofire request created: $request');
+      final session = await alamofire.Session.create();
+      setState(() => _result = 'Alamofire session created: $session');
     } catch (e) {
       setState(() => _result = 'Error: $e');
     }
   }
 
-  Future<void> _okhttpRequest() async {
+  Future<void> _okhttpClient() async {
     try {
-      final request = Request(
-        url: 'https://httpbin.org/get',
-        method: 'GET',
-        headers: {'Accept': 'application/json'},
-      );
-      final call = await _httpClient.newCall(request);
-      setState(() => _result = 'OkHttp call created: $call');
+      final client = await okhttp.OkHttpClient.create();
+      setState(() => _result = 'OkHttp client created: $client');
     } catch (e) {
       setState(() => _result = 'Error: $e');
     }

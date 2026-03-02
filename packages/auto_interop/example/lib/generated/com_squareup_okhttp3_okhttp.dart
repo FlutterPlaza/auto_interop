@@ -22,7 +22,11 @@ class Request {
   final Map<String, String> headers;
   final String? body;
 
-  Request({required this.url, required this.method, required this.headers, this.body});
+  Request(
+      {required this.url,
+      required this.method,
+      required this.headers,
+      this.body});
 
   factory Request.fromMap(Map<String, dynamic> map) {
     return Request(
@@ -34,11 +38,11 @@ class Request {
   }
 
   Map<String, dynamic> toMap() => {
-    'url': url,
-    'method': method,
-    'headers': headers,
-    if (body != null) 'body': body,
-  };
+        'url': url,
+        'method': method,
+        'headers': headers,
+        if (body != null) 'body': body,
+      };
 }
 
 /// Represents an HTTP response.
@@ -48,7 +52,11 @@ class Response {
   final String? body;
   final Map<String, String> headers;
 
-  Response({required this.code, required this.message, this.body, required this.headers});
+  Response(
+      {required this.code,
+      required this.message,
+      this.body,
+      required this.headers});
 
   factory Response.fromMap(Map<String, dynamic> map) {
     return Response(
@@ -60,11 +68,11 @@ class Response {
   }
 
   Map<String, dynamic> toMap() => {
-    'code': code,
-    'message': message,
-    if (body != null) 'body': body,
-    'headers': headers,
-  };
+        'code': code,
+        'message': message,
+        if (body != null) 'body': body,
+        'headers': headers,
+      };
 }
 
 /// HTTP client for making network requests.
@@ -143,4 +151,3 @@ class Call {
     await _channel.invoke<void>('_dispose', {'_handle': _handle});
   }
 }
-
