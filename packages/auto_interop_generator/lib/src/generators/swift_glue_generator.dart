@@ -257,11 +257,15 @@ class SwiftGlueGenerator extends GeneratorBase {
         if (hasInstanceMethods &&
             cls.kind != UtsClassKind.abstractClass &&
             cls.constructorParameters != null) {
-          _writeCreateCase(buffer, cls, indent: '        ');
+          _writeCreateCase(buffer, schema, cls, indent: '        ');
         }
 
         final dedupedMethods = _deduplicateMethods(cls.methods);
         for (final method in dedupedMethods) {
+          // Skip spurious "create" method (init is handled via _writeCreateCase)
+          if (cls.constructorParameters != null && method.name == 'create') {
+            continue;
+          }
           _writeMethodCase(buffer, schema, method,
               indent: '        ',
               prefix: '${cls.name}.',
@@ -639,14 +643,15 @@ class SwiftGlueGenerator extends GeneratorBase {
     buffer.writeln();
   }
 
-  void _writeCreateCase(StringBuffer buffer, UtsClass cls,
+  void _writeCreateCase(
+      StringBuffer buffer, UnifiedTypeSchema schema, UtsClass cls,
       {String indent = ''}) {
     buffer.writeln('${indent}case "${cls.name}._create":');
     if (cls.constructorParameters != null &&
         cls.constructorParameters!.isNotEmpty) {
-      // Named-parameter construction
+      // Extract arguments with proper type mapping
       for (final param in cls.constructorParameters!) {
-        final swiftType = _toSwiftType(param.type);
+        final swiftType = _toSwiftType(param.type, schema: schema);
         if (param.isOptional || param.type.nullable) {
           buffer.writeln(
               '$indent    let ${param.name} = args["${param.name}"] as? $swiftType');
@@ -655,15 +660,66 @@ class SwiftGlueGenerator extends GeneratorBase {
               '$indent    let ${param.name} = args["${param.name}"] as! $swiftType');
         }
       }
-      final argParts = cls.constructorParameters!
-          .map((p) => '${p.name}: ${p.name}')
-          .join(', ');
-      buffer.writeln('$indent    let instance = ${cls.name}($argParts)');
+
+      // Type conversion for special types
+      for (final param in cls.constructorParameters!) {
+        final conversion = _argumentConversion(param);
+        if (conversion != null) {
+          buffer.writeln('$indent    $conversion');
+        }
+      }
+
+      // Build native arg list using the shared helper
+      final nativeArgs =
+          _buildNativeArgList(schema, cls.constructorParameters!);
+
+      if (cls.constructorThrows) {
+        // Throwing init: wrap in Task + do/try/catch
+        buffer.writeln('$indent    Task {');
+        buffer.writeln('$indent        do {');
+        buffer.writeln(
+            '$indent            let instance = try ${cls.name}($nativeArgs)');
+        buffer
+            .writeln('$indent            let handle = createHandle(instance)');
+        buffer.writeln('$indent            DispatchQueue.main.async {');
+        buffer.writeln('$indent                result(handle)');
+        buffer.writeln('$indent            }');
+        buffer.writeln('$indent        } catch {');
+        buffer.writeln('$indent            DispatchQueue.main.async {');
+        buffer.writeln(
+            '$indent                result(FlutterError(code: normalizeErrorCode(error), message: error.localizedDescription, details: String(describing: error)))');
+        buffer.writeln('$indent            }');
+        buffer.writeln('$indent        }');
+        buffer.writeln('$indent    }');
+      } else {
+        buffer.writeln('$indent    let instance = ${cls.name}($nativeArgs)');
+        buffer.writeln('$indent    let handle = createHandle(instance)');
+        buffer.writeln('$indent    result(handle)');
+      }
     } else {
-      buffer.writeln('$indent    let instance = ${cls.name}()');
+      // No-arg constructor
+      if (cls.constructorThrows) {
+        buffer.writeln('$indent    Task {');
+        buffer.writeln('$indent        do {');
+        buffer.writeln('$indent            let instance = try ${cls.name}()');
+        buffer
+            .writeln('$indent            let handle = createHandle(instance)');
+        buffer.writeln('$indent            DispatchQueue.main.async {');
+        buffer.writeln('$indent                result(handle)');
+        buffer.writeln('$indent            }');
+        buffer.writeln('$indent        } catch {');
+        buffer.writeln('$indent            DispatchQueue.main.async {');
+        buffer.writeln(
+            '$indent                result(FlutterError(code: normalizeErrorCode(error), message: error.localizedDescription, details: String(describing: error)))');
+        buffer.writeln('$indent            }');
+        buffer.writeln('$indent        }');
+        buffer.writeln('$indent    }');
+      } else {
+        buffer.writeln('$indent    let instance = ${cls.name}()');
+        buffer.writeln('$indent    let handle = createHandle(instance)');
+        buffer.writeln('$indent    result(handle)');
+      }
     }
-    buffer.writeln('$indent    let handle = createHandle(instance)');
-    buffer.writeln('$indent    result(handle)');
   }
 
   void _writeMethodCase(
@@ -893,6 +949,8 @@ class SwiftGlueGenerator extends GeneratorBase {
         return 'String';
       case UtsTypeKind.callback:
         return 'String'; // callback ID
+      case UtsTypeKind.nativeObject:
+        return 'String'; // handle-based
       case UtsTypeKind.voidType:
         return 'Void';
       case UtsTypeKind.dynamic:

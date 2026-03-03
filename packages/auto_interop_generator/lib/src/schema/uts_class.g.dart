@@ -24,18 +24,10 @@ Map<String, dynamic> _$UtsFieldToJson(UtsField instance) => <String, dynamic>{
       'documentation': instance.documentation,
     };
 
-const _$UtsClassKindEnumMap = {
-  UtsClassKind.concreteClass: 'concreteClass',
-  UtsClassKind.abstractClass: 'abstractClass',
-  UtsClassKind.dataClass: 'dataClass',
-  UtsClassKind.sealedClass: 'sealedClass',
-};
-
 UtsClass _$UtsClassFromJson(Map<String, dynamic> json) => UtsClass(
       name: json['name'] as String,
-      kind: json['kind'] == null
-          ? UtsClassKind.concreteClass
-          : $enumDecode(_$UtsClassKindEnumMap, json['kind']),
+      kind: $enumDecodeNullable(_$UtsClassKindEnumMap, json['kind']) ??
+          UtsClassKind.concreteClass,
       fields: (json['fields'] as List<dynamic>?)
               ?.map((e) => UtsField.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -57,23 +49,12 @@ UtsClass _$UtsClassFromJson(Map<String, dynamic> json) => UtsClass(
       constructorParameters: (json['constructorParameters'] as List<dynamic>?)
           ?.map((e) => UtsParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      constructorThrows: json['constructorThrows'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$UtsClassToJson(UtsClass instance) {
-  final json = <String, dynamic>{
-    'name': instance.name,
-    'kind': _$UtsClassKindEnumMap[instance.kind]!,
-    'fields': instance.fields.map((e) => e.toJson()).toList(),
-    'methods': instance.methods.map((e) => e.toJson()).toList(),
-    'superclass': instance.superclass,
-    'interfaces': instance.interfaces,
-    'sealedSubclasses': instance.sealedSubclasses,
-    'documentation': instance.documentation,
-  };
-  if (instance.constructorParameters != null &&
-      instance.constructorParameters!.isNotEmpty) {
-    json['constructorParameters'] =
-        instance.constructorParameters!.map((e) => e.toJson()).toList();
-  }
-  return json;
-}
+const _$UtsClassKindEnumMap = {
+  UtsClassKind.concreteClass: 'concreteClass',
+  UtsClassKind.abstractClass: 'abstractClass',
+  UtsClassKind.dataClass: 'dataClass',
+  UtsClassKind.sealedClass: 'sealedClass',
+};

@@ -272,6 +272,7 @@ class SwiftParser extends ParserBase {
     final nestedEnums = <UtsEnum>[];
     final nestedClasses = <UtsClass>[];
     var foundInit = false;
+    var ctorThrows = false;
 
     for (var j = 0; j < bodyLines.length; j++) {
       final rawBodyLine = bodyLines[j].trim();
@@ -343,6 +344,11 @@ class SwiftParser extends ParserBase {
         final sig = _collectFunctionSignature(bodyLines, j);
         final params = _parseInit(sig.text);
         constructorParams.addAll(params);
+        // Detect throws/rethrows after the closing paren
+        final afterParams = sig.text.substring(sig.text.lastIndexOf(')') + 1);
+        if (RegExp(r'\bthrows\b|\brethrows\b').hasMatch(afterParams)) {
+          ctorThrows = true;
+        }
         j = sig.endIndex;
         continue;
       }
@@ -369,6 +375,7 @@ class SwiftParser extends ParserBase {
         methods: methods,
         fields: fields,
         constructorParameters: foundInit ? constructorParams : null,
+        constructorThrows: ctorThrows,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
@@ -392,6 +399,7 @@ class SwiftParser extends ParserBase {
     final nestedEnums = <UtsEnum>[];
     final nestedClasses = <UtsClass>[];
     var foundInit = false;
+    var ctorThrows = false;
 
     for (var j = 0; j < bodyLines.length; j++) {
       final rawBodyLine = bodyLines[j].trim();
@@ -448,6 +456,11 @@ class SwiftParser extends ParserBase {
         final sig = _collectFunctionSignature(bodyLines, j);
         final params = _parseInit(sig.text);
         constructorParams.addAll(params);
+        // Detect throws/rethrows after the closing paren
+        final afterParams = sig.text.substring(sig.text.lastIndexOf(')') + 1);
+        if (RegExp(r'\bthrows\b|\brethrows\b').hasMatch(afterParams)) {
+          ctorThrows = true;
+        }
         j = sig.endIndex;
         continue;
       }
@@ -474,6 +487,7 @@ class SwiftParser extends ParserBase {
         fields: fields,
         methods: methods,
         constructorParameters: foundInit ? constructorParams : null,
+        constructorThrows: ctorThrows,
         documentation: doc,
       ),
       endIndex: endIndex + 1,
@@ -1298,6 +1312,7 @@ class SwiftParser extends ParserBase {
       sealedSubclasses: c.sealedSubclasses.map((s) => '$parent$s').toList(),
       documentation: c.documentation,
       constructorParameters: c.constructorParameters,
+      constructorThrows: c.constructorThrows,
     );
   }
 
@@ -1396,6 +1411,7 @@ class SwiftParser extends ParserBase {
         documentation: c.documentation,
         constructorParameters:
             c.constructorParameters?.map(resolveParam).toList(),
+        constructorThrows: c.constructorThrows,
       );
     }
 

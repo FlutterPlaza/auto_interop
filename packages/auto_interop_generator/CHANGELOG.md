@@ -1,3 +1,18 @@
+## 0.2.3
+
+### Bug Fixes
+
+- **AST: Proper constructor parameters** — Init declarations now populate `constructorParameters` instead of generating a spurious static `create` method. Distinguishes no-init (`null`), parameterless init (`[]`), and parameterized init.
+- **AST: Nested type parsing** — Nested enums, structs, and classes inside class/struct bodies are now extracted and prefixed with the parent name (e.g., `SHA2.Variant` → `SHA2Variant`).
+- **AST: Dotted type flattening** — `MemberTypeSyntax` (e.g., `SHA2.Variant`) is now flattened to the full joined name instead of taking only the last component.
+- **AST: Post-parse type resolution** — After parsing, type references with `kind: "object"` are resolved to `kind: "enumType"` when the name matches a known enum.
+- **Schema: `constructorThrows` field** — New boolean field on `UtsClass` tracks whether a Swift init can throw, enabling try/catch wrapping in glue code.
+- **Swift glue: Improved `_writeCreateCase`** — Now uses schema-aware type mapping, argument conversions, native arg list builder, and try/catch for throwing inits.
+- **Kotlin glue: Improved `_writeCreateCase`** — Mirrors Swift improvements: schema-aware types, argument conversions, native arg list, and try/catch for throwing constructors.
+- **Swift/Kotlin glue: `nativeObject` type handling** — `UtsTypeKind.nativeObject` now maps to `String` (handle-based) instead of falling through to `Any`.
+- **Swift/Kotlin glue: Skip `create` method** — Methods loop skips the spurious `create` method when `constructorParameters` is set.
+- **pbxproj patcher: Correct build phase targeting** — `_addToSourcesBuildPhase` now iterates all `PBXSourcesBuildPhase` matches and selects the Runner target (not RunnerTests).
+
 ## 0.2.2
 
 ### Bug Fixes

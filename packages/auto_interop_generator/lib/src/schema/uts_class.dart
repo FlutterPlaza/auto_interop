@@ -96,6 +96,11 @@ class UtsClass {
   /// - A non-empty list means a public init with parameters was found.
   final List<UtsParameter>? constructorParameters;
 
+  /// Whether the constructor (init) can throw.
+  ///
+  /// When true, the glue generator wraps the constructor call in try/catch.
+  final bool constructorThrows;
+
   const UtsClass({
     required this.name,
     this.kind = UtsClassKind.concreteClass,
@@ -106,12 +111,32 @@ class UtsClass {
     this.sealedSubclasses = const [],
     this.documentation,
     this.constructorParameters,
+    this.constructorThrows = false,
   });
 
   factory UtsClass.fromJson(Map<String, dynamic> json) =>
       _$UtsClassFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UtsClassToJson(this);
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'name': name,
+      'kind': _$UtsClassKindEnumMap[kind]!,
+      'fields': fields.map((e) => e.toJson()).toList(),
+      'methods': methods.map((e) => e.toJson()).toList(),
+      'superclass': superclass,
+      'interfaces': interfaces,
+      'sealedSubclasses': sealedSubclasses,
+      'documentation': documentation,
+    };
+    if (constructorParameters != null && constructorParameters!.isNotEmpty) {
+      json['constructorParameters'] =
+          constructorParameters!.map((e) => e.toJson()).toList();
+    }
+    if (constructorThrows) {
+      json['constructorThrows'] = constructorThrows;
+    }
+    return json;
+  }
 
   @override
   String toString() => 'UtsClass($name)';

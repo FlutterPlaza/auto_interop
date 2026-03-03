@@ -208,10 +208,10 @@ func mapSwiftType(_ typeSyntax: TypeSyntaxProtocol, nullable: Bool = false) -> U
         return utsDynamic(nullable: nullable)
     }
 
-    // Member type: Foo.Bar → use last component name
+    // Member type: Foo.Bar → flatten to FooBar
     if let memberType = typeSyntax.as(MemberTypeSyntax.self) {
-        let name = memberType.name.text
-        return resolveSimpleType(name, nullable: nullable)
+        let fullName = flattenMemberType(memberType)
+        return resolveSimpleType(fullName, nullable: nullable)
     }
 
     // Simple identifier type
@@ -284,6 +284,25 @@ func resolveSimpleType(_ name: String, nullable: Bool) -> UtsJSON {
     return utsObject(name, nullable: nullable)
 }
 
+/// Flattens a MemberTypeSyntax (e.g. SHA2.Variant) into a single name (SHA2Variant).
+func flattenMemberType(_ memberType: MemberTypeSyntax) -> String {
+    var parts: [String] = []
+    // Walk the baseType chain recursively
+    func collectParts(_ type: TypeSyntaxProtocol) {
+        if let member = type.as(MemberTypeSyntax.self) {
+            collectParts(member.baseType)
+            parts.append(member.name.text)
+        } else if let ident = type.as(IdentifierTypeSyntax.self) {
+            parts.append(ident.name.text)
+        } else {
+            parts.append(type.trimmedDescription)
+        }
+    }
+    collectParts(memberType.baseType)
+    parts.append(memberType.name.text)
+    return parts.joined()
+}
+
 // MARK: - Access control filtering
 
 func isPublicOrOpen(_ modifiers: DeclModifierListSyntax) -> Bool {
@@ -308,6 +327,17 @@ func hasPublicAccess(_ modifiers: DeclModifierListSyntax) -> Bool {
 
 // MARK: - AST Visitor
 
+/// Result of extracting members from a class/struct body.
+struct ExtractedMembers {
+    let methods: [[String: Any?]]
+    let fields: [[String: Any?]]
+    let constructorParameters: [[String: Any?]]?
+    let constructorThrows: Bool
+    let nestedEnums: [[String: Any?]]
+    let nestedTypes: [[String: Any?]]    // structs (dataClass)
+    let nestedClasses: [[String: Any?]]  // classes (concreteClass)
+}
+
 class SchemaVisitor: SyntaxVisitor {
     var classes: [[String: Any?]] = []
     var functions: [[String: Any?]] = []
@@ -323,21 +353,42 @@ class SchemaVisitor: SyntaxVisitor {
         guard !name.hasPrefix("_"), seenNames.insert(name).inserted else { return .skipChildren }
 
         let doc = extractDoc(node)
-        let (methods, fields) = extractMembers(node.memberBlock)
+        let extracted = extractMembersEx(node.memberBlock, parentName: name)
         let superclass = extractSuperclass(node.inheritanceClause)
         let interfaces = extractInterfaces(node.inheritanceClause)
 
-        classes.append([
+        var classDict: [String: Any?] = [
             "name": name,
             "kind": "concreteClass",
-            "fields": fields,
-            "methods": methods,
+            "fields": extracted.fields,
+            "methods": extracted.methods,
             "superclass": superclass,
             "interfaces": interfaces,
             "sealedSubclasses": [] as [String],
             "documentation": doc,
-            "constructorParameters": [] as [[String: Any?]],
-        ])
+            "constructorThrows": extracted.constructorThrows,
+        ]
+        if let ctorParams = extracted.constructorParameters {
+            classDict["constructorParameters"] = ctorParams
+        }
+        classes.append(classDict)
+
+        // Append nested types to top-level collections
+        for nested in extracted.nestedEnums {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                enums.append(nested)
+            }
+        }
+        for nested in extracted.nestedTypes {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                types.append(nested)
+            }
+        }
+        for nested in extracted.nestedClasses {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                classes.append(nested)
+            }
+        }
         return .skipChildren
     }
 
@@ -347,20 +398,41 @@ class SchemaVisitor: SyntaxVisitor {
         guard !name.hasPrefix("_"), seenNames.insert(name).inserted else { return .skipChildren }
 
         let doc = extractDoc(node)
-        let (methods, fields) = extractMembers(node.memberBlock)
+        let extracted = extractMembersEx(node.memberBlock, parentName: name)
         let interfaces = extractInterfaces(node.inheritanceClause)
 
-        types.append([
+        var typeDict: [String: Any?] = [
             "name": name,
             "kind": "dataClass",
-            "fields": fields,
-            "methods": methods,
+            "fields": extracted.fields,
+            "methods": extracted.methods,
             "superclass": nil as String?,
             "interfaces": interfaces,
             "sealedSubclasses": [] as [String],
             "documentation": doc,
-            "constructorParameters": [] as [[String: Any?]],
-        ])
+            "constructorThrows": extracted.constructorThrows,
+        ]
+        if let ctorParams = extracted.constructorParameters {
+            typeDict["constructorParameters"] = ctorParams
+        }
+        types.append(typeDict)
+
+        // Append nested types to top-level collections
+        for nested in extracted.nestedEnums {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                enums.append(nested)
+            }
+        }
+        for nested in extracted.nestedTypes {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                types.append(nested)
+            }
+        }
+        for nested in extracted.nestedClasses {
+            if let nestedName = nested["name"] as? String, seenNames.insert(nestedName).inserted {
+                classes.append(nested)
+            }
+        }
         return .skipChildren
     }
 
@@ -373,6 +445,7 @@ class SchemaVisitor: SyntaxVisitor {
         let (methods, fields) = extractMembers(node.memberBlock)
         let interfaces = extractInterfaces(node.inheritanceClause)
 
+        // Protocols don't have constructors — omit constructorParameters key
         classes.append([
             "name": name,
             "kind": "abstractClass",
@@ -382,7 +455,6 @@ class SchemaVisitor: SyntaxVisitor {
             "interfaces": interfaces,
             "sealedSubclasses": [] as [String],
             "documentation": doc,
-            "constructorParameters": [] as [[String: Any?]],
         ])
         return .skipChildren
     }
@@ -415,7 +487,7 @@ class SchemaVisitor: SyntaxVisitor {
         }
 
         if hasAssociatedValues {
-            // Enum with associated values → sealedClass
+            // Enum with associated values → sealedClass (no constructor)
             classes.append([
                 "name": name,
                 "kind": "sealedClass",
@@ -425,7 +497,6 @@ class SchemaVisitor: SyntaxVisitor {
                 "interfaces": extractInterfaces(node.inheritanceClause),
                 "sealedSubclasses": values.map { $0["name"] as! String },
                 "documentation": doc,
-                "constructorParameters": [] as [[String: Any?]],
             ])
         } else {
             enums.append([
@@ -467,9 +538,22 @@ class SchemaVisitor: SyntaxVisitor {
 
     // MARK: - Member extraction
 
+    /// Extracts methods and fields from a member block (used by protocols and extensions).
     func extractMembers(_ memberBlock: MemberBlockSyntax, requirePublic: Bool = false) -> ([[String: Any?]], [[String: Any?]]) {
+        let result = extractMembersEx(memberBlock, parentName: nil, requirePublic: requirePublic)
+        return (result.methods, result.fields)
+    }
+
+    /// Full member extraction: methods, fields, constructor params, and nested types.
+    func extractMembersEx(_ memberBlock: MemberBlockSyntax, parentName: String?, requirePublic: Bool = false) -> ExtractedMembers {
         var methods: [[String: Any?]] = []
         var fields: [[String: Any?]] = []
+        var foundInit = false
+        var initParams: [[String: Any?]] = []
+        var initThrows = false
+        var nestedEnums: [[String: Any?]] = []
+        var nestedTypes: [[String: Any?]] = []
+        var nestedClasses: [[String: Any?]] = []
 
         for member in memberBlock.members {
             // Functions / methods
@@ -485,30 +569,136 @@ class SchemaVisitor: SyntaxVisitor {
                 methods.append(method)
             }
 
-            // Init (constructors) → static "create" method
+            // Init (constructors) → populate constructorParameters
             if let initDecl = member.decl.as(InitializerDeclSyntax.self) {
                 let modifiers = initDecl.modifiers
                 if requirePublic && !hasPublicAccess(modifiers) { continue }
                 guard isPublicOrOpen(modifiers) else { continue }
 
-                // Skip failable init? for now (they're convenience patterns)
+                foundInit = true
                 let params = extractParameters(initDecl.signature.parameterClause)
-                let returnType = utsVoid() // init returns Self, handled by generator
+                initParams = params
 
-                let initIsAsync = initDecl.signature.effectSpecifiers?.asyncSpecifier != nil
-                let initThrows = initDecl.signature.effectSpecifiers?.throwsClause != nil
-                let initEffectivelyAsync = initIsAsync || initThrows
-                let doc = extractDoc(initDecl)
+                let doesThrow = initDecl.signature.effectSpecifiers?.throwsClause != nil
+                if doesThrow {
+                    initThrows = true
+                }
+            }
 
-                methods.append([
-                    "name": "create",
-                    "isStatic": true,
-                    "isAsync": initEffectivelyAsync,
-                    "parameters": params,
-                    "returnType": returnType,
+            // Nested enum declarations
+            if let enumDecl = member.decl.as(EnumDeclSyntax.self), let parentName = parentName {
+                guard hasPublicAccess(enumDecl.modifiers) || isPublicOrOpen(enumDecl.modifiers) else { continue }
+                let nestedName = enumDecl.name.text
+                guard !nestedName.hasPrefix("_") else { continue }
+                let prefixedName = "\(parentName)\(nestedName)"
+
+                let doc = extractDoc(enumDecl)
+                var values: [[String: Any?]] = []
+                var hasAssociatedValues = false
+
+                for caseMember in enumDecl.memberBlock.members {
+                    if let caseDecl = caseMember.decl.as(EnumCaseDeclSyntax.self) {
+                        for element in caseDecl.elements {
+                            let caseName = element.name.text
+                            if element.parameterClause != nil {
+                                hasAssociatedValues = true
+                            }
+                            let rawValue: Any? = element.rawValue?.value.description
+                                .trimmingCharacters(in: .init(charactersIn: "\""))
+                            values.append([
+                                "name": caseName,
+                                "rawValue": rawValue,
+                                "documentation": nil as String?,
+                            ])
+                        }
+                    }
+                }
+
+                if hasAssociatedValues {
+                    nestedClasses.append([
+                        "name": prefixedName,
+                        "kind": "sealedClass",
+                        "fields": [] as [[String: Any?]],
+                        "methods": [] as [[String: Any?]],
+                        "superclass": nil as String?,
+                        "interfaces": extractInterfaces(enumDecl.inheritanceClause),
+                        "sealedSubclasses": values.map { $0["name"] as! String },
+                        "documentation": doc,
+                    ])
+                } else {
+                    nestedEnums.append([
+                        "name": prefixedName,
+                        "values": values,
+                        "documentation": doc,
+                    ])
+                }
+            }
+
+            // Nested struct declarations
+            if let structDecl = member.decl.as(StructDeclSyntax.self), let parentName = parentName {
+                guard hasPublicAccess(structDecl.modifiers) || isPublicOrOpen(structDecl.modifiers) else { continue }
+                let nestedName = structDecl.name.text
+                guard !nestedName.hasPrefix("_") else { continue }
+                let prefixedName = "\(parentName)\(nestedName)"
+
+                let doc = extractDoc(structDecl)
+                let nested = extractMembersEx(structDecl.memberBlock, parentName: prefixedName)
+                let interfaces = extractInterfaces(structDecl.inheritanceClause)
+
+                var typeDict: [String: Any?] = [
+                    "name": prefixedName,
+                    "kind": "dataClass",
+                    "fields": nested.fields,
+                    "methods": nested.methods,
+                    "superclass": nil as String?,
+                    "interfaces": interfaces,
+                    "sealedSubclasses": [] as [String],
                     "documentation": doc,
-                    "nativeBody": nil as [String: String]?,
-                ])
+                    "constructorThrows": nested.constructorThrows,
+                ]
+                if let ctorParams = nested.constructorParameters {
+                    typeDict["constructorParameters"] = ctorParams
+                }
+                nestedTypes.append(typeDict)
+
+                // Propagate deeply nested types
+                nestedEnums.append(contentsOf: nested.nestedEnums)
+                nestedTypes.append(contentsOf: nested.nestedTypes)
+                nestedClasses.append(contentsOf: nested.nestedClasses)
+            }
+
+            // Nested class declarations
+            if let classDecl = member.decl.as(ClassDeclSyntax.self), let parentName = parentName {
+                guard hasPublicAccess(classDecl.modifiers) || isPublicOrOpen(classDecl.modifiers) else { continue }
+                let nestedName = classDecl.name.text
+                guard !nestedName.hasPrefix("_") else { continue }
+                let prefixedName = "\(parentName)\(nestedName)"
+
+                let doc = extractDoc(classDecl)
+                let nested = extractMembersEx(classDecl.memberBlock, parentName: prefixedName)
+                let superclass = extractSuperclass(classDecl.inheritanceClause)
+                let interfaces = extractInterfaces(classDecl.inheritanceClause)
+
+                var classDict: [String: Any?] = [
+                    "name": prefixedName,
+                    "kind": "concreteClass",
+                    "fields": nested.fields,
+                    "methods": nested.methods,
+                    "superclass": superclass,
+                    "interfaces": interfaces,
+                    "sealedSubclasses": [] as [String],
+                    "documentation": doc,
+                    "constructorThrows": nested.constructorThrows,
+                ]
+                if let ctorParams = nested.constructorParameters {
+                    classDict["constructorParameters"] = ctorParams
+                }
+                nestedClasses.append(classDict)
+
+                // Propagate deeply nested types
+                nestedEnums.append(contentsOf: nested.nestedEnums)
+                nestedTypes.append(contentsOf: nested.nestedTypes)
+                nestedClasses.append(contentsOf: nested.nestedClasses)
             }
 
             // Properties
@@ -557,7 +747,15 @@ class SchemaVisitor: SyntaxVisitor {
             }
         }
 
-        return (methods, fields)
+        return ExtractedMembers(
+            methods: methods,
+            fields: fields,
+            constructorParameters: foundInit ? initParams : nil,
+            constructorThrows: initThrows,
+            nestedEnums: nestedEnums,
+            nestedTypes: nestedTypes,
+            nestedClasses: nestedClasses
+        )
     }
 
     func extractFunction(_ node: FunctionDeclSyntax, isStatic: Bool) -> [String: Any?] {
@@ -726,6 +924,74 @@ for filePath in filePaths {
 
 // Fold extension methods
 visitor.foldExtensions()
+
+// Post-parse type resolution: resolve "object" kinds to "enumType" where appropriate
+func resolveTypeRefs() {
+    let enumNames = Set(visitor.enums.compactMap { $0["name"] as? String })
+
+    func resolveType(_ type: UtsJSON) -> UtsJSON {
+        var t = type
+        if let kind = t["kind"] as? String, kind == "object",
+           let name = t["name"] as? String, enumNames.contains(name) {
+            t["kind"] = "enumType"
+        }
+        // Recurse into typeArguments
+        if let typeArgs = t["typeArguments"] as? [UtsJSON] {
+            t["typeArguments"] = typeArgs.map { resolveType($0) }
+        }
+        return t
+    }
+
+    func resolveParam(_ param: [String: Any?]) -> [String: Any?] {
+        var p = param
+        if let type = p["type"] as? UtsJSON {
+            p["type"] = resolveType(type)
+        }
+        return p
+    }
+
+    func resolveMethod(_ method: [String: Any?]) -> [String: Any?] {
+        var m = method
+        if let retType = m["returnType"] as? UtsJSON {
+            m["returnType"] = resolveType(retType)
+        }
+        if let params = m["parameters"] as? [[String: Any?]] {
+            m["parameters"] = params.map { resolveParam($0) }
+        }
+        return m
+    }
+
+    func resolveField(_ field: [String: Any?]) -> [String: Any?] {
+        var f = field
+        if let type = f["type"] as? UtsJSON {
+            f["type"] = resolveType(type)
+        }
+        return f
+    }
+
+    func resolveClassDict(_ cls: inout [String: Any?]) {
+        if let methods = cls["methods"] as? [[String: Any?]] {
+            cls["methods"] = methods.map { resolveMethod($0) }
+        }
+        if let fields = cls["fields"] as? [[String: Any?]] {
+            cls["fields"] = fields.map { resolveField($0) }
+        }
+        if let ctorParams = cls["constructorParameters"] as? [[String: Any?]] {
+            cls["constructorParameters"] = ctorParams.map { resolveParam($0) }
+        }
+    }
+
+    for i in 0..<visitor.classes.count {
+        resolveClassDict(&visitor.classes[i])
+    }
+    for i in 0..<visitor.types.count {
+        resolveClassDict(&visitor.types[i])
+    }
+    for i in 0..<visitor.functions.count {
+        visitor.functions[i] = resolveMethod(visitor.functions[i])
+    }
+}
+resolveTypeRefs()
 
 // Build output
 let schema: [String: Any] = [

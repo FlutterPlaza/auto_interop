@@ -281,11 +281,15 @@ class KotlinGlueGenerator extends GeneratorBase {
       if (hasInstanceMethods &&
           cls.kind != UtsClassKind.abstractClass &&
           cls.constructorParameters != null) {
-        _writeCreateCase(buffer, cls, indent: '            ');
+        _writeCreateCase(buffer, schema, cls, indent: '            ');
       }
 
       final dedupedMethods = _deduplicateMethods(cls.methods);
       for (final method in dedupedMethods) {
+        // Skip spurious "create" method (init is handled via _writeCreateCase)
+        if (cls.constructorParameters != null && method.name == 'create') {
+          continue;
+        }
         _writeMethodCase(buffer, schema, method,
             indent: '            ',
             prefix: '${cls.name}.',
@@ -474,14 +478,15 @@ class KotlinGlueGenerator extends GeneratorBase {
     buffer.writeln();
   }
 
-  void _writeCreateCase(StringBuffer buffer, UtsClass cls,
+  void _writeCreateCase(
+      StringBuffer buffer, UnifiedTypeSchema schema, UtsClass cls,
       {String indent = ''}) {
     buffer.writeln('$indent"${cls.name}._create" -> {');
     if (cls.constructorParameters != null &&
         cls.constructorParameters!.isNotEmpty) {
-      // Builder-pattern construction: extract params and use Builder
+      // Extract arguments with proper type mapping
       for (final param in cls.constructorParameters!) {
-        final kotlinType = _toKotlinType(param.type);
+        final kotlinType = _toKotlinType(param.type, schema: schema);
         if (param.isOptional || param.type.nullable) {
           buffer.writeln(
               '$indent    val ${param.name} = call.argument<$kotlinType>("${param.name}")');
@@ -490,21 +495,51 @@ class KotlinGlueGenerator extends GeneratorBase {
               '$indent    val ${param.name} = call.argument<$kotlinType>("${param.name}")!!');
         }
       }
-      buffer.writeln('$indent    val builder = ${cls.name}.Builder()');
+
+      // Type conversion for special types
       for (final param in cls.constructorParameters!) {
-        if (param.isOptional || param.type.nullable) {
-          buffer.writeln(
-              '$indent    ${param.name}?.let { builder.${param.name}(it) }');
-        } else {
-          buffer.writeln('$indent    builder.${param.name}(${param.name})');
+        final conversion = _argumentConversion(param);
+        if (conversion != null) {
+          buffer.writeln('$indent    $conversion');
         }
       }
-      buffer.writeln('$indent    val instance = builder.build()');
+
+      // Build native arg list using the shared helper
+      final nativeArgs =
+          _buildNativeArgList(schema, cls.constructorParameters!);
+
+      if (cls.constructorThrows) {
+        buffer.writeln('$indent    try {');
+        buffer
+            .writeln('$indent        val instance = ${cls.name}($nativeArgs)');
+        buffer.writeln('$indent        val handle = createHandle(instance)');
+        buffer.writeln('$indent        result.success(handle)');
+        buffer.writeln('$indent    } catch (e: Exception) {');
+        buffer.writeln(
+            '$indent        result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())');
+        buffer.writeln('$indent    }');
+      } else {
+        buffer.writeln('$indent    val instance = ${cls.name}($nativeArgs)');
+        buffer.writeln('$indent    val handle = createHandle(instance)');
+        buffer.writeln('$indent    result.success(handle)');
+      }
     } else {
-      buffer.writeln('$indent    val instance = ${cls.name}()');
+      // No-arg constructor
+      if (cls.constructorThrows) {
+        buffer.writeln('$indent    try {');
+        buffer.writeln('$indent        val instance = ${cls.name}()');
+        buffer.writeln('$indent        val handle = createHandle(instance)');
+        buffer.writeln('$indent        result.success(handle)');
+        buffer.writeln('$indent    } catch (e: Exception) {');
+        buffer.writeln(
+            '$indent        result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())');
+        buffer.writeln('$indent    }');
+      } else {
+        buffer.writeln('$indent    val instance = ${cls.name}()');
+        buffer.writeln('$indent    val handle = createHandle(instance)');
+        buffer.writeln('$indent    result.success(handle)');
+      }
     }
-    buffer.writeln('$indent    val handle = createHandle(instance)');
-    buffer.writeln('$indent    result.success(handle)');
     buffer.writeln('$indent}');
   }
 
@@ -734,6 +769,8 @@ class KotlinGlueGenerator extends GeneratorBase {
         return 'String';
       case UtsTypeKind.callback:
         return 'String'; // callback ID
+      case UtsTypeKind.nativeObject:
+        return 'String'; // handle-based
       case UtsTypeKind.voidType:
         return 'Unit';
       case UtsTypeKind.dynamic:

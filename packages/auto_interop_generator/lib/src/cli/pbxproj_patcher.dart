@@ -93,15 +93,35 @@ class PbxprojPatcher {
   }
 
   /// Adds the build file ID to the Sources build phase's files list.
+  ///
+  /// Iterates all PBXSourcesBuildPhase matches and picks the one belonging
+  /// to the Runner target (contains AppDelegate or GeneratedPluginRegistrant),
+  /// falling back to the first match.
   String _addToSourcesBuildPhase(
       String content, String buildId, String fileName) {
-    // Find PBXSourcesBuildPhase section and its files list
     final sourcesBuildPhasePattern = RegExp(
       r'isa = PBXSourcesBuildPhase;[^}]*files = \(\s*',
       multiLine: true,
     );
-    final match = sourcesBuildPhasePattern.firstMatch(content);
-    if (match == null) return content;
+    final matches = sourcesBuildPhasePattern.allMatches(content).toList();
+    if (matches.isEmpty) return content;
+
+    // Find the Runner target's build phase by checking if its files list
+    // contains AppDelegate or GeneratedPluginRegistrant.
+    RegExpMatch? runnerMatch;
+    for (final match in matches) {
+      // Look at the files list after this match until the closing paren
+      final closeParen = content.indexOf(')', match.end);
+      if (closeParen == -1) continue;
+      final filesBlock = content.substring(match.end, closeParen);
+      if (filesBlock.contains('AppDelegate') ||
+          filesBlock.contains('GeneratedPluginRegistrant')) {
+        runnerMatch = match;
+        break;
+      }
+    }
+    // Fallback to first match
+    final match = runnerMatch ?? matches.first;
 
     final insertPos = match.end;
     final entry = '\t\t\t\t$buildId /* $fileName in Sources */,\n';
