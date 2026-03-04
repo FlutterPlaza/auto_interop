@@ -1,3 +1,7 @@
+## 0.2.5
+
+- Version bump to accompany `auto_interop_generator` 0.2.5 (no runtime changes).
+
 ## 0.2.3
 
 - Version bump to accompany `auto_interop_generator` 0.2.4 (no runtime changes).
