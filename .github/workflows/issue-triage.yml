@@ -1,0 +1,131 @@
+name: Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    name: Auto-label and triage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label based on content
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = (issue.title || '').toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const text = `${title} ${body}`;
+
+            const labels = [];
+
+            // Bug indicators
+            const bugPatterns = [
+              'bug', 'error', 'crash', 'broken', 'fail', 'fix',
+              'doesn\'t work', 'does not work', 'not working',
+              'incorrect', 'wrong', 'issue', 'problem',
+              'exception', 'stacktrace', 'stack trace'
+            ];
+            if (bugPatterns.some(p => text.includes(p))) {
+              labels.push('bug');
+            }
+
+            // Feature / enhancement indicators
+            const featurePatterns = [
+              'feature', 'request', 'enhancement', 'add support',
+              'would be nice', 'suggestion', 'proposal', 'new'
+            ];
+            if (featurePatterns.some(p => text.includes(p))) {
+              labels.push('enhancement');
+            }
+
+            // Documentation indicators
+            const docPatterns = [
+              'docs', 'documentation', 'readme', 'example',
+              'how to', 'howto', 'tutorial'
+            ];
+            if (docPatterns.some(p => text.includes(p))) {
+              labels.push('documentation');
+            }
+
+            // Question indicators
+            const questionPatterns = [
+              'question', 'how do', 'how can', 'is it possible',
+              'can i', 'can you', 'help'
+            ];
+            if (questionPatterns.some(p => text.includes(p))) {
+              labels.push('question');
+            }
+
+            // Component labels based on keywords
+            if (text.includes('swift') || text.includes('ios') || text.includes('cocoapods') || text.includes('xcode') || text.includes('pbxproj')) {
+              labels.push('platform: ios');
+            }
+            if (text.includes('kotlin') || text.includes('android') || text.includes('gradle')) {
+              labels.push('platform: android');
+            }
+            if (text.includes('typescript') || text.includes('javascript') || text.includes('npm') || text.includes('web')) {
+              labels.push('platform: web');
+            }
+            if (text.includes('parser') || text.includes('ast') || text.includes('parsing')) {
+              labels.push('area: parser');
+            }
+            if (text.includes('generator') || text.includes('glue') || text.includes('codegen')) {
+              labels.push('area: generator');
+            }
+            if (text.includes('schema') || text.includes('uts')) {
+              labels.push('area: schema');
+            }
+
+            // Default to bug if no category matched
+            if (labels.length === 0) {
+              labels.push('bug');
+            }
+
+            // Ensure labels exist, create if needed
+            const repoLabels = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+            const existingNames = repoLabels.data.map(l => l.name);
+
+            const colorMap = {
+              'platform: ios': '1d76db',
+              'platform: android': '0e8a16',
+              'platform: web': 'fbca04',
+              'area: parser': 'c5def5',
+              'area: generator': 'bfdadc',
+              'area: schema': 'd4c5f9',
+            };
+
+            for (const label of labels) {
+              if (!existingNames.includes(label)) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                  color: colorMap[label] || 'ededed',
+                });
+              }
+            }
+
+            // Apply labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: labels,
+            });
+
+            // Post acknowledgment comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `Thanks for reporting this! The issue has been auto-labeled as **${labels.join('**, **')}** and added to the triage queue.`,
+            });
