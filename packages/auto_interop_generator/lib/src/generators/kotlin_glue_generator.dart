@@ -699,6 +699,15 @@ class KotlinGlueGenerator extends GeneratorBase {
         argName = 'decode${param.type.name}(${param.name})';
       } else if (param.type.kind == UtsTypeKind.enumType) {
         argName = 'decode${param.type.name}(${param.name})';
+      } else if (param.type.kind == UtsTypeKind.list) {
+        final elementType = param.type.typeArguments?.first;
+        if (elementType != null &&
+            elementType.kind == UtsTypeKind.primitive &&
+            _toNativeKotlinType(elementType) != 'Any') {
+          argName = '${param.name}Typed';
+        } else {
+          argName = param.name;
+        }
       } else {
         argName = param.name;
       }
@@ -844,6 +853,16 @@ class KotlinGlueGenerator extends GeneratorBase {
     }
     if (param.type.kind == UtsTypeKind.primitive && param.type.name == 'Uri') {
       return 'val ${param.name}URI = java.net.URI.create(${param.name})';
+    }
+    if (param.type.kind == UtsTypeKind.list) {
+      final elementType = param.type.typeArguments?.first;
+      if (elementType != null && elementType.kind == UtsTypeKind.primitive) {
+        final kotlinPrimitive = _toNativeKotlinType(elementType);
+        if (kotlinPrimitive != 'Any') {
+          final opt = param.isOptional || param.type.nullable ? '?' : '';
+          return 'val ${param.name}Typed = (${param.name} as$opt List<*>)$opt.map { it as $kotlinPrimitive }';
+        }
+      }
     }
     return null;
   }
@@ -1113,6 +1132,12 @@ class KotlinGlueGenerator extends GeneratorBase {
       for (final method in cls.methods) {
         collectFromMethod(method);
       }
+      // Also collect from constructor parameters
+      if (cls.constructorParameters != null) {
+        for (final param in cls.constructorParameters!) {
+          collectFromType(param.type);
+        }
+      }
     }
     return needed;
   }
@@ -1149,6 +1174,12 @@ class KotlinGlueGenerator extends GeneratorBase {
     for (final cls in schema.classes) {
       for (final method in cls.methods) {
         collectFromMethod(method);
+      }
+      // Also collect from constructor parameters
+      if (cls.constructorParameters != null) {
+        for (final param in cls.constructorParameters!) {
+          collectFromType(param.type);
+        }
       }
     }
     return needed;

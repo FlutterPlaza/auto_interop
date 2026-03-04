@@ -76,12 +76,29 @@ class PbxprojPatcher {
   /// Adds the file reference ID to the Runner group's children list.
   String _addToRunnerGroup(String content, String fileRefId, String fileName) {
     // Find the Runner group — look for a PBXGroup with name or path = Runner
-    // that contains a children array.
+    // that contains a children array. Try the comment form first, then the
+    // name/path attribute form.
     final runnerGroupPattern = RegExp(
       r'/\* Runner \*/ = \{[^}]*children = \(\s*',
       multiLine: true,
     );
-    final match = runnerGroupPattern.firstMatch(content);
+    var match = runnerGroupPattern.firstMatch(content);
+    if (match == null) {
+      // Fallback: look for a PBXGroup with path = Runner or name = Runner
+      final fallbackPattern = RegExp(
+        r'isa = PBXGroup;[^}]*(?:path|name) = Runner;[^}]*children = \(\s*',
+        multiLine: true,
+      );
+      match = fallbackPattern.firstMatch(content);
+      if (match == null) {
+        // Try reverse order: children before path/name
+        final reversePattern = RegExp(
+          r'isa = PBXGroup;[^}]*children = \(\s*(?=[^)]*\);[^}]*(?:path|name) = Runner)',
+          multiLine: true,
+        );
+        match = reversePattern.firstMatch(content);
+      }
+    }
     if (match == null) return content;
 
     final insertPos = match.end;

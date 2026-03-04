@@ -60,9 +60,10 @@ public class SdwebimagePlugin: NSObject, FlutterPlugin {
             }
         case "SDWebImageManager.prefetch":
             let urls = args["urls"] as! [Any]
+            let urlsTyped = (urls as [Any]).map { $0 as! String }
             let handle = args["_handle"] as! String
             let instance = instances[handle] as! SDWebImageManager
-            instance.prefetch(urls: urls)
+            instance.prefetch(urls: urlsTyped)
             result(nil)
         case "SDWebImageManager.clearMemoryCache":
             let handle = args["_handle"] as! String

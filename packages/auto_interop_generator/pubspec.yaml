@@ -1,6 +1,6 @@
 name: auto_interop_generator
 description: Code generator for auto_interop — auto-generates type-safe Dart bindings from native package APIs (npm, CocoaPods, Gradle).
-version: 0.2.3
+version: 0.2.4
 homepage: https://github.com/FlutterPlaza/auto_interop
 repository: https://github.com/FlutterPlaza/auto_interop
 issue_tracker: https://github.com/FlutterPlaza/auto_interop/issues

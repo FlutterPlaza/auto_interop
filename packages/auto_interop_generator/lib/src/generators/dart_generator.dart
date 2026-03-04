@@ -234,6 +234,28 @@ class DartGenerator extends GeneratorBase {
         buffer.writeln('abstract interface class ${classDef.name} {');
       }
     } else if (classDef.kind == UtsClassKind.sealedClass) {
+      // Check if any sealed subclasses are actually defined in the schema
+      final definedNames = {
+        ...schema.classes.map((c) => c.name),
+        ...schema.types.map((t) => t.name),
+      };
+      final hasDefinedSubclasses =
+          classDef.sealedSubclasses.any((sub) => definedNames.contains(sub));
+
+      if (!hasDefinedSubclasses && classDef.sealedSubclasses.isNotEmpty) {
+        // No subclasses defined in schema — generate as a simple enum
+        // (common for Swift enums with associated values that can't be
+        // represented in Dart; the case names are preserved for use as
+        // platform channel strings)
+        buffer.writeln('enum ${classDef.name} {');
+        for (var i = 0; i < classDef.sealedSubclasses.length; i++) {
+          final comma = i < classDef.sealedSubclasses.length - 1 ? ',' : ';';
+          buffer.writeln('  ${_esc(classDef.sealedSubclasses[i])}$comma');
+        }
+        buffer.writeln('}');
+        return;
+      }
+
       buffer.writeln('sealed class ${classDef.name} {');
       // Generative constructor so subtypes can extend this class
       buffer.writeln('  ${classDef.name}();');
@@ -295,7 +317,8 @@ class DartGenerator extends GeneratorBase {
         final params = classDef.constructorParameters!.map((p) {
           final dartType = p.type.toDartType();
           if (p.isOptional || p.type.nullable) {
-            final suffix = dartType == 'dynamic' ? '' : '?';
+            final suffix =
+                (dartType == 'dynamic' || dartType.endsWith('?')) ? '' : '?';
             return '$dartType$suffix ${_esc(p.name)}';
           }
           return 'required $dartType ${_esc(p.name)}';
@@ -1211,7 +1234,8 @@ class DartGenerator extends GeneratorBase {
       if (_isReferenceTypeClass(schema, type.name)) {
         return '$expr${isNullable ? '?' : ''}._handle';
       }
-      if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+      // Only call toMap() on known data classes (defined in schema.types)
+      if (schema.types.any((t) => t.name == type.name)) {
         return '$expr${dot}toMap()';
       }
       return expr;
@@ -1308,7 +1332,8 @@ class DartGenerator extends GeneratorBase {
       if (_isReferenceTypeClass(schema, type.name)) {
         return '$eName?._handle';
       }
-      if (!_isEmptyClassWithoutFromMap(schema, type.name)) {
+      // Only call toMap() on known data classes (defined in schema.types)
+      if (schema.types.any((t) => t.name == type.name)) {
         return '$eName?.toMap()';
       }
       return eName;

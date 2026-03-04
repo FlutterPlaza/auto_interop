@@ -244,6 +244,14 @@ void main() {
               ],
               returnType: UtsType.voidType(),
             ),
+          ], types: [
+            UtsClass(
+              name: 'Options',
+              kind: UtsClassKind.dataClass,
+              fields: [
+                UtsField(name: 'value', type: UtsType.primitive('String')),
+              ],
+            ),
           ],
         ));
         expect(code, contains('options.toMap()'));
@@ -465,7 +473,7 @@ void main() {
         expect(code, contains('abstract interface class Repository'));
       });
 
-      test('generates sealed class', () {
+      test('generates sealed class when subclasses are defined', () {
         final code = generator.generateDartCode(UnifiedTypeSchema(
           package: 'test',
           source: PackageSource.npm,
@@ -477,8 +485,46 @@ void main() {
               sealedSubclasses: ['Success', 'Failure'],
             ),
           ],
+          types: [
+            UtsClass(
+              name: 'Success',
+              kind: UtsClassKind.dataClass,
+              superclass: 'Result',
+              fields: [
+                UtsField(name: 'value', type: UtsType.primitive('String')),
+              ],
+            ),
+            UtsClass(
+              name: 'Failure',
+              kind: UtsClassKind.dataClass,
+              superclass: 'Result',
+              fields: [
+                UtsField(name: 'error', type: UtsType.primitive('String')),
+              ],
+            ),
+          ],
         ));
         expect(code, contains('sealed class Result'));
+      });
+
+      test('generates enum for sealed class when no subclasses defined', () {
+        final code = generator.generateDartCode(UnifiedTypeSchema(
+          package: 'test',
+          source: PackageSource.npm,
+          version: '1.0.0',
+          classes: [
+            UtsClass(
+              name: 'Variant',
+              kind: UtsClassKind.sealedClass,
+              sealedSubclasses: ['md5', 'sha1', 'sha256'],
+            ),
+          ],
+        ));
+        expect(code, contains('enum Variant'));
+        expect(code, contains('md5'));
+        expect(code, contains('sha1'));
+        expect(code, contains('sha256'));
+        expect(code, isNot(contains('sealed class Variant')));
       });
 
       test('generates class with static methods and channel (no interface)',
@@ -659,6 +705,24 @@ void main() {
               name: 'Result',
               kind: UtsClassKind.sealedClass,
               sealedSubclasses: ['Success', 'Failure'],
+            ),
+          ],
+          types: [
+            UtsClass(
+              name: 'Success',
+              kind: UtsClassKind.dataClass,
+              superclass: 'Result',
+              fields: [
+                UtsField(name: 'value', type: UtsType.primitive('String')),
+              ],
+            ),
+            UtsClass(
+              name: 'Failure',
+              kind: UtsClassKind.dataClass,
+              superclass: 'Result',
+              fields: [
+                UtsField(name: 'error', type: UtsType.primitive('String')),
+              ],
             ),
           ],
         ));
