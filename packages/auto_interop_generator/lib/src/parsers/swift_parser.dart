@@ -160,6 +160,7 @@ class SwiftParser extends ParserBase {
         if (classes[ci].name == targetName) {
           classes[ci] = UtsClass(
             name: classes[ci].name,
+            nativeName: classes[ci].nativeName,
             kind: classes[ci].kind,
             fields: classes[ci].fields,
             methods: [...classes[ci].methods, ...extMethods],
@@ -167,6 +168,8 @@ class SwiftParser extends ParserBase {
             interfaces: classes[ci].interfaces,
             sealedSubclasses: classes[ci].sealedSubclasses,
             documentation: classes[ci].documentation,
+            constructorParameters: classes[ci].constructorParameters,
+            constructorThrows: classes[ci].constructorThrows,
           );
           found = true;
           break;
@@ -1293,8 +1296,11 @@ class SwiftParser extends ParserBase {
 
   /// Prefixes an enum name with its parent type name (e.g., SHA2 + Variant → SHA2Variant).
   UtsEnum _prefixEnum(String parent, UtsEnum e) {
+    final flatName = '$parent${e.name}';
+    final dotName = '$parent.${e.name}';
     return UtsEnum(
-      name: '$parent${e.name}',
+      name: flatName,
+      nativeName: dotName,
       values: e.values,
       documentation: e.documentation,
     );
@@ -1302,8 +1308,11 @@ class SwiftParser extends ParserBase {
 
   /// Prefixes a class name with its parent type name (e.g., SHA2 + Variant → SHA2Variant).
   UtsClass _prefixClass(String parent, UtsClass c) {
+    final flatName = '$parent${c.name}';
+    final dotName = '$parent.${c.name}';
     return UtsClass(
-      name: '$parent${c.name}',
+      name: flatName,
+      nativeName: dotName,
       kind: c.kind,
       fields: c.fields,
       methods: c.methods,
@@ -1325,11 +1334,47 @@ class SwiftParser extends ParserBase {
     final classNames = schema.classes.map((c) => c.name).toSet();
     final typeNames = schema.types.map((t) => t.name).toSet();
 
+    // --- Step 1: Promote sealed classes → enum when subclasses are undefined ---
+    final promotedEnums = <UtsEnum>[];
+    final classesToRemove = <String>{};
+    for (final cls in schema.classes) {
+      if (cls.kind == UtsClassKind.sealedClass &&
+          cls.sealedSubclasses.isNotEmpty) {
+        final allUndefined = cls.sealedSubclasses.every((sub) =>
+            !classNames.contains(sub) &&
+            !typeNames.contains(sub) &&
+            !enumNames.contains(sub));
+        if (allUndefined) {
+          promotedEnums.add(UtsEnum(
+            name: cls.name,
+            nativeName: cls.nativeName,
+            values:
+                cls.sealedSubclasses.map((s) => UtsEnumValue(name: s)).toList(),
+            documentation: cls.documentation,
+          ));
+          classesToRemove.add(cls.name);
+          enumNames.add(cls.name);
+        }
+      }
+    }
+
+    final updatedClasses =
+        schema.classes.where((c) => !classesToRemove.contains(c.name)).toList();
+    final updatedEnums = [...schema.enums, ...promotedEnums];
+
+    // --- Step 2: Resolve dotted type references ---
     UtsType resolveType(UtsType type) {
       if (type.kind == UtsTypeKind.object && type.name.contains('.')) {
-        final joined = type.name.split('.').join();
+        final originalName = type.name; // e.g., 'SHA2.Variant'
+        final joined = type.name.split('.').join(); // e.g., 'SHA2Variant'
         if (enumNames.contains(joined)) {
-          return UtsType.enumType(joined, nullable: type.nullable);
+          return UtsType(
+            kind: UtsTypeKind.enumType,
+            name: joined,
+            nullable: type.nullable,
+            ref: joined,
+            nativeName: originalName,
+          );
         }
         if (classNames.contains(joined) || typeNames.contains(joined)) {
           return UtsType(
@@ -1337,8 +1382,19 @@ class SwiftParser extends ParserBase {
             name: joined,
             nullable: type.nullable,
             typeArguments: type.typeArguments,
+            nativeName: originalName,
           );
         }
+      }
+      // Also resolve enum references that aren't dotted (e.g., after promotion)
+      if (type.kind == UtsTypeKind.object && enumNames.contains(type.name)) {
+        return UtsType(
+          kind: UtsTypeKind.enumType,
+          name: type.name,
+          nullable: type.nullable,
+          ref: type.name,
+          nativeName: type.nativeName,
+        );
       }
       // Recurse into type arguments
       if (type.typeArguments != null && type.typeArguments!.isNotEmpty) {
@@ -1351,6 +1407,7 @@ class SwiftParser extends ParserBase {
             typeArguments: resolved,
             returnType: type.returnType,
             parameterTypes: type.parameterTypes,
+            nativeName: type.nativeName,
           );
         }
       }
@@ -1402,6 +1459,7 @@ class SwiftParser extends ParserBase {
     UtsClass resolveClass(UtsClass c) {
       return UtsClass(
         name: c.name,
+        nativeName: c.nativeName,
         kind: c.kind,
         fields: c.fields.map(resolveField).toList(),
         methods: c.methods.map(resolveMethod).toList(),
@@ -1415,14 +1473,21 @@ class SwiftParser extends ParserBase {
       );
     }
 
+    // --- Step 3: Also set nativeName on enum/class definitions for nested types ---
+    final resolvedEnums = updatedEnums.map((e) {
+      // If this enum was originally a nested type (name was flattened),
+      // check if any promoted enum already has nativeName set
+      return e;
+    }).toList();
+
     return UnifiedTypeSchema(
       package: schema.package,
       source: schema.source,
       version: schema.version,
-      classes: schema.classes.map(resolveClass).toList(),
+      classes: updatedClasses.map(resolveClass).toList(),
       functions: schema.functions.map(resolveMethod).toList(),
       types: schema.types.map(resolveClass).toList(),
-      enums: schema.enums,
+      enums: resolvedEnums,
       nativeImports: schema.nativeImports,
       nativeFields: schema.nativeFields,
     );

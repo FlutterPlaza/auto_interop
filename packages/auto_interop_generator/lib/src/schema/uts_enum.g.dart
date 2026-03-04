@@ -21,6 +21,7 @@ Map<String, dynamic> _$UtsEnumValueToJson(UtsEnumValue instance) =>
 
 UtsEnum _$UtsEnumFromJson(Map<String, dynamic> json) => UtsEnum(
       name: json['name'] as String,
+      nativeName: json['nativeName'] as String?,
       values: (json['values'] as List<dynamic>?)
               ?.map((e) => UtsEnumValue.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -28,8 +29,14 @@ UtsEnum _$UtsEnumFromJson(Map<String, dynamic> json) => UtsEnum(
       documentation: json['documentation'] as String?,
     );
 
-Map<String, dynamic> _$UtsEnumToJson(UtsEnum instance) => <String, dynamic>{
-      'name': instance.name,
-      'values': instance.values.map((e) => e.toJson()).toList(),
-      'documentation': instance.documentation,
-    };
+Map<String, dynamic> _$UtsEnumToJson(UtsEnum instance) {
+  final json = <String, dynamic>{
+    'name': instance.name,
+    'values': instance.values.map((e) => e.toJson()).toList(),
+    'documentation': instance.documentation,
+  };
+  if (instance.nativeName != null) {
+    json['nativeName'] = instance.nativeName;
+  }
+  return json;
+}

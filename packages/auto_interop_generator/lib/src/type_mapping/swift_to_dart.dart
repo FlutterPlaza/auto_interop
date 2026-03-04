@@ -157,6 +157,7 @@ class SwiftToDartMapper {
     // Primitive mappings
     switch (swiftType) {
       case 'Int':
+        return UtsType.primitive('int', nullable: nullable);
       case 'Int8':
       case 'Int16':
       case 'Int32':
@@ -166,11 +167,22 @@ class SwiftToDartMapper {
       case 'UInt16':
       case 'UInt32':
       case 'UInt64':
-        return UtsType.primitive('int', nullable: nullable);
+        return UtsType(
+          kind: UtsTypeKind.primitive,
+          name: 'int',
+          nullable: nullable,
+          nativeName: swiftType,
+        );
       case 'Double':
+        return UtsType.primitive('double', nullable: nullable);
       case 'Float':
       case 'CGFloat':
-        return UtsType.primitive('double', nullable: nullable);
+        return UtsType(
+          kind: UtsTypeKind.primitive,
+          name: 'double',
+          nullable: nullable,
+          nativeName: swiftType,
+        );
       case 'String':
         return UtsType.primitive('String', nullable: nullable);
       case 'Bool':

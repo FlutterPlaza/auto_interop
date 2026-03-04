@@ -65,6 +65,12 @@ class UtsClass {
   /// The class name.
   final String name;
 
+  /// The original native type name, if different from [name].
+  ///
+  /// Used when the Dart name was flattened from a nested type
+  /// (e.g., `SHA2.Variant` → `SHA2Variant`).
+  final String? nativeName;
+
   /// The kind of class.
   final UtsClassKind kind;
 
@@ -103,6 +109,7 @@ class UtsClass {
 
   const UtsClass({
     required this.name,
+    this.nativeName,
     this.kind = UtsClassKind.concreteClass,
     this.fields = const [],
     this.methods = const [],
@@ -128,6 +135,9 @@ class UtsClass {
       'sealedSubclasses': sealedSubclasses,
       'documentation': documentation,
     };
+    if (nativeName != null) {
+      json['nativeName'] = nativeName;
+    }
     if (constructorParameters != null && constructorParameters!.isNotEmpty) {
       json['constructorParameters'] =
           constructorParameters!.map((e) => e.toJson()).toList();

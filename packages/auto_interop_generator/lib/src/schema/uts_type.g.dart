@@ -20,18 +20,24 @@ UtsType _$UtsTypeFromJson(Map<String, dynamic> json) => UtsType(
       returnType: json['returnType'] == null
           ? null
           : UtsType.fromJson(json['returnType'] as Map<String, dynamic>),
+      nativeName: json['nativeName'] as String?,
     );
 
-Map<String, dynamic> _$UtsTypeToJson(UtsType instance) => <String, dynamic>{
-      'kind': _$UtsTypeKindEnumMap[instance.kind]!,
-      'name': instance.name,
-      'nullable': instance.nullable,
-      'ref': instance.ref,
-      'typeArguments': instance.typeArguments?.map((e) => e.toJson()).toList(),
-      'parameterTypes':
-          instance.parameterTypes?.map((e) => e.toJson()).toList(),
-      'returnType': instance.returnType?.toJson(),
-    };
+Map<String, dynamic> _$UtsTypeToJson(UtsType instance) {
+  final json = <String, dynamic>{
+    'kind': _$UtsTypeKindEnumMap[instance.kind]!,
+    'name': instance.name,
+    'nullable': instance.nullable,
+    'ref': instance.ref,
+    'typeArguments': instance.typeArguments?.map((e) => e.toJson()).toList(),
+    'parameterTypes': instance.parameterTypes?.map((e) => e.toJson()).toList(),
+    'returnType': instance.returnType?.toJson(),
+  };
+  if (instance.nativeName != null) {
+    json['nativeName'] = instance.nativeName;
+  }
+  return json;
+}
 
 const _$UtsTypeKindEnumMap = {
   UtsTypeKind.primitive: 'primitive',

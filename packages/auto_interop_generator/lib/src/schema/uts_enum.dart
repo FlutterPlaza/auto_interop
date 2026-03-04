@@ -35,6 +35,12 @@ class UtsEnum {
   /// The enum name.
   final String name;
 
+  /// The original native type name, if different from [name].
+  ///
+  /// Used when the Dart name was flattened from a nested type
+  /// (e.g., `SHA2.Variant` → `SHA2Variant`).
+  final String? nativeName;
+
   /// The enum values/cases.
   final List<UtsEnumValue> values;
 
@@ -43,6 +49,7 @@ class UtsEnum {
 
   const UtsEnum({
     required this.name,
+    this.nativeName,
     this.values = const [],
     this.documentation,
   });

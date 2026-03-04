@@ -244,7 +244,8 @@ void main() {
               ],
               returnType: UtsType.voidType(),
             ),
-          ], types: [
+          ],
+          types: [
             UtsClass(
               name: 'Options',
               kind: UtsClassKind.dataClass,

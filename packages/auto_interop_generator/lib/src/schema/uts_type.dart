@@ -47,6 +47,14 @@ class UtsType {
   /// For callback types, the return type.
   final UtsType? returnType;
 
+  /// The original native type name, if different from [name].
+  ///
+  /// Used to preserve platform-specific type information that is lost during
+  /// the native→Dart mapping. For example:
+  /// - `UInt8` → Dart `int` → Swift glue needs `UInt8` not `Int`
+  /// - `SHA2.Variant` → Dart `SHA2Variant` → Swift glue needs `SHA2.Variant`
+  final String? nativeName;
+
   const UtsType({
     required this.kind,
     required this.name,
@@ -55,6 +63,7 @@ class UtsType {
     this.typeArguments,
     this.parameterTypes,
     this.returnType,
+    this.nativeName,
   });
 
   /// Creates a primitive type (String, int, double, bool, DateTime).
@@ -158,6 +167,7 @@ class UtsType {
         typeArguments: typeArguments,
         parameterTypes: parameterTypes,
         returnType: returnType,
+        nativeName: nativeName,
       );
 
   /// Returns the Dart type string representation.
@@ -212,6 +222,7 @@ class UtsType {
           name == other.name &&
           nullable == other.nullable &&
           ref == other.ref &&
+          nativeName == other.nativeName &&
           _listEquals(typeArguments, other.typeArguments) &&
           _listEquals(parameterTypes, other.parameterTypes) &&
           returnType == other.returnType;
@@ -222,6 +233,7 @@ class UtsType {
         name,
         nullable,
         ref,
+        nativeName,
         typeArguments == null ? null : Object.hashAll(typeArguments!),
         parameterTypes == null ? null : Object.hashAll(parameterTypes!),
         returnType,

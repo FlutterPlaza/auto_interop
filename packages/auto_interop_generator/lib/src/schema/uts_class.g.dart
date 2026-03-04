@@ -26,6 +26,7 @@ Map<String, dynamic> _$UtsFieldToJson(UtsField instance) => <String, dynamic>{
 
 UtsClass _$UtsClassFromJson(Map<String, dynamic> json) => UtsClass(
       name: json['name'] as String,
+      nativeName: json['nativeName'] as String?,
       kind: $enumDecodeNullable(_$UtsClassKindEnumMap, json['kind']) ??
           UtsClassKind.concreteClass,
       fields: (json['fields'] as List<dynamic>?)

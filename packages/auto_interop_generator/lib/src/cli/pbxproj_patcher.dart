@@ -91,9 +91,9 @@ class PbxprojPatcher {
       );
       match = fallbackPattern.firstMatch(content);
       if (match == null) {
-        // Try reverse order: children before path/name
+        // Try reverse order: children listed before path/name in the group block
         final reversePattern = RegExp(
-          r'isa = PBXGroup;[^}]*children = \(\s*(?=[^)]*\);[^}]*(?:path|name) = Runner)',
+          r'isa = PBXGroup;\s*children = \(\s*(?=[^}]*(?:path|name) = Runner;)',
           multiLine: true,
         );
         match = reversePattern.firstMatch(content);

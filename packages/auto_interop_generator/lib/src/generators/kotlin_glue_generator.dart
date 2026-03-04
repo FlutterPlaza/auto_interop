@@ -293,7 +293,7 @@ class KotlinGlueGenerator extends GeneratorBase {
         _writeMethodCase(buffer, schema, method,
             indent: '            ',
             prefix: '${cls.name}.',
-            className: cls.name,
+            className: cls.nativeName ?? cls.name,
             isStatic: method.isStatic);
       }
     }
@@ -365,15 +365,16 @@ class KotlinGlueGenerator extends GeneratorBase {
 
   void _writeDataClassHelpers(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass typeDef) {
-    final name = typeDef.name;
+    final dartName = typeDef.name;
+    final nativeName = typeDef.nativeName ?? typeDef.name;
 
     // decode helper
     buffer.writeln(
-        '    private fun decode$name(map: Map<String, Any?>): $name {');
+        '    private fun decode$dartName(map: Map<String, Any?>): $nativeName {');
     if (typeDef.fields.isEmpty) {
-      buffer.writeln('        return $name()');
+      buffer.writeln('        return $nativeName()');
     } else {
-      buffer.writeln('        return $name(');
+      buffer.writeln('        return $nativeName(');
       for (var i = 0; i < typeDef.fields.length; i++) {
         final field = typeDef.fields[i];
         final comma = i < typeDef.fields.length - 1 ? ',' : '';
@@ -388,7 +389,8 @@ class KotlinGlueGenerator extends GeneratorBase {
     // encode helper
     final hasNullableFields = typeDef.fields.any((f) => f.nullable);
     if (hasNullableFields) {
-      buffer.writeln('    private fun encode(obj: $name): Map<String, Any?> {');
+      buffer.writeln(
+          '    private fun encode(obj: $nativeName): Map<String, Any?> {');
       buffer.writeln('        val map = mutableMapOf<String, Any?>()');
       for (final field in typeDef.fields) {
         final encodeExpr = _kotlinEncodeFieldExpr(schema, field);
@@ -401,7 +403,8 @@ class KotlinGlueGenerator extends GeneratorBase {
       }
       buffer.writeln('        return map');
     } else {
-      buffer.writeln('    private fun encode(obj: $name): Map<String, Any?> {');
+      buffer.writeln(
+          '    private fun encode(obj: $nativeName): Map<String, Any?> {');
       buffer.writeln('        return mapOf(');
       for (var i = 0; i < typeDef.fields.length; i++) {
         final field = typeDef.fields[i];
@@ -465,14 +468,16 @@ class KotlinGlueGenerator extends GeneratorBase {
   }
 
   void _writeEnumHelper(StringBuffer buffer, UtsEnum enumDef) {
-    final name = enumDef.name;
-    buffer.writeln('    private fun decode$name(value: String): $name {');
+    final dartName = enumDef.name;
+    final nativeName = enumDef.nativeName ?? enumDef.name;
+    buffer.writeln(
+        '    private fun decode$dartName(value: String): $nativeName {');
     buffer.writeln('        return when (value) {');
     for (final v in enumDef.values) {
-      buffer.writeln('            "${v.name}" -> $name.${v.name}');
+      buffer.writeln('            "${v.name}" -> $nativeName.${v.name}');
     }
     buffer.writeln(
-        '            else -> throw IllegalArgumentException("Unknown $name value: \$value")');
+        '            else -> throw IllegalArgumentException("Unknown $nativeName value: \$value")');
     buffer.writeln('        }');
     buffer.writeln('    }');
     buffer.writeln();
@@ -481,6 +486,7 @@ class KotlinGlueGenerator extends GeneratorBase {
   void _writeCreateCase(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass cls,
       {String indent = ''}) {
+    final nativeClassName = cls.nativeName ?? cls.name;
     buffer.writeln('$indent"${cls.name}._create" -> {');
     if (cls.constructorParameters != null &&
         cls.constructorParameters!.isNotEmpty) {
@@ -510,8 +516,8 @@ class KotlinGlueGenerator extends GeneratorBase {
 
       if (cls.constructorThrows) {
         buffer.writeln('$indent    try {');
-        buffer
-            .writeln('$indent        val instance = ${cls.name}($nativeArgs)');
+        buffer.writeln(
+            '$indent        val instance = $nativeClassName($nativeArgs)');
         buffer.writeln('$indent        val handle = createHandle(instance)');
         buffer.writeln('$indent        result.success(handle)');
         buffer.writeln('$indent    } catch (e: Exception) {');
@@ -519,7 +525,8 @@ class KotlinGlueGenerator extends GeneratorBase {
             '$indent        result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())');
         buffer.writeln('$indent    }');
       } else {
-        buffer.writeln('$indent    val instance = ${cls.name}($nativeArgs)');
+        buffer
+            .writeln('$indent    val instance = $nativeClassName($nativeArgs)');
         buffer.writeln('$indent    val handle = createHandle(instance)');
         buffer.writeln('$indent    result.success(handle)');
       }
@@ -527,7 +534,7 @@ class KotlinGlueGenerator extends GeneratorBase {
       // No-arg constructor
       if (cls.constructorThrows) {
         buffer.writeln('$indent    try {');
-        buffer.writeln('$indent        val instance = ${cls.name}()');
+        buffer.writeln('$indent        val instance = $nativeClassName()');
         buffer.writeln('$indent        val handle = createHandle(instance)');
         buffer.writeln('$indent        result.success(handle)');
         buffer.writeln('$indent    } catch (e: Exception) {');
@@ -535,7 +542,7 @@ class KotlinGlueGenerator extends GeneratorBase {
             '$indent        result.error(normalizeErrorCode(e), e.message, e.stackTraceToString())');
         buffer.writeln('$indent    }');
       } else {
-        buffer.writeln('$indent    val instance = ${cls.name}()');
+        buffer.writeln('$indent    val instance = $nativeClassName()');
         buffer.writeln('$indent    val handle = createHandle(instance)');
         buffer.writeln('$indent    result.success(handle)');
       }
@@ -791,6 +798,31 @@ class KotlinGlueGenerator extends GeneratorBase {
 
   /// Maps UTS type to actual native Kotlin type.
   String _toNativeKotlinType(UtsType type) {
+    // If a native name is preserved, map Swift sub-integer types to Kotlin equivalents
+    if (type.nativeName != null && type.kind == UtsTypeKind.primitive) {
+      switch (type.nativeName) {
+        case 'UInt8':
+          return 'UByte';
+        case 'UInt16':
+          return 'UShort';
+        case 'UInt32':
+          return 'UInt';
+        case 'UInt64':
+          return 'ULong';
+        case 'Int8':
+          return 'Byte';
+        case 'Int16':
+          return 'Short';
+        case 'Int32':
+          return 'Int';
+        case 'Int64':
+          return 'Long';
+        case 'Float':
+          return 'Float';
+        case 'CGFloat':
+          return 'Double';
+      }
+    }
     switch (type.kind) {
       case UtsTypeKind.primitive:
         switch (type.name) {
@@ -814,7 +846,7 @@ class KotlinGlueGenerator extends GeneratorBase {
             return 'Any';
         }
       case UtsTypeKind.object:
-        return type.name;
+        return type.nativeName ?? type.name;
       case UtsTypeKind.list:
         final elementType = type.typeArguments?.first;
         if (elementType != null) {
@@ -832,9 +864,9 @@ class KotlinGlueGenerator extends GeneratorBase {
         }
         return 'Map<String, Any>';
       case UtsTypeKind.enumType:
-        return type.name;
+        return type.nativeName ?? type.name;
       case UtsTypeKind.nativeObject:
-        return type.name;
+        return type.nativeName ?? type.name;
       default:
         return 'Any';
     }

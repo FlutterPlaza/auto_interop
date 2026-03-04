@@ -269,7 +269,7 @@ class SwiftGlueGenerator extends GeneratorBase {
           _writeMethodCase(buffer, schema, method,
               indent: '        ',
               prefix: '${cls.name}.',
-              className: cls.name,
+              className: cls.nativeName ?? cls.name,
               isStatic: method.isStatic);
         }
       }
@@ -530,15 +530,16 @@ class SwiftGlueGenerator extends GeneratorBase {
 
   void _writeDataClassHelpers(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass typeDef) {
-    final name = typeDef.name;
+    final dartName = typeDef.name;
+    final nativeName = typeDef.nativeName ?? typeDef.name;
 
     // decode helper
     buffer.writeln(
-        '    private func decode$name(from map: [String: Any]) -> $name {');
+        '    private func decode$dartName(from map: [String: Any]) -> $nativeName {');
     if (typeDef.fields.isEmpty) {
-      buffer.writeln('        return $name()');
+      buffer.writeln('        return $nativeName()');
     } else {
-      buffer.writeln('        return $name(');
+      buffer.writeln('        return $nativeName(');
       for (var i = 0; i < typeDef.fields.length; i++) {
         final field = typeDef.fields[i];
         final comma = i < typeDef.fields.length - 1 ? ',' : '';
@@ -552,7 +553,8 @@ class SwiftGlueGenerator extends GeneratorBase {
 
     // encode helper
     final hasNullableFields = typeDef.fields.any((f) => f.nullable);
-    buffer.writeln('    private func encode(_ obj: $name) -> [String: Any] {');
+    buffer.writeln(
+        '    private func encode(_ obj: $nativeName) -> [String: Any] {');
     if (hasNullableFields) {
       // Use mutable dict so nullable fields can be conditionally added
       buffer.writeln('        var dict: [String: Any] = [:]');
@@ -630,14 +632,16 @@ class SwiftGlueGenerator extends GeneratorBase {
   }
 
   void _writeEnumHelper(StringBuffer buffer, UtsEnum enumDef) {
-    final name = enumDef.name;
-    buffer.writeln('    private func decode$name(_ value: String) -> $name {');
+    final dartName = enumDef.name;
+    final nativeName = enumDef.nativeName ?? enumDef.name;
+    buffer.writeln(
+        '    private func decode$dartName(_ value: String) -> $nativeName {');
     buffer.writeln('        switch value {');
     for (final v in enumDef.values) {
       buffer.writeln('        case "${v.name}": return .${v.name}');
     }
     buffer.writeln(
-        '        default: fatalError("Unknown $name value: \\(value)")');
+        '        default: fatalError("Unknown $nativeName value: \\(value)")');
     buffer.writeln('        }');
     buffer.writeln('    }');
     buffer.writeln();
@@ -646,6 +650,7 @@ class SwiftGlueGenerator extends GeneratorBase {
   void _writeCreateCase(
       StringBuffer buffer, UnifiedTypeSchema schema, UtsClass cls,
       {String indent = ''}) {
+    final nativeClassName = cls.nativeName ?? cls.name;
     buffer.writeln('${indent}case "${cls.name}._create":');
     if (cls.constructorParameters != null &&
         cls.constructorParameters!.isNotEmpty) {
@@ -678,7 +683,7 @@ class SwiftGlueGenerator extends GeneratorBase {
         buffer.writeln('$indent    Task {');
         buffer.writeln('$indent        do {');
         buffer.writeln(
-            '$indent            let instance = try ${cls.name}($nativeArgs)');
+            '$indent            let instance = try $nativeClassName($nativeArgs)');
         buffer
             .writeln('$indent            let handle = createHandle(instance)');
         buffer.writeln('$indent            DispatchQueue.main.async {');
@@ -692,7 +697,8 @@ class SwiftGlueGenerator extends GeneratorBase {
         buffer.writeln('$indent        }');
         buffer.writeln('$indent    }');
       } else {
-        buffer.writeln('$indent    let instance = ${cls.name}($nativeArgs)');
+        buffer
+            .writeln('$indent    let instance = $nativeClassName($nativeArgs)');
         buffer.writeln('$indent    let handle = createHandle(instance)');
         buffer.writeln('$indent    result(handle)');
       }
@@ -701,7 +707,8 @@ class SwiftGlueGenerator extends GeneratorBase {
       if (cls.constructorThrows) {
         buffer.writeln('$indent    Task {');
         buffer.writeln('$indent        do {');
-        buffer.writeln('$indent            let instance = try ${cls.name}()');
+        buffer.writeln(
+            '$indent            let instance = try $nativeClassName()');
         buffer
             .writeln('$indent            let handle = createHandle(instance)');
         buffer.writeln('$indent            DispatchQueue.main.async {');
@@ -715,7 +722,7 @@ class SwiftGlueGenerator extends GeneratorBase {
         buffer.writeln('$indent        }');
         buffer.writeln('$indent    }');
       } else {
-        buffer.writeln('$indent    let instance = ${cls.name}()');
+        buffer.writeln('$indent    let instance = $nativeClassName()');
         buffer.writeln('$indent    let handle = createHandle(instance)');
         buffer.writeln('$indent    result(handle)');
       }
@@ -971,6 +978,10 @@ class SwiftGlueGenerator extends GeneratorBase {
 
   /// Maps UTS type to actual native Swift type.
   String _toNativeSwiftType(UtsType type) {
+    // If a native name is preserved, use it for primitive sub-types (UInt8, Float, etc.)
+    if (type.nativeName != null && type.kind == UtsTypeKind.primitive) {
+      return type.nativeName!;
+    }
     switch (type.kind) {
       case UtsTypeKind.primitive:
         switch (type.name) {
@@ -994,7 +1005,7 @@ class SwiftGlueGenerator extends GeneratorBase {
             return 'Any';
         }
       case UtsTypeKind.object:
-        return type.name;
+        return type.nativeName ?? type.name;
       case UtsTypeKind.list:
         final elementType = type.typeArguments?.first;
         if (elementType != null) {
@@ -1012,9 +1023,9 @@ class SwiftGlueGenerator extends GeneratorBase {
         }
         return '[String: Any]';
       case UtsTypeKind.enumType:
-        return type.name;
+        return type.nativeName ?? type.name;
       case UtsTypeKind.nativeObject:
-        return type.name;
+        return type.nativeName ?? type.name;
       default:
         return 'Any';
     }

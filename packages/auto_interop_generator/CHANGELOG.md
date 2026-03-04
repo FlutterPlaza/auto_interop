@@ -1,3 +1,15 @@
+## 0.2.5
+
+### Bug Fixes
+
+- **Schema: `nativeName` field** — Added `nativeName` to `UtsType`, `UtsEnum`, and `UtsClass` to preserve original native type names (e.g., `SHA2.Variant`, `UInt8`) through the Dart mapping round-trip.
+- **Parser: Nested type native names** — `_prefixEnum` and `_prefixClass` now set `nativeName` to the dotted form (e.g., `SHA2.Variant`) when flattening nested types for Dart compatibility.
+- **Parser: Sealed class → enum promotion** — Sealed classes whose subclasses are all undefined in the schema are now promoted to enums at parse time, ensuring Swift/Kotlin glue generators see the correct `enumType` kind instead of `object`.
+- **Type mapping: Sub-integer type preservation** — `UInt8`, `Int16`, `Float`, and other sub-integer Swift types now preserve their native name through the `int`/`double` Dart mapping, preventing `UInt8` → `Int` loss in generated glue code.
+- **Swift glue: Native name usage** — Enum helpers, data class helpers, constructor calls, and type references now use `nativeName` (e.g., `SHA2.Variant`, `UInt8`) instead of flattened Dart names.
+- **Kotlin glue: Native name usage** — Mirrors Swift changes; also maps Swift sub-integer types to Kotlin equivalents (`UInt8` → `UByte`, `Int16` → `Short`, etc.).
+- **pbxproj patcher: Fixed reverse regex** — The fallback regex in `_addToRunnerGroup` now correctly matches pbxproj structures where `children` appears before `path/name = Runner`.
+
 ## 0.2.4
 
 ### Bug Fixes
