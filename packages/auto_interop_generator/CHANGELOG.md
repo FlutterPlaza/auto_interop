@@ -1,3 +1,16 @@
+## 0.2.6
+
+### Bug Fixes
+
+- **Parser: Extension nested types** — Nested enums, structs, and classes declared inside Swift `extension` blocks are now parsed and flattened with the parent prefix (e.g., `extension GCM { enum Mode }` → `GCMMode`). Previously only methods were extracted from extensions.
+- **Parser: Protocol conformance** — Inheritance clauses (`: Protocol1, Protocol2`) are now parsed from class, struct, and extension headers and stored as `interfaces` on `UtsClass`.
+- **Parser: Struct → class promotion** — Structs that implement a reference-type protocol (abstract class with instance methods) are automatically promoted to handle-based concrete classes, enabling them to be passed where the protocol type is expected.
+- **Type mapping: `ArraySlice<T>`** — `ArraySlice<T>` is now mapped to `List<T>` (like `Array<T>`) instead of falling through to an opaque handle type.
+- **Dart generator: Protocol implements** — Concrete classes now include implemented protocol interfaces in their `implements` clause (e.g., `class GCM implements BlockMode`).
+- **Dart generator: Opaque handle create()** — Handle-based types without instance methods but with constructor parameters now generate `create()` factories and `_channel` fields.
+- **Swift glue: Optional enum decode** — Optional enum parameters now use nil-check wrapping (`mode != nil ? decodeGCMMode(mode!) : nil`) instead of unconditional decode.
+- **Swift glue: Opaque handle _create** — Handle-based types without instance methods now generate `_create` switch cases and instance registry support.
+
 ## 0.2.5
 
 ### Bug Fixes

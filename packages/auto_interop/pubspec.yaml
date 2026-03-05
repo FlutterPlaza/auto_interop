@@ -1,6 +1,6 @@
 name: auto_interop
 description: Runtime library for auto_interop — provides platform channel management, type conversion, and error handling for auto-generated native bindings.
-version: 0.2.5
+version: 0.2.6
 homepage: https://github.com/FlutterPlaza/auto_interop
 repository: https://github.com/FlutterPlaza/auto_interop
 issue_tracker: https://github.com/FlutterPlaza/auto_interop/issues
