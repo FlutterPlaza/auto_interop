@@ -36,6 +36,7 @@ class SwiftParser extends ParserBase {
     final types = <UtsClass>[];
     final enums = <UtsEnum>[];
     final extensions = <String, List<UtsMethod>>{};
+    final extensionInterfaces = <String, List<String>>{};
 
     var i = 0;
     while (i < lines.length) {
@@ -80,6 +81,15 @@ class SwiftParser extends ParserBase {
           extensions
               .putIfAbsent(result.targetName, () => [])
               .addAll(result.methods);
+          // Add nested types from extensions to the schema
+          enums.addAll(result.nestedEnums);
+          types.addAll(result.nestedClasses);
+          // Collect protocol conformance from extensions
+          if (result.interfaces.isNotEmpty) {
+            extensionInterfaces
+                .putIfAbsent(result.targetName, () => [])
+                .addAll(result.interfaces);
+          }
           i = result.endIndex;
           continue;
         }
@@ -150,40 +160,79 @@ class SwiftParser extends ParserBase {
       i++;
     }
 
-    // Fold extension methods into their base classes
+    // Fold extension methods and interfaces into their base classes/types
     for (final entry in extensions.entries) {
       final targetName = entry.key;
       final extMethods = entry.value;
+      final extInterfaces = extensionInterfaces[targetName] ?? [];
 
       var found = false;
-      for (var ci = 0; ci < classes.length; ci++) {
-        if (classes[ci].name == targetName) {
-          classes[ci] = UtsClass(
-            name: classes[ci].name,
-            nativeName: classes[ci].nativeName,
-            kind: classes[ci].kind,
-            fields: classes[ci].fields,
-            methods: [...classes[ci].methods, ...extMethods],
-            superclass: classes[ci].superclass,
-            interfaces: classes[ci].interfaces,
-            sealedSubclasses: classes[ci].sealedSubclasses,
-            documentation: classes[ci].documentation,
-            constructorParameters: classes[ci].constructorParameters,
-            constructorThrows: classes[ci].constructorThrows,
-          );
-          found = true;
-          break;
+      // Search in both classes and types (structs go to types)
+      for (final list in [classes, types]) {
+        for (var ci = 0; ci < list.length; ci++) {
+          if (list[ci].name == targetName) {
+            list[ci] = UtsClass(
+              name: list[ci].name,
+              nativeName: list[ci].nativeName,
+              kind: list[ci].kind,
+              fields: list[ci].fields,
+              methods: [...list[ci].methods, ...extMethods],
+              superclass: list[ci].superclass,
+              interfaces: {...list[ci].interfaces, ...extInterfaces}.toList(),
+              sealedSubclasses: list[ci].sealedSubclasses,
+              documentation: list[ci].documentation,
+              constructorParameters: list[ci].constructorParameters,
+              constructorThrows: list[ci].constructorThrows,
+            );
+            found = true;
+            break;
+          }
         }
+        if (found) break;
       }
       // If the base class wasn't found in this file, create it
       if (!found) {
         classes.add(UtsClass(
           name: targetName,
           kind: UtsClassKind.concreteClass,
+          interfaces: extInterfaces,
           methods: extMethods,
         ));
       }
     }
+
+    // Promote structs (data classes) to concrete classes when they implement
+    // a protocol that is a reference type (abstract class with instance methods).
+    // This ensures they get handle-based management so they can be passed where
+    // the protocol type is expected.
+    final referenceProtocols = classes
+        .where((c) =>
+            c.kind == UtsClassKind.abstractClass &&
+            c.methods.any((m) => !m.isStatic))
+        .map((c) => c.name)
+        .toSet();
+    final toPromote = <UtsClass>[];
+    types.removeWhere((t) {
+      if (t.kind == UtsClassKind.dataClass &&
+          t.interfaces.any((i) => referenceProtocols.contains(i))) {
+        toPromote.add(UtsClass(
+          name: t.name,
+          nativeName: t.nativeName,
+          kind: UtsClassKind.concreteClass,
+          fields: t.fields,
+          methods: t.methods,
+          superclass: t.superclass,
+          interfaces: t.interfaces,
+          sealedSubclasses: t.sealedSubclasses,
+          documentation: t.documentation,
+          constructorParameters: t.constructorParameters,
+          constructorThrows: t.constructorThrows,
+        ));
+        return true;
+      }
+      return false;
+    });
+    classes.addAll(toPromote);
 
     final schema = UnifiedTypeSchema(
       package: packageName,
@@ -266,6 +315,7 @@ class SwiftParser extends ParserBase {
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
+    final interfaces = _parseInheritanceClause(line);
     final endIndex = _findBlockEnd(lines, startIndex);
     final bodyLines = lines.sublist(startIndex + 1, endIndex);
 
@@ -375,6 +425,7 @@ class SwiftParser extends ParserBase {
       cls: UtsClass(
         name: name,
         kind: UtsClassKind.concreteClass,
+        interfaces: interfaces,
         methods: methods,
         fields: fields,
         constructorParameters: foundInit ? constructorParams : null,
@@ -393,6 +444,7 @@ class SwiftParser extends ParserBase {
     if (nameMatch == null) return null;
 
     final name = nameMatch.group(1)!;
+    final interfaces = _parseInheritanceClause(line);
     final endIndex = _findBlockEnd(lines, startIndex);
     final bodyLines = lines.sublist(startIndex + 1, endIndex);
 
@@ -487,6 +539,7 @@ class SwiftParser extends ParserBase {
       cls: UtsClass(
         name: name,
         kind: UtsClassKind.dataClass,
+        interfaces: interfaces,
         fields: fields,
         methods: methods,
         constructorParameters: foundInit ? constructorParams : null,
@@ -706,14 +759,22 @@ class SwiftParser extends ParserBase {
     if (nameMatch == null) return null;
 
     final targetName = nameMatch.group(1)!;
+    final interfaces = _parseInheritanceClause(line);
     final endIndex = _findBlockEnd(lines, startIndex);
     final bodyLines = lines.sublist(startIndex + 1, endIndex);
 
     final methods = <UtsMethod>[];
+    final nestedEnums = <UtsEnum>[];
+    final nestedClasses = <UtsClass>[];
 
     for (var j = 0; j < bodyLines.length; j++) {
       final rawBodyLine = bodyLines[j].trim();
-      if (rawBodyLine.isEmpty) continue;
+      if (rawBodyLine.isEmpty ||
+          rawBodyLine.startsWith('///') ||
+          rawBodyLine.startsWith('/**') ||
+          rawBodyLine.startsWith('*')) {
+        continue;
+      }
 
       final bodyLine = _stripAttributes(rawBodyLine);
 
@@ -724,6 +785,52 @@ class SwiftParser extends ParserBase {
       }
 
       final memberDoc = _lookbackForDoc(bodyLines, j);
+
+      // Nested enum
+      if (_matchesEnum(bodyLine)) {
+        final result = _parseEnum(bodyLines, j, memberDoc);
+        if (result != null) {
+          if (result.isSealedClass) {
+            nestedClasses
+                .add(_prefixClass(targetName, result.sealedClass!));
+            for (final sub in result.subclasses) {
+              nestedClasses.add(_prefixClass(targetName, sub));
+            }
+          } else {
+            nestedEnums.add(_prefixEnum(targetName, result.enumDef!));
+          }
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
+      // Nested struct
+      if (_matchesStruct(bodyLine)) {
+        final result = _parseStruct(bodyLines, j, memberDoc);
+        if (result != null) {
+          nestedClasses.add(_prefixClass(targetName, result.cls));
+          nestedEnums.addAll(
+              result.nestedEnums.map((e) => _prefixEnum(targetName, e)));
+          nestedClasses.addAll(
+              result.nestedClasses.map((c) => _prefixClass(targetName, c)));
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
+
+      // Nested class
+      if (_matchesClass(bodyLine)) {
+        final result = _parseClass(bodyLines, j, memberDoc);
+        if (result != null) {
+          nestedClasses.add(_prefixClass(targetName, result.cls));
+          nestedEnums.addAll(
+              result.nestedEnums.map((e) => _prefixEnum(targetName, e)));
+          nestedClasses.addAll(
+              result.nestedClasses.map((c) => _prefixClass(targetName, c)));
+          j = result.endIndex - 1;
+          continue;
+        }
+      }
 
       if (_matchesFunction(bodyLine)) {
         final sig = _collectFunctionSignature(bodyLines, j);
@@ -738,6 +845,9 @@ class SwiftParser extends ParserBase {
     return _ParsedExtension(
       targetName: targetName,
       methods: methods,
+      nestedEnums: nestedEnums,
+      nestedClasses: nestedClasses,
+      interfaces: interfaces,
       endIndex: endIndex + 1,
     );
   }
@@ -1292,6 +1402,50 @@ class SwiftParser extends ParserBase {
     return _DocResult(null, index);
   }
 
+  // ========== Inheritance Parsing ==========
+
+  /// Extracts protocol/superclass names from a Swift declaration's
+  /// inheritance clause (e.g., `class Foo: Bar, Baz {` → `['Bar', 'Baz']`).
+  List<String> _parseInheritanceClause(String line) {
+    final braceIdx = line.indexOf('{');
+    final searchEnd = braceIdx != -1 ? braceIdx : line.length;
+
+    // Find the `:` that's outside `<>` angle brackets
+    var depth = 0;
+    var colonIdx = -1;
+    for (var i = 0; i < searchEnd; i++) {
+      switch (line[i]) {
+        case '<':
+          depth++;
+          break;
+        case '>':
+          depth--;
+          break;
+        case ':':
+          if (depth == 0) {
+            colonIdx = i;
+          }
+          break;
+      }
+      if (colonIdx != -1) break;
+    }
+
+    if (colonIdx == -1) return [];
+    var clause = line.substring(colonIdx + 1, searchEnd).trim();
+
+    // Strip `where` clause if present
+    final whereIdx = clause.indexOf(' where ');
+    if (whereIdx != -1) {
+      clause = clause.substring(0, whereIdx);
+    }
+
+    return clause
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+  }
+
   // ========== Nested Type Helpers ==========
 
   /// Prefixes an enum name with its parent type name (e.g., SHA2 + Variant → SHA2Variant).
@@ -1535,10 +1689,16 @@ class _ParsedEnumResult {
 class _ParsedExtension {
   final String targetName;
   final List<UtsMethod> methods;
+  final List<UtsEnum> nestedEnums;
+  final List<UtsClass> nestedClasses;
+  final List<String> interfaces;
   final int endIndex;
   _ParsedExtension({
     required this.targetName,
     required this.methods,
+    this.nestedEnums = const [],
+    this.nestedClasses = const [],
+    this.interfaces = const [],
     required this.endIndex,
   });
 }

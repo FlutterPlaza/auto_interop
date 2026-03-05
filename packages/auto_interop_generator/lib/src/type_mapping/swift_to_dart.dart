@@ -107,6 +107,12 @@ class SwiftToDartMapper {
       return UtsType.list(mapType(inner), nullable: nullable);
     }
 
+    // Handle ArraySlice<T> → List<T> (effectively a sub-range of Array)
+    if (swiftType.startsWith('ArraySlice<') && swiftType.endsWith('>')) {
+      final inner = swiftType.substring(11, swiftType.length - 1);
+      return UtsType.list(mapType(inner), nullable: nullable);
+    }
+
     // Handle [K: V] → Map<K, V>
     if (swiftType.startsWith('[') &&
         swiftType.endsWith(']') &&

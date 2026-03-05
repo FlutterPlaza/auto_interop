@@ -274,17 +274,37 @@ class DartGenerator extends GeneratorBase {
         buffer.writeln('    }');
         buffer.writeln('  }');
       }
-    } else if (hasInstanceMethods) {
-      buffer.writeln(
-          'class ${classDef.name} implements ${classDef.name}Interface {');
     } else {
-      buffer.writeln('class ${classDef.name} {');
+      // Resolve protocol interfaces that are known abstract classes in the schema
+      final knownAbstractNames = schema.classes
+          .where((c) => c.kind == UtsClassKind.abstractClass)
+          .map((c) => c.name)
+          .toSet();
+      final protocolImpls = classDef.interfaces
+          .where((i) => knownAbstractNames.contains(i))
+          .toList();
+
+      if (hasInstanceMethods) {
+        final allImplements = [
+          '${classDef.name}Interface',
+          ...protocolImpls,
+        ];
+        buffer.writeln(
+            'class ${classDef.name} implements ${allImplements.join(', ')} {');
+      } else if (protocolImpls.isNotEmpty) {
+        buffer.writeln(
+            'class ${classDef.name} implements ${protocolImpls.join(', ')} {');
+      } else {
+        buffer.writeln('class ${classDef.name} {');
+      }
     }
 
-    // Channel for method invocations
+    // Channel for method invocations (also needed for create() factory)
     final hasStreamMethod =
         classDef.methods.any((m) => m.returnType.kind == UtsTypeKind.stream);
-    if (classDef.methods.isNotEmpty) {
+    final needsChannel =
+        classDef.methods.isNotEmpty || classDef.constructorParameters != null;
+    if (needsChannel) {
       buffer.writeln(
           "  static final _channel = AutoInteropChannel('$channelName');");
       if (hasStreamMethod) {
@@ -309,8 +329,10 @@ class DartGenerator extends GeneratorBase {
           '  static ${classDef.name} fromHandle(String handle) => ${classDef.name}._(handle);');
     }
 
-    // Factory constructor for concrete reference types (only when a public init was found)
-    if (isConcreteReferenceType && classDef.constructorParameters != null) {
+    // Factory constructor for handle-based types (only when a public init was found)
+    final needsCreateFactory = (isConcreteReferenceType || isOpaqueHandleType) &&
+        classDef.constructorParameters != null;
+    if (needsCreateFactory) {
       buffer.writeln();
       if (classDef.constructorParameters!.isNotEmpty) {
         // Builder-aware factory with named parameters

@@ -88,6 +88,13 @@ class SwiftGlueGenerator extends GeneratorBase {
       for (final m in cls.methods) {
         if (!m.isStatic) return true;
       }
+      // Opaque handle types with constructors also need handle management
+      if (cls.methods.isEmpty &&
+          cls.fields.isEmpty &&
+          cls.kind != UtsClassKind.sealedClass &&
+          cls.constructorParameters != null) {
+        return true;
+      }
     }
     return false;
   }
@@ -236,7 +243,8 @@ class SwiftGlueGenerator extends GeneratorBase {
 
     // Collect all method cases
     final hasMethods = schema.functions.isNotEmpty ||
-        schema.classes.any((c) => c.methods.isNotEmpty);
+        schema.classes.any((c) =>
+            c.methods.isNotEmpty || c.constructorParameters != null);
 
     if (hasMethods) {
       // Use default empty dict so _create (no arguments) still works
@@ -253,8 +261,13 @@ class SwiftGlueGenerator extends GeneratorBase {
       // Class methods (prefixed with className)
       for (final cls in schema.classes) {
         // Constructor factory for concrete classes with instance methods
+        // or opaque handle types with constructors
         final hasInstanceMethods = cls.methods.any((m) => !m.isStatic);
-        if (hasInstanceMethods &&
+        final isOpaqueHandleType = !hasInstanceMethods &&
+            cls.fields.isEmpty &&
+            cls.methods.isEmpty &&
+            cls.kind != UtsClassKind.sealedClass;
+        if ((hasInstanceMethods || isOpaqueHandleType) &&
             cls.kind != UtsClassKind.abstractClass &&
             cls.constructorParameters != null) {
           _writeCreateCase(buffer, schema, cls, indent: '        ');
@@ -872,7 +885,12 @@ class SwiftGlueGenerator extends GeneratorBase {
         // Data class param: call decode helper to convert Map → native type
         argName = 'decode${param.type.name}(from: ${param.name})';
       } else if (param.type.kind == UtsTypeKind.enumType) {
-        argName = 'decode${param.type.name}(${param.name})';
+        if (param.isOptional || param.type.nullable) {
+          argName =
+              '${param.name} != nil ? decode${param.type.name}(${param.name}!) : nil';
+        } else {
+          argName = 'decode${param.type.name}(${param.name})';
+        }
       } else if (param.type.kind == UtsTypeKind.list) {
         final elementType = param.type.typeArguments?.first;
         if (elementType != null &&
